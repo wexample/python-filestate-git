@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Union, cast, Dict
 from git import Repo
-from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationMixin
+from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers.helpers.git_helper import git_remote_create_once
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from wexample_filestate.item.file_state_item_file_target import FileStateItemFileTarget
 
 
-class GitRemoteAddOperation(FileManipulationMixin, AbstractGitOperation):
+class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _original_path_str: str
     _created_remote: Dict[str, bool]
 

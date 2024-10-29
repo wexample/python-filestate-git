@@ -21,7 +21,7 @@ class TestGitOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
         }
 
     def _operation_get_count(self) -> int:
-        return 1
+        return 2
 
     def _operation_test_assert_initial(self) -> None:
         self._assert_state_manager_target_directory_exists("test_git_dir", positive=False)
