@@ -7,7 +7,6 @@ from git import Repo
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.file_create_operation import FileCreateOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
-from wexample_filestate.option.should_exist_option import ShouldExistOption
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers.const.globals import DIR_GIT
 
@@ -27,12 +26,11 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
 
     @staticmethod
     def applicable(target: Union["FileStateItemDirectoryTarget", "FileStateItemFileTarget"]) -> bool:
-        from wexample_filestate_git.option.git_option import GitOption
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_helpers.helpers.git_helper import git_is_init
 
-        option = cast(GitOption, target.get_option(GitOption))
-
-        return option and option.should_have_git() and not git_is_init(target.path)
+        option = cast(GitConfigOption, target.get_option(GitConfigOption))
+        return option is not None and option.should_have_git() and not git_is_init(target.path)
 
     def describe_before(self) -> str:
         return 'No initialized .git directory'
