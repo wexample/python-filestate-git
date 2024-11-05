@@ -12,7 +12,7 @@ class GitOperationsProvider(AbstractOperationsProvider):
     def get_operations() -> List[Type["AbstractOperation"]]:
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
         from wexample_filestate_git.operation.git_remote_operation import GitRemoteOperation
-        from wexample_filestate.const.types_state_items import TargetFileOrDirectory
+        from wexample_filestate.const.state_items import TargetFileOrDirectory
 
         import_dummy(TargetFileOrDirectory)
 
