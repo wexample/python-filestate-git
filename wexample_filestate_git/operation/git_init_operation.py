@@ -11,8 +11,7 @@ from wexample_filestate_git.operation.abstract_git_operation import AbstractGitO
 from wexample_helpers.const.globals import DIR_GIT
 
 if TYPE_CHECKING:
-    from wexample_filestate.item.file_state_item_directory_target import FileStateItemDirectoryTarget
-    from wexample_filestate.item.file_state_item_file_target import FileStateItemFileTarget
+    from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
@@ -25,12 +24,12 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         ]
 
     @staticmethod
-    def applicable(target: Union["FileStateItemDirectoryTarget", "FileStateItemFileTarget"]) -> bool:
+    def applicable(target: TargetFileOrDirectoryType) -> bool:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_helpers.helpers.git_helper import git_is_init
 
         option = cast(GitConfigOption, target.get_option(GitConfigOption))
-        return option is not None and option.should_have_git() and not git_is_init(target.path)
+        return option is not None and option.should_have_git() and not git_is_init(target.get_path())
 
     def describe_before(self) -> str:
         return 'No initialized .git directory'

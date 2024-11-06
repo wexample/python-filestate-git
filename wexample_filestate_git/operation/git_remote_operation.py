@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Union, cast, Dict, List, Type, Any
+from typing import TYPE_CHECKING, cast, Dict, List, Type, Any
 from git import Repo
 
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
-from wexample_helpers.helpers.git_helper import git_remote_create_once
+from wexample_helpers.helpers.git_helper import git_remote_create_once, git_is_init
 
 if TYPE_CHECKING:
-    from wexample_filestate.item.file_state_item_directory_target import FileStateItemDirectoryTarget
-    from wexample_filestate.item.file_state_item_file_target import FileStateItemFileTarget
+    from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
 
 
 class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
@@ -25,15 +24,22 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
     def dependencies(self) -> List[Type["AbstractOperation"]]:
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
-        return [
-            GitInitOperation
-        ]
+        if GitInitOperation.applicable(target=self.target):
+            return [
+                GitInitOperation
+            ]
+
+        return []
 
     @staticmethod
-    def applicable(target: Union["FileStateItemDirectoryTarget", "FileStateItemFileTarget"]) -> bool:
+    def applicable(target: "TargetFileOrDirectoryType") -> bool:
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
-        if GitInitOperation.applicable(target=target):
+        option = cast(GitConfigOption, target.get_option(GitConfigOption))
+
+        if option is not None and option.should_have_git() and (
+            GitInitOperation.applicable(target=target) or git_is_init(target.get_path())):
             from wexample_filestate_git.config_option.git_config_option import GitConfigOption
             value = target.get_option_value(GitConfigOption)
 
@@ -70,7 +76,7 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
         if isinstance(value, str):
             return value
         elif isinstance(value, dict) and "pattern" in value:
-            path = cast(PosixPath, self.target.path)
+            path = cast(PosixPath, self.target.get_path())
 
             return value["pattern"].format(**{
                 'name': path.name,
