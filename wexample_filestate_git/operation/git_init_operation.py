@@ -26,7 +26,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     @staticmethod
     def applicable(target: TargetFileOrDirectoryType) -> bool:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
-        from wexample_helpers.helpers.git_helper import git_is_init
+        from wexample_helpers.helpers.git import git_is_init
 
         option = cast(GitConfigOption, target.get_option(GitConfigOption))
         return option is not None and option.should_have_git() and not git_is_init(target.get_path())
