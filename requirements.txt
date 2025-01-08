@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements.in
 #
+-e file:///home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/helpers-git
+    # via -r requirements.in
 annotated-types==0.7.0
     # via pydantic
 build==1.2.2.post1

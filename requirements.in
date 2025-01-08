@@ -1,3 +1,4 @@
 pip-tools
 pydantic
 pytest
+-e ../helpers-git

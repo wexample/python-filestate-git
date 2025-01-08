@@ -7,7 +7,7 @@ from git import Repo
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
-from wexample_helpers.helpers.git import git_remote_create_once, git_is_init
+from wexample_helpers_git.helpers.git import git_remote_create_once, git_is_init
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType

@@ -18,10 +18,10 @@ classifiers = [
 ]
 
 dependencies = [
-    "gitpython",
     "pydantic",
     "wexample-filestate",
     "wexample-helpers",
+    "wexample-helpers-git",
 ]
 
 [project.urls]
