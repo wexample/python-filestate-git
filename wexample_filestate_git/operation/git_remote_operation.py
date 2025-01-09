@@ -40,7 +40,6 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
 
         if option is not None and option.should_have_git() and (
             GitInitOperation.applicable(target=target) or git_is_init(target.get_path())):
-            from wexample_filestate_git.config_option.git_config_option import GitConfigOption
             value = target.get_option_value(GitConfigOption)
 
             return (value is not None
@@ -53,7 +52,7 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
         return 'Remote missing in .git directory'
 
     def describe_after(self) -> str:
-        return 'Remote added .git directory'
+        return 'Remote added in .git directory'
 
     def description(self) -> str:
         return 'Add remote in .git directory'
