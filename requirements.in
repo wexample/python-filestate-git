@@ -1,4 +1,6 @@
 pip-tools
 pydantic
 pytest
--e ../helpers-git
+wexample_filestate
+wexample_helpers
+wexample_helpers_git
