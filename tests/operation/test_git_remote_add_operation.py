@@ -21,7 +21,6 @@ class TestGitOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
                                 "url": {
                                     "pattern": "test-remote-with-{name}"
                                 },
-                                "check_remote": True
                             },
                         ]
                     }
