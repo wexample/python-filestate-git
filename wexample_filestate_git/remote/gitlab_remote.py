@@ -2,9 +2,11 @@ import os
 import re
 from typing import Dict, List
 from pydantic import Field
+import logging
 import requests
 
 from .abstract_remote import AbstractRemote
+
 
 GITLAB_API_TOKEN: str = "GITLAB_API_TOKEN"
 GITLAB_DEFAULT_URL: str = "GITLAB_DEFAULT_URL"
@@ -31,16 +33,22 @@ class GitlabRemote(AbstractRemote):
             GITLAB_API_TOKEN,
         ]
 
-    def create_repository(self, name: str, description: str = "", private: bool = False) -> Dict:
+    def create_repository(self, name: str, namespace: str = "", description: str = "", private: bool = False) -> Dict:
+        data = {
+            "name": name,
+            "description": description,
+            "visibility": "private" if private else "public",
+            "initialize_with_readme": True
+        }
+        
+        if namespace:
+            data["path"] = name
+            data["namespace_path"] = namespace
+            
         response = self.make_request(
             method="POST",
             endpoint="projects",
-            data={
-                "name": name,
-                "description": description,
-                "visibility": "private" if private else "public",
-                "initialize_with_readme": True
-            }
+            data=data
         )
         return response.json()
 
