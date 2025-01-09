@@ -17,10 +17,10 @@ class GitlabRemote(AbstractRemote):
 
     def model_post_init(self, *args, **kwargs):
         super().model_post_init(*args, **kwargs)
-        if self.api_keys.get(GITLAB_ENV_KEY_TOKEN):
-            self.default_headers.update({
-                "PRIVATE-TOKEN": self.api_keys[GITLAB_ENV_KEY_TOKEN]
-            })
+        token = self.get_api_key(GITLAB_ENV_KEY_TOKEN)
+        self.default_headers.update({
+            "PRIVATE-TOKEN": token
+        })
 
     def get_expected_env_keys(self) -> List[str]:
         return [
@@ -34,17 +34,28 @@ class GitlabRemote(AbstractRemote):
             data={
                 "name": name,
                 "description": description,
-                "visibility": "private" if private else "public"
+                "visibility": "private" if private else "public",
+                "initialize_with_readme": True
             }
         )
         return response.json()
+
+    def check_connection(self) -> bool:
+        try:
+            # Try to access user information to verify connection
+            self.make_request(
+                method="GET",
+                endpoint="user"
+            )
+            return True
+        except Exception:
+            return False
 
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
         gitlab_patterns = [
             r"git@gitlab\.com:",
             r"https://gitlab\.com/",
-            r"git://gitlab\.com/",
-            r"://gitlab",
+            r"git://gitlab\.com/"
         ]
         return any(re.search(pattern, remote_url) for pattern in gitlab_patterns)

@@ -18,11 +18,11 @@ class GithubRemote(AbstractRemote):
 
     def model_post_init(self, *args, **kwargs):
         super().model_post_init(*args, **kwargs)
-        if self.api_keys.get(GITHUB_ENV_KEY_TOKEN):
-            self.default_headers.update({
-                "Authorization": f"token {self.api_keys[GITHUB_ENV_KEY_TOKEN]}",
-                "Accept": GITHUB_API_VERSION
-            })
+        token = self.get_api_key(GITHUB_ENV_KEY_TOKEN)
+        self.default_headers.update({
+            "Authorization": f"token {token}",
+            "Accept": GITHUB_API_VERSION
+        })
 
     def get_expected_env_keys(self) -> List[str]:
         return [
@@ -36,7 +36,8 @@ class GithubRemote(AbstractRemote):
             data={
                 "name": name,
                 "description": description,
-                "private": private
+                "private": private,
+                "auto_init": True
             }
         )
         return response.json()
