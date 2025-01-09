@@ -107,11 +107,13 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
                         url_parts = remote_url.split('/')
                         repo_full_name = '/'.join(url_parts[-2:])  # Get "acme-python/app.git"
                         repo_name = repo_full_name.split('/')[-1].replace('.git', '')  # Get "app"
-                        
-                        # Create the repository using the parsed name
-                        remote.create_repository(name=repo_name)
-                    else:
-                        print(f"Could not detect or find remote type for URL: {remote_url}")
+                        namespace = repo_full_name.split('/')[0] if '/' in repo_full_name else ""
+
+                        if not remote.check_repository_exists(repo_name, namespace):
+                            remote.create_repository(
+                                name=repo_name,
+                                namespace=namespace
+                            )
 
     def _config_parse_file_value(self, value: Any) -> str:
         if isinstance(value, str):

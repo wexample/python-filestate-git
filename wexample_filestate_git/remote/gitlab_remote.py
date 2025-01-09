@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Dict, List
+from typing import Dict, List, Optional
 from pydantic import Field
 import logging
 import requests
@@ -36,15 +36,15 @@ class GitlabRemote(AbstractRemote):
     def create_repository(self, name: str, namespace: str = "", description: str = "", private: bool = False) -> Dict:
         data = {
             "name": name,
+            "path": name,
             "description": description,
             "visibility": "private" if private else "public",
-            "initialize_with_readme": True
+            "initialize_with_readme": False
         }
         
         if namespace:
-            data["path"] = name
-            data["namespace_path"] = namespace
-            
+            data["namespace_id"] = self._get_namespace_id(namespace)
+
         response = self.make_request(
             method="POST",
             endpoint="projects",
@@ -56,7 +56,7 @@ class GitlabRemote(AbstractRemote):
         try:
             url = f"{self.base_url.rstrip('/')}/user"
 
-            response = requests.get(
+            response = requests.head(
                 url,
                 headers=self.default_headers,
                 timeout=self.timeout
@@ -67,6 +67,45 @@ class GitlabRemote(AbstractRemote):
         except requests.exceptions.RequestException as e:
             print(f"Connection error: {str(e)}")
             return False
+
+    def check_repository_exists(self, name: str, namespace: str = "") -> bool:
+        try:
+            if namespace:
+                response = requests.get(
+                    f"{self.base_url.rstrip('/')}/projects",
+                    params={
+                        "search": name,
+                        "namespace": namespace
+                    },
+                    headers=self.default_headers,
+                    timeout=self.timeout
+                )
+                if response.status_code == 200:
+                    projects = response.json()
+                    return any(
+                        p["path"] == name and p["namespace"]["path"] == namespace 
+                        for p in projects
+                    )
+            return False
+        except requests.exceptions.RequestException:
+            return False
+
+    def _get_namespace_id(self, namespace_path: str) -> Optional[int]:
+        try:
+            response = requests.get(
+                f"{self.base_url.rstrip('/')}/namespaces",
+                params={"search": namespace_path},
+                headers=self.default_headers,
+                timeout=self.timeout
+            )
+            if response.status_code == 200:
+                namespaces = response.json()
+                for ns in namespaces:
+                    if ns["path"] == namespace_path:
+                        return ns["id"]
+            return None
+        except requests.exceptions.RequestException:
+            return None
 
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
