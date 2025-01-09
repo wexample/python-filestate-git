@@ -9,8 +9,8 @@ from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers_git.helpers.git import git_remote_create_once, git_is_init
-from wexample_filestate_git.remote.github_remote import GithubRemote, GITHUB_ENV_KEY_TOKEN
-from wexample_filestate_git.remote.gitlab_remote import GitlabRemote, GITLAB_ENV_KEY_TOKEN
+from wexample_filestate_git.remote.github_remote import GithubRemote, GITHUB_API_TOKEN
+from wexample_filestate_git.remote.gitlab_remote import GitlabRemote, GITLAB_API_TOKEN
 from wexample_filestate_git.remote.abstract_remote import AbstractRemote
 
 if TYPE_CHECKING:

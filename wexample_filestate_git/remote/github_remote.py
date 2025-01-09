@@ -1,32 +1,33 @@
+import os
 import re
 from typing import Dict, List
 from pydantic import Field
-
 from .abstract_remote import AbstractRemote
 
-
-GITHUB_ENV_KEY_TOKEN: str = "GITHUB_API_TOKEN"
-GITHUB_API_VERSION: str = "application/vnd.github.v3+json"
-GITHUB_DEFAULT_URL: str = "https://api.github.com"
+GITHUB_API_TOKEN: str = "GITHUB_API_TOKEN"
+GITHUB_DEFAULT_URL: str = "GITHUB_DEFAULT_URL"
 
 
 class GithubRemote(AbstractRemote):
     base_url: str = Field(
-        default=GITHUB_DEFAULT_URL,
+        default="https://api.github.com",
         description="GitHub API base URL"
     )
 
     def model_post_init(self, *args, **kwargs):
         super().model_post_init(*args, **kwargs)
-        token = self.get_api_key(GITHUB_ENV_KEY_TOKEN)
+
         self.default_headers.update({
-            "Authorization": f"token {token}",
-            "Accept": GITHUB_API_VERSION
+            "Authorization": f"token {os.getenv(GITHUB_API_TOKEN)}",
+            "Accept": "application/vnd.github.v3+json"
         })
+
+        if os.getenv(GITHUB_DEFAULT_URL) is not None:
+            self.base_url = os.getenv(GITHUB_DEFAULT_URL)
 
     def get_expected_env_keys(self) -> List[str]:
         return [
-            GITHUB_ENV_KEY_TOKEN,
+            GITHUB_API_TOKEN,
         ]
 
     def create_repository(self, name: str, description: str = "", private: bool = False) -> Dict:

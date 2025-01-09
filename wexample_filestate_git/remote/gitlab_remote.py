@@ -1,30 +1,34 @@
+import os
 import re
 from typing import Dict, List
 from pydantic import Field
+import requests
 
 from .abstract_remote import AbstractRemote
 
-
-GITLAB_ENV_KEY_TOKEN: str = "GITLAB_API_TOKEN"
-GITLAB_DEFAULT_URL: str = "https://gitlab.com/api/v4"
+GITLAB_API_TOKEN: str = "GITLAB_API_TOKEN"
+GITLAB_DEFAULT_URL: str = "GITLAB_DEFAULT_URL"
 
 
 class GitlabRemote(AbstractRemote):
     base_url: str = Field(
-        default=GITLAB_DEFAULT_URL,
+        default="https://gitlab.com/api/v4",
         description="GitLab API base URL"
     )
 
     def model_post_init(self, *args, **kwargs):
         super().model_post_init(*args, **kwargs)
-        token = self.get_api_key(GITLAB_ENV_KEY_TOKEN)
+
         self.default_headers.update({
-            "PRIVATE-TOKEN": token
+            "PRIVATE-TOKEN": os.getenv(GITLAB_API_TOKEN)
         })
+
+        if os.getenv(GITLAB_DEFAULT_URL) is not None:
+            self.base_url = os.getenv(GITLAB_DEFAULT_URL)
 
     def get_expected_env_keys(self) -> List[str]:
         return [
-            GITLAB_ENV_KEY_TOKEN,
+            GITLAB_API_TOKEN,
         ]
 
     def create_repository(self, name: str, description: str = "", private: bool = False) -> Dict:
@@ -42,13 +46,18 @@ class GitlabRemote(AbstractRemote):
 
     def check_connection(self) -> bool:
         try:
-            # Try to access user information to verify connection
-            self.make_request(
-                method="GET",
-                endpoint="user"
+            url = f"{self.base_url.rstrip('/')}/user"
+
+            response = requests.get(
+                url,
+                headers=self.default_headers,
+                timeout=self.timeout
             )
-            return True
-        except Exception:
+
+            return response.status_code == 200
+
+        except requests.exceptions.RequestException as e:
+            print(f"Connection error: {str(e)}")
             return False
 
     @classmethod
