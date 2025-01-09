@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import PosixPath
 from typing import TYPE_CHECKING, cast, Dict, List, Type, Any, Optional
 from git import Repo
-import os
 
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
@@ -102,7 +101,15 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
                     if remote_type:
                         remote = remote_type()
                         remote.connect()
-                        remote.create_repository(name=self.target.get_path().name)
+
+                        # Parse the repository name and path from the URL
+                        # Example URL: ssh://git@gitlab.wexample.com:4567/acme-python/app.git
+                        url_parts = remote_url.split('/')
+                        repo_full_name = '/'.join(url_parts[-2:])  # Get "acme-python/app.git"
+                        repo_name = repo_full_name.split('/')[-1].replace('.git', '')  # Get "app"
+                        
+                        # Create the repository using the parsed name
+                        remote.create_repository(name=repo_name)
                     else:
                         print(f"Could not detect or find remote type for URL: {remote_url}")
 
