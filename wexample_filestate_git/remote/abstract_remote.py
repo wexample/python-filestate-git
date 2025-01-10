@@ -24,20 +24,6 @@ class AbstractRemote(AbstractGateway):
         """
         pass
 
-    @abstractmethod
-    def check_repository_exists(self, name: str, namespace: str = "") -> bool:
-        """
-        Check if a repository exists on the remote service.
-
-        Args:
-            name: Repository name
-            namespace: Repository namespace/organization (optional)
-
-        Returns:
-            bool: True if the repository exists
-        """
-        pass
-
     @classmethod
     @abstractmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
