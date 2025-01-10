@@ -1,6 +1,6 @@
 from abc import abstractmethod
-from typing import Dict, Optional
-from wexample_helpers.classes.abstract_gateway import AbstractGateway
+from typing import Dict
+from wexample_helpers_api.common.abstract_gateway import AbstractGateway
 
 
 class AbstractRemote(AbstractGateway):
@@ -10,7 +10,7 @@ class AbstractRemote(AbstractGateway):
     """
 
     @abstractmethod
-    def create_repository(self, name: str, description: str = "", private: bool = False) -> Dict:
+    def create_repository(self, name: str, description: str = "", private: bool = False, namespace: str = "") -> Dict:
         """
         Create a new repository on the remote service.
 
@@ -18,6 +18,7 @@ class AbstractRemote(AbstractGateway):
             name: Repository name
             description: Repository description
             private: Whether the repository should be private
+            namespace: Repository namespace/organization (optional, used by some services like GitLab)
 
         Returns:
             Dict: Repository information from the API
