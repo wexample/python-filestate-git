@@ -2,7 +2,6 @@ import os
 import re
 from typing import Dict, List, Optional
 from pydantic import Field
-import logging
 import requests
 
 from .abstract_remote import AbstractRemote
