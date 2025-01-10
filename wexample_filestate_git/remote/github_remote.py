@@ -50,23 +50,38 @@ class GithubRemote(AbstractRemote):
                 endpoint = f"repos/{namespace}/{name}"
             else:
                 endpoint = f"user/repos"
-                params = {"per_page": 100}  # GitHub's default is 30
-                response = self.make_request("GET", endpoint, params=params)
+                response = self.make_request(method="GET", endpoint=endpoint)
                 repos = response.json()
                 return any(repo["name"] == name for repo in repos)
 
-            response = self.make_request("GET", endpoint)
+            response = self.make_request(method="GET", endpoint=endpoint)
             return response.status_code == 200
-
-        except Exception as e:
-            print(f"Error checking repository existence: {str(e)}")
+        except Exception:
             return False
 
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
-        github_patterns = [
-            r"git@github\.com:",
-            r"https://github\.com/",
-            r"git://github\.com/"
-        ]
-        return any(re.search(pattern, remote_url) for pattern in github_patterns)
+        return bool(re.search(r'github\.com[:/]', remote_url))
+
+    def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
+        """
+        Parse a GitHub repository URL to extract repository information.
+        Supports both HTTPS and SSH URLs:
+        - https://github.com/owner/repo.git
+        - git@github.com:owner/repo.git
+        """
+        # Remove protocol and domain
+        path = re.sub(r'^(https://github\.com/|git@github\.com:)', '', remote_url)
+        # Remove .git suffix if present
+        path = path.replace('.git', '')
+        
+        parts = path.split('/')
+        if len(parts) >= 2:
+            return {
+                'name': parts[-1],
+                'namespace': parts[-2]
+            }
+        return {
+            'name': parts[0],
+            'namespace': ''
+        }

@@ -51,3 +51,18 @@ class AbstractRemote(AbstractGateway):
             bool: True if the URL matches this service's pattern
         """
         pass
+
+    @abstractmethod
+    def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
+        """
+        Parse a repository URL to extract repository information.
+
+        Args:
+            remote_url: Git remote URL to parse
+
+        Returns:
+            Dict with keys:
+                - name: Repository name (without .git)
+                - namespace: Repository namespace/organization (optional)
+        """
+        pass

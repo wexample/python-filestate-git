@@ -108,9 +108,27 @@ class GitlabRemote(AbstractRemote):
 
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
-        gitlab_patterns = [
-            r"git@gitlab\.com:",
-            r"https://gitlab\.com/",
-            r"git://gitlab\.com/"
-        ]
-        return any(re.search(pattern, remote_url) for pattern in gitlab_patterns)
+        return bool(re.search(r'gitlab\.com[:/]', remote_url))
+
+    def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
+        """
+        Parse a GitLab repository URL to extract repository information.
+        Supports both HTTPS and SSH URLs:
+        - https://gitlab.com/owner/repo.git
+        - git@gitlab.com:owner/repo.git
+        """
+        # Remove protocol and domain
+        path = re.sub(r'^(https://gitlab\.com/|git@gitlab\.com:)', '', remote_url)
+        # Remove .git suffix if present
+        path = path.replace('.git', '')
+        
+        parts = path.split('/')
+        if len(parts) >= 2:
+            return {
+                'name': parts[-1],
+                'namespace': parts[-2]
+            }
+        return {
+            'name': parts[0],
+            'namespace': ''
+        }

@@ -87,16 +87,13 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                         remote = remote_type(io_manager=self.io)
                         remote.connect()
 
-                        # Parse the repository name and path from the URL
-                        url_parts = remote_url.split('/')
-                        repo_full_name = '/'.join(url_parts[-2:])  # Get "owner/repo.git"
-                        repo_name = repo_full_name.split('/')[-1].replace('.git', '')
-                        namespace = repo_full_name.split('/')[0] if '/' in repo_full_name else ""
+                        # Parse repository information from URL
+                        repo_info = remote.parse_repository_url(remote_url)
 
-                        if not remote.check_repository_exists(repo_name, namespace):
+                        if not remote.check_repository_exists(repo_info['name'], repo_info['namespace']):
                             remote.create_repository(
-                                name=repo_name,
-                                namespace=namespace
+                                name=repo_info['name'],
+                                namespace=repo_info['namespace']
                             )
 
     def _config_parse_file_value(self, value: Any) -> str:
