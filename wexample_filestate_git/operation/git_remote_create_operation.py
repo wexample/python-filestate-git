@@ -9,12 +9,13 @@ from wexample_filestate_git.operation.abstract_git_operation import AbstractGitO
 from wexample_filestate_git.remote.github_remote import GithubRemote
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 from wexample_filestate_git.remote.abstract_remote import AbstractRemote
+from wexample_prompt.mixins.with_required_io_manager import WithRequiredIoManager
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
 
 
-class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperation):
+class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationMixin, AbstractGitOperation):
     _remote_types: List[Type[AbstractRemote]] = [GithubRemote, GitlabRemote]
 
     def dependencies(self) -> List[Type["AbstractOperation"]]:
@@ -83,7 +84,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         remote_type = self._detect_remote_type(remote_url)
 
                     if remote_type:
-                        remote = remote_type()
+                        remote = remote_type(io_manager=self.io)
                         remote.connect()
 
                         # Parse the repository name and path from the URL
