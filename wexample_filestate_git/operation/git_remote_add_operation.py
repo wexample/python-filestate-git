@@ -1,25 +1,21 @@
 from __future__ import annotations
 
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, cast, Dict, List, Type, Any, Optional
+from typing import TYPE_CHECKING, cast, Dict, List, Type, Any
 from git import Repo
 
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers_git.helpers.git import git_remote_create_once, git_is_init
-from wexample_filestate_git.remote.github_remote import GithubRemote, GITHUB_API_TOKEN
-from wexample_filestate_git.remote.gitlab_remote import GitlabRemote, GITLAB_API_TOKEN
-from wexample_filestate_git.remote.abstract_remote import AbstractRemote
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
 
 
-class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
+class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _original_path_str: str
     _created_remote: Dict[str, bool]
-    _remote_types: List[Type[AbstractRemote]] = [GithubRemote, GitlabRemote]
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
@@ -61,15 +57,6 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
     def description(self) -> str:
         return 'Add remote in .git directory'
 
-    def _detect_remote_type(self, remote_url: str) -> Optional[Type[AbstractRemote]]:
-        """
-        Detect the remote type (GitHub, GitLab, etc.) from the URL.
-        """
-        for remote_type in self._remote_types:
-            if remote_type.detect_remote_type(remote_url):
-                return remote_type
-        return None
-
     def apply(self) -> None:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         value = self.target.get_option_value(GitConfigOption)
@@ -82,38 +69,6 @@ class GitRemoteOperation(FileManipulationOperationMixin, AbstractGitOperation):
                 remote_url = self._config_parse_file_value(remote["url"])
 
                 self._created_remote[remote_name] = git_remote_create_once(repo, remote_name, remote_url) is not None
-
-                if ("create_remote" in remote) and remote["create_remote"] is True:
-                    from wexample_helpers_git.const.common import GIT_PROVIDER_GITHUB, GIT_PROVIDER_GITLAB
-
-                    # Auto-detect remote type if not specified
-                    if "type" in remote:
-                        # Use specified type
-                        type_map = {
-                            GIT_PROVIDER_GITHUB: GithubRemote,
-                            GIT_PROVIDER_GITLAB: GitlabRemote
-                        }
-                        remote_type = type_map.get(remote["type"].lower())
-                    else:
-                        # Auto-detect from URL
-                        remote_type = self._detect_remote_type(remote_url)
-
-                    if remote_type:
-                        remote = remote_type()
-                        remote.connect()
-
-                        # Parse the repository name and path from the URL
-                        # Example URL: ssh://git@gitlab.wexample.com:4567/acme-python/app.git
-                        url_parts = remote_url.split('/')
-                        repo_full_name = '/'.join(url_parts[-2:])  # Get "acme-python/app.git"
-                        repo_name = repo_full_name.split('/')[-1].replace('.git', '')  # Get "app"
-                        namespace = repo_full_name.split('/')[0] if '/' in repo_full_name else ""
-
-                        if not remote.check_repository_exists(repo_name, namespace):
-                            remote.create_repository(
-                                name=repo_name,
-                                namespace=namespace
-                            )
 
     def _config_parse_file_value(self, value: Any) -> str:
         if isinstance(value, str):

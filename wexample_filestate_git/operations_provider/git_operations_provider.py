@@ -11,14 +11,17 @@ class GitOperationsProvider(AbstractOperationsProvider):
     @staticmethod
     def get_operations() -> List[Type["AbstractOperation"]]:
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
-        from wexample_filestate_git.operation.git_remote_operation import GitRemoteOperation
+        from wexample_filestate_git.operation.git_remote_add_operation import GitRemoteAddOperation
+        from wexample_filestate_git.operation.git_remote_create_operation import GitRemoteCreateOperation
         from wexample_filestate.const.state_items import TargetFileOrDirectory
 
         polyfill_import(TargetFileOrDirectory)
 
-        GitRemoteOperation.model_rebuild()
+        GitRemoteAddOperation.model_rebuild()
+        GitRemoteCreateOperation.model_rebuild()
 
         return [
             GitInitOperation,
-            GitRemoteOperation
+            GitRemoteAddOperation,
+            GitRemoteCreateOperation,
         ]
