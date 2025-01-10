@@ -1,5 +1,5 @@
 from typing import Optional
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from wexample_config.const.types import DictConfig
 from wexample_filestate.const.disk import DiskItemType
@@ -10,6 +10,22 @@ from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
+    def _operation_test_setup(self) -> None:
+        # Setup all mocks
+        self.mock_github_connect = patch.object(GithubRemote, 'connect').start()
+        self.mock_github_check = patch.object(GithubRemote, 'check_repository_exists').start()
+        self.mock_github_create = patch.object(GithubRemote, 'create_repository').start()
+        self.mock_gitlab_connect = patch.object(GitlabRemote, 'connect').start()
+        self.mock_gitlab_check = patch.object(GitlabRemote, 'check_repository_exists').start()
+        self.mock_gitlab_create = patch.object(GitlabRemote, 'create_repository').start()
+        
+        # Configure default mock behaviors
+        self.mock_github_check.return_value = False
+        self.mock_gitlab_check.return_value = False
+
+        # Call parent setup after mocks are ready
+        super()._operation_test_setup()
+
     def _operation_test_setup_configuration(self) -> Optional[DictConfig]:
         return {
             'children': [
@@ -37,52 +53,28 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
             ]
         }
 
-    def test_apply(self) -> None:
-        # Disable default execution method
-        assert True
-
     def _operation_get_count(self) -> int:
-        return 0
+        return 2  # One operation for each remote
 
     def _operation_test_assert_initial(self) -> None:
-        assert True
+        # Verify initial state - no repositories should exist
+        self.mock_github_check.assert_not_called()
+        self.mock_gitlab_check.assert_not_called()
 
     def _operation_test_assert_applied(self) -> None:
-        assert True
-
-    @patch.object(GithubRemote, 'connect')
-    @patch.object(GithubRemote, 'check_repository_exists')
-    @patch.object(GithubRemote, 'create_repository')
-    @patch.object(GitlabRemote, 'connect')
-    @patch.object(GitlabRemote, 'check_repository_exists')
-    @patch.object(GitlabRemote, 'create_repository')
-    def test_create_remote_repositories(
-        self,
-        mock_gitlab_create: MagicMock,
-        mock_gitlab_check: MagicMock,
-        mock_gitlab_connect: MagicMock,
-        mock_github_create: MagicMock,
-        mock_github_check: MagicMock,
-        mock_github_connect: MagicMock
-    ):
-        # Configure mocks
-        mock_github_check.return_value = False
-        mock_gitlab_check.return_value = False
-
-        # Run the operation
-        self._operation_test_setup()
-        self._operation_test_apply()
-
-        # Assert GitHub interactions
-        mock_github_connect.assert_called_once()
-        mock_github_create.assert_called_once_with(
+        # Verify that repositories were created
+        self.mock_github_connect.assert_called_once()
+        self.mock_github_create.assert_called_once_with(
             name="test-repo",
             namespace="test-org"
         )
 
-        # Assert GitHub interactions
-        mock_gitlab_connect.assert_called_once()
-        mock_gitlab_create.assert_called_once_with(
+        self.mock_gitlab_connect.assert_called_once()
+        self.mock_gitlab_create.assert_called_once_with(
             name="test-repo",
             namespace="test-org"
         )
+
+    def _operation_test_assert_rollback(self) -> None:
+        # Add rollback assertions if needed
+        pass
