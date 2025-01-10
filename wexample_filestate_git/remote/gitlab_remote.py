@@ -108,27 +108,38 @@ class GitlabRemote(AbstractRemote):
 
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
-        return bool(re.search(r'gitlab\.com[:/]', remote_url))
+        # Support both gitlab.com and custom GitLab instances
+        return bool(re.search(r'gitlab\.[a-zA-Z0-9.-]+[:/]', remote_url))
 
     def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
         """
         Parse a GitLab repository URL to extract repository information.
-        Supports both HTTPS and SSH URLs:
-        - https://gitlab.com/owner/repo.git
-        - git@gitlab.com:owner/repo.git
+        Supports both HTTPS and SSH URLs and custom GitLab instances:
+        - https://gitlab.example.com/owner/repo.git
+        - git@gitlab.example.com:owner/repo.git
         """
-        # Remove protocol and domain
-        path = re.sub(r'^(https://gitlab\.com/|git@gitlab\.com:)', '', remote_url)
+        # Extract the path part after the domain
+        if remote_url.startswith('git@'):
+            path = remote_url.split(':', 1)[1]
+        else:
+            # For HTTPS URLs, split on the third slash to get the path
+            parts = remote_url.split('/', 3)
+            path = parts[3] if len(parts) > 3 else ''
+
         # Remove .git suffix if present
         path = path.replace('.git', '')
         
-        parts = path.split('/')
-        if len(parts) >= 2:
+        # Split the path into parts and extract name and namespace
+        url_parts = path.split('/')
+        if len(url_parts) >= 2:
+            repo_name = url_parts[-1]
+            namespace = url_parts[-2]
             return {
-                'name': parts[-1],
-                'namespace': parts[-2]
+                'name': repo_name,
+                'namespace': namespace
             }
+        
         return {
-            'name': parts[0],
+            'name': url_parts[0],
             'namespace': ''
         }
