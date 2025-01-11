@@ -54,7 +54,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         }
 
     def _operation_get_count(self) -> int:
-        return 2  # One operation for each remote
+        return 4  # Two operations for each remote: local create, and remote create
 
     def _operation_test_assert_initial(self) -> None:
         # Verify initial state - no repositories should exist
