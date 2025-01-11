@@ -4,3 +4,4 @@ pytest
 wexample_filestate
 wexample_helpers
 wexample_helpers_git
+wexample_prompt
