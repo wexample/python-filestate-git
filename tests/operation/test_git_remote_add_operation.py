@@ -2,7 +2,7 @@ from typing import Optional
 
 from wexample_config.const.types import DictConfig
 from wexample_filestate.const.disk import DiskItemType
-from wexample_filestate.test.test_abstract_operation import TestAbstractOperation
+from wexample_filestate.testing.test_abstract_operation import TestAbstractOperation
 from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import TestGitFileStateManagerMixin
 
 

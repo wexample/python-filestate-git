@@ -1,5 +1,5 @@
 
-from wexample_filestate.test.abstract_state_manager_test import AbstractStateManagerTest
+from wexample_filestate.testing.abstract_state_manager_test import AbstractStateManagerTest
 from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import TestGitFileStateManagerMixin
 
 
