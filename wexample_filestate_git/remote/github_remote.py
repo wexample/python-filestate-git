@@ -2,6 +2,8 @@ import os
 import re
 from typing import Dict, List
 from pydantic import Field
+
+from wexample_helpers_api.enums.http import HttpMethod
 from .abstract_remote import AbstractRemote
 
 GITHUB_API_TOKEN: str = "GITHUB_API_TOKEN"
@@ -32,7 +34,7 @@ class GithubRemote(AbstractRemote):
 
     def create_repository(self, name: str, description: str = "", private: bool = False) -> Dict:
         response = self.make_request(
-            method="POST",
+            method=HttpMethod.POST,
             endpoint="user/repos",
             data={
                 "name": name,
@@ -50,11 +52,11 @@ class GithubRemote(AbstractRemote):
                 endpoint = f"repos/{namespace}/{name}"
             else:
                 endpoint = f"user/repos"
-                response = self.make_request(method="GET", endpoint=endpoint)
+                response = self.make_request(endpoint=endpoint)
                 repos = response.json()
                 return any(repo["name"] == name for repo in repos)
 
-            response = self.make_request(method="GET", endpoint=endpoint)
+            response = self.make_request(endpoint=endpoint)
             return response.status_code == 200
         except Exception:
             return False

@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from pydantic import Field
 import requests
 
+from wexample_helpers_api.enums.http import HttpMethod
 from .abstract_remote import AbstractRemote
 
 
@@ -45,7 +46,7 @@ class GitlabRemote(AbstractRemote):
             data["namespace_id"] = self._get_namespace_id(namespace)
 
         response = self.make_request(
-            method="POST",
+            method=HttpMethod.POST,
             endpoint="projects",
             data=data
         )
