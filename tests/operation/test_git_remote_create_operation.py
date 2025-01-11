@@ -39,13 +39,11 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
                                 "name": "github",
                                 "type": "github",
                                 "url": "https://github.com/test-org/test-repo.git",
-                                "create_remote": True
                             },
                             {
                                 "name": "gitlab",
                                 "type": "gitlab",
                                 "url": "https://gitlab.com/test-org/test-repo.git",
-                                "create_remote": True
                             }
                         ]
                     }
@@ -54,7 +52,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         }
 
     def _operation_get_count(self) -> int:
-        return 4  # Two operations for each remote: local create, and remote create
+        return 2 # One operation for each remote
 
     def _operation_test_assert_initial(self) -> None:
         # Verify initial state - no repositories should exist
