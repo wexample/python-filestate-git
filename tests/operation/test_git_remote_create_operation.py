@@ -4,9 +4,9 @@ from unittest.mock import patch
 from wexample_config.const.types import DictConfig
 from wexample_filestate.const.disk import DiskItemType
 from wexample_filestate.testing.test_abstract_operation import TestAbstractOperation
-from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import TestGitFileStateManagerMixin
 from wexample_filestate_git.remote.github_remote import GithubRemote
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import TestGitFileStateManagerMixin
 
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
@@ -18,7 +18,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         self.mock_gitlab_connect = patch.object(GitlabRemote, 'connect').start()
         self.mock_gitlab_check = patch.object(GitlabRemote, 'check_repository_exists').start()
         self.mock_gitlab_create = patch.object(GitlabRemote, 'create_repository').start()
-        
+
         # Configure default mock behaviors
         self.mock_github_check.return_value = False
         self.mock_gitlab_check.return_value = False
@@ -27,6 +27,8 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         super()._operation_test_setup()
 
     def _operation_test_setup_configuration(self) -> Optional[DictConfig]:
+        self._remove_test_git_dir()
+
         return {
             'children': [
                 {
@@ -39,11 +41,13 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
                                 "name": "github",
                                 "type": "github",
                                 "url": "https://github.com/test-org/test-repo.git",
+                                "create_remote": True
                             },
                             {
                                 "name": "gitlab",
                                 "type": "gitlab",
                                 "url": "https://gitlab.com/test-org/test-repo.git",
+                                "create_remote": True
                             }
                         ]
                     }
@@ -52,7 +56,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         }
 
     def _operation_get_count(self) -> int:
-        return 2 # One operation for each remote
+        return 3  # One operation for each remote, 1 operation to create local repo
 
     def _operation_test_assert_initial(self) -> None:
         # Verify initial state - no repositories should exist

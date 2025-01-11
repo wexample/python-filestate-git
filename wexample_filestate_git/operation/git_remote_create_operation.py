@@ -31,7 +31,6 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
 
         if option is not None:
             value = target.get_option_value(GitConfigOption)
-
             if (value is not None
                 and value.is_dict()
                 and value.get_dict().get("remote")):

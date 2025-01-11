@@ -4,12 +4,11 @@ from wexample_config.const.types import DictConfig
 from wexample_filestate.const.disk import DiskItemType
 from wexample_filestate.testing.test_abstract_operation import TestAbstractOperation
 from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import TestGitFileStateManagerMixin
-from wexample_helpers.helpers.directory import directory_remove_tree_if_exists
 
 
 class TestGitRemoteAddOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
     def _operation_test_setup_configuration(self) -> Optional[DictConfig]:
-        directory_remove_tree_if_exists(self._get_absolute_path_from_state_manager('.git'))
+        self._remove_test_git_dir()
 
         return {
             'children': [
