@@ -33,8 +33,8 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
             value = target.get_option_value(GitConfigOption)
 
             if (value is not None
-                    and value.is_dict()
-                    and value.get_dict().get("remote")):
+                and value.is_dict()
+                and value.get_dict().get("remote")):
                 # Check if at least one remote has create_remote: true
                 for remote in value.get_dict().get("remote"):
                     if remote.get("create_remote") is True:
@@ -91,15 +91,13 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                         repo_info = remote.parse_repository_url(remote_url)
 
                         if not remote.check_repository_exists(repo_info['name'], repo_info['namespace']):
-                            # Pour GitHub, on ignore le namespace car il utilise l'utilisateur courant
                             create_args = {
                                 'name': repo_info['name'],
                             }
-                            
-                            # Pour GitLab, on ajoute le namespace s'il est présent
+
                             if isinstance(remote, GitlabRemote) and repo_info['namespace']:
                                 create_args['namespace'] = repo_info['namespace']
-                            
+
                             remote.create_repository(**create_args)
 
     def _config_parse_file_value(self, value: Any) -> str:

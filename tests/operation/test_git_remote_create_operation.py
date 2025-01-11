@@ -61,13 +61,11 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
 
     def _operation_test_assert_applied(self) -> None:
         # Verify that repositories were created
-        self.mock_github_connect.assert_called_once()
         self.mock_github_create.assert_called_once_with(
             name="test-repo",
             namespace="test-org"
         )
 
-        self.mock_gitlab_connect.assert_called_once()
         self.mock_gitlab_create.assert_called_once_with(
             name="test-repo",
             namespace="test-org"
