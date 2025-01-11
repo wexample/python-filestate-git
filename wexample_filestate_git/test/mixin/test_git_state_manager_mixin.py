@@ -1,4 +1,6 @@
 from typing import Optional, List, Type
+import os
+from unittest.mock import patch
 
 from wexample_config.options_provider.abstract_options_provider import AbstractOptionsProvider
 from wexample_filestate.operations_provider.abstract_operations_provider import AbstractOperationsProvider
@@ -7,6 +9,28 @@ from wexample_helpers.helpers.directory import directory_remove_tree_if_exists
 
 
 class TestGitFileStateManagerMixin:
+    _env_patcher = None
+
+    # def setup_method(self) -> None:
+    #     # Mock environment variables
+    #     self._mock_git_env()
+    #
+    # def teardown_method(self) -> None:
+    #     if self._env_patcher:
+    #         self._env_patcher.stop()
+
+    def _mock_git_env(self) -> None:
+        """Mock Git-related environment variables."""
+        mock_env = {
+            "GITHUB_API_TOKEN": "mock-token-123",
+            "GITLAB_API_TOKEN": "mock-token-456",
+            "GITHUB_DEFAULT_URL": "https://api.github.test",
+            "GITLAB_DEFAULT_URL": "https://gitlab.test/api/v4",
+        }
+        
+        self._env_patcher = patch.dict(os.environ, mock_env)
+        self._env_patcher.start()
+
     def _get_test_operations_providers(self) -> Optional[List[Type[AbstractOperationsProvider]]]:
         from wexample_filestate.operations_provider.default_operations_provider import DefaultOperationsProvider
         from wexample_filestate_git.operations_provider.git_operations_provider import GitOperationsProvider

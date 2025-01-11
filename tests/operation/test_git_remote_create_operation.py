@@ -28,6 +28,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
 
     def _operation_test_setup_configuration(self) -> Optional[DictConfig]:
         self._remove_test_git_dir()
+        self._mock_git_env()
 
         return {
             'children': [
@@ -40,13 +41,13 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
                             {
                                 "name": "github",
                                 "type": "github",
-                                "url": "https://github.com/test-org/test-repo.git",
+                                "url": "https://github.com/test-namespace/test-repo.git",
                                 "create_remote": True
                             },
                             {
                                 "name": "gitlab",
                                 "type": "gitlab",
-                                "url": "https://gitlab.com/test-org/test-repo.git",
+                                "url": "https://gitlab.com/test-namespace/test-repo.git",
                                 "create_remote": True
                             }
                         ]
@@ -67,12 +68,11 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         # Verify that repositories were created
         self.mock_github_create.assert_called_once_with(
             name="test-repo",
-            namespace="test-org"
         )
 
         self.mock_gitlab_create.assert_called_once_with(
             name="test-repo",
-            namespace="test-org"
+            namespace="test-namespace"
         )
 
     def _operation_test_assert_rollback(self) -> None:
