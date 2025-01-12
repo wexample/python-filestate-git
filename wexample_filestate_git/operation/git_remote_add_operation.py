@@ -11,7 +11,7 @@ from wexample_helpers_git.helpers.git import git_remote_create_once, git_is_init
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
-
+    from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 
 class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _original_path_str: str
@@ -32,19 +32,16 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return []
 
     @staticmethod
-    def applicable(target: "TargetFileOrDirectoryType") -> bool:
+    def applicable_option(target: "TargetFileOrDirectoryType", option: "AbstractConfigOption") -> bool:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
-        option = cast(GitConfigOption, target.get_option(GitConfigOption))
-
-        if option is not None and option.should_have_git() and (
-            GitInitOperation.applicable(target=target) or git_is_init(target.get_path())):
-            value = target.get_option_value(GitConfigOption)
-
-            return (value is not None
-                    and value.is_dict()
-                    and value.get_dict().get("remote"))
+        if isinstance(option, GitConfigOption):
+            if option.should_have_git() and (GitInitOperation.applicable_option(target=target, option=option) or git_is_init(target.get_path())):
+                value = target.get_option_value(GitConfigOption)
+                return (value is not None
+                        and value.is_dict()
+                        and value.get_dict().get("remote"))
 
         return False
 
