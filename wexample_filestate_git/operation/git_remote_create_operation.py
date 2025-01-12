@@ -16,7 +16,9 @@ if TYPE_CHECKING:
     from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 
 class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationMixin, AbstractGitOperation):
-    _remote_types: List[Type[AbstractRemote]] = [GithubRemote, GitlabRemote]
+    @staticmethod
+    def get_remote_types() -> List[Type[AbstractRemote]]:
+        return [GithubRemote, GitlabRemote]
 
     def dependencies(self) -> List[Type["AbstractOperation"]]:
         from wexample_filestate_git.operation.git_remote_add_operation import GitRemoteAddOperation
@@ -52,7 +54,7 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
         """
         Detect the remote type (GitHub, GitLab, etc.) from the URL.
         """
-        for remote_type in self._remote_types:
+        for remote_type in self.get_remote_types():
             if remote_type.detect_remote_type(remote_url):
                 return remote_type
         return None
