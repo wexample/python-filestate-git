@@ -48,7 +48,8 @@ class GitlabRemote(AbstractRemote):
         response = self.make_request(
             method=HttpMethod.POST,
             endpoint="projects",
-            data=data
+            data=data,
+            call_origin=__file__
         )
         return response.json()
 

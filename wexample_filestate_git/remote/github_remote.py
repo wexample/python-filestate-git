@@ -32,7 +32,7 @@ class GithubRemote(AbstractRemote):
             GITHUB_API_TOKEN,
         ]
 
-    def create_repository(self, name: str, description: str = "", private: bool = False) -> Dict:
+    def create_repository(self, name: str, description: str = "", private: bool = False, namespace: str = "") -> Dict:
         response = self.make_request(
             method=HttpMethod.POST,
             endpoint="user/repos",
@@ -41,7 +41,8 @@ class GithubRemote(AbstractRemote):
                 "description": description,
                 "private": private,
                 "auto_init": True
-            }
+            },
+            call_origin=__file__
         )
         return response.json()
 
@@ -52,11 +53,17 @@ class GithubRemote(AbstractRemote):
                 endpoint = f"repos/{namespace}/{name}"
             else:
                 endpoint = f"user/repos"
-                response = self.make_request(endpoint=endpoint)
+                response = self.make_request(
+                    endpoint=endpoint,
+                    call_origin=__file__
+                )
                 repos = response.json()
                 return any(repo["name"] == name for repo in repos)
 
-            response = self.make_request(endpoint=endpoint)
+            response = self.make_request(
+                endpoint=endpoint,
+                call_origin=__file__
+            )
             return response.status_code == 200
         except Exception:
             return False
