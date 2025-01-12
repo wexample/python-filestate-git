@@ -32,10 +32,21 @@ class GithubRemote(AbstractRemote):
             GITHUB_API_TOKEN,
         ]
 
-    def create_repository(self, name: str, description: str = "", private: bool = False, namespace: str = "") -> Dict:
+    def create_repository(self, name: str, namespace: str, description: str = "", private: bool = False) -> Dict:
+        """
+        Create a new repository in the specified namespace.
+        
+        Args:
+            name: Repository name
+            namespace: Organization or user name (mandatory)
+            description: Optional repository description
+            private: Whether the repository should be private
+        """
+        endpoint = f"orgs/{namespace}/repos"
+
         response = self.make_request(
             method=HttpMethod.POST,
-            endpoint="user/repos",
+            endpoint=endpoint,
             data={
                 "name": name,
                 "description": description,
@@ -48,32 +59,44 @@ class GithubRemote(AbstractRemote):
         )
         return response.json()
 
-    def check_repository_exists(self, name: str, namespace: str = "") -> bool:
+    def check_repository_exists(self, name: str, namespace: str) -> bool:
+        """
+        Check if a repository exists in the specified namespace.
+        
+        Args:
+            name: Repository name
+            namespace: Organization or user name (mandatory)
+        """
         try:
-            # If namespace is provided, use it, otherwise search in user's repositories
-            if namespace:
-                endpoint = f"repos/{namespace}/{name}"
-                response = self.make_request(
-                    endpoint=endpoint,
-                    call_origin=__file__,
-                    expected_status_codes=[200, 404]
-                )
-                return response.status_code == 200
-            else:
-                endpoint = f"user/repos"
-                response = self.make_request(
-                    endpoint=endpoint,
-                    call_origin=__file__
-                )
-                repos = response.json()
-                return any(repo["name"] == name for repo in repos)
-
+            endpoint = f"repos/{namespace}/{name}"
+            response = self.make_request(
+                endpoint=endpoint,
+                call_origin=__file__,
+                expected_status_codes=[200, 404]
+            )
+            return response.status_code == 200
         except Exception:
             return False
 
-    @classmethod
-    def detect_remote_type(cls, remote_url: str) -> bool:
-        return bool(re.search(r'github\.com[:/]', remote_url))
+    def create_repository_if_not_exists(self, remote_url: str, description: str = "", private: bool = False) -> Dict:
+        """
+        Create a repository from a complete remote URL if it doesn't exist.
+        
+        Args:
+            remote_url: Complete GitHub repository URL
+            description: Optional repository description
+            private: Whether the repository should be private
+        """
+        repo_info = self.parse_repository_url(remote_url)
+        
+        if not self.check_repository_exists(repo_info['name'], repo_info['namespace']):
+            return self.create_repository(
+                name=repo_info['name'],
+                namespace=repo_info['namespace'],
+                description=description,
+                private=private
+            )
+        return {}
 
     def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
         """
@@ -97,3 +120,7 @@ class GithubRemote(AbstractRemote):
             'name': parts[0],
             'namespace': ''
         }
+
+    @classmethod
+    def detect_remote_type(cls, remote_url: str) -> bool:
+        return bool(re.search(r'github\.com[:/]', remote_url))

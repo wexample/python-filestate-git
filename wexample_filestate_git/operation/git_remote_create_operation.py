@@ -86,18 +86,8 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                         remote = remote_type(io_manager=self.io)
                         remote.connect()
 
-                        # Parse repository information from URL
-                        repo_info = remote.parse_repository_url(remote_url)
-
-                        if not remote.check_repository_exists(repo_info['name'], repo_info['namespace']):
-                            create_args = {
-                                'name': repo_info['name'],
-                            }
-
-                            if isinstance(remote, GitlabRemote) and repo_info['namespace']:
-                                create_args['namespace'] = repo_info['namespace']
-
-                            remote.create_repository(**create_args)
+                        # Create repository directly from URL
+                        remote.create_repository_if_not_exists(remote_url)
 
     def _config_parse_file_value(self, value: Any) -> str:
         if isinstance(value, str):

@@ -10,15 +10,15 @@ class AbstractRemote(AbstractGateway):
     """
 
     @abstractmethod
-    def create_repository(self, name: str, description: str = "", private: bool = False, namespace: str = "") -> Dict:
+    def create_repository(self, name: str, namespace: str, description: str = "", private: bool = False) -> Dict:
         """
         Create a new repository on the remote service.
 
         Args:
             name: Repository name
+            namespace: Repository namespace/organization (mandatory)
             description: Repository description
             private: Whether the repository should be private
-            namespace: Repository namespace/organization (optional, used by some services like GitLab)
 
         Returns:
             Dict: Repository information from the API
@@ -26,16 +26,31 @@ class AbstractRemote(AbstractGateway):
         pass
 
     @abstractmethod
-    def check_repository_exists(self, name: str, namespace: str = "") -> bool:
+    def check_repository_exists(self, name: str, namespace: str) -> bool:
         """
         Check if a repository exists on the remote service.
 
         Args:
             name: Repository name
-            namespace: Repository namespace/organization (optional)
+            namespace: Repository namespace/organization (mandatory)
 
         Returns:
             bool: True if the repository exists
+        """
+        pass
+
+    @abstractmethod
+    def create_repository_if_not_exists(self, remote_url: str, description: str = "", private: bool = False) -> Dict:
+        """
+        Create a repository from a complete remote URL if it doesn't exist.
+        
+        Args:
+            remote_url: Complete remote repository URL
+            description: Optional repository description
+            private: Whether the repository should be private
+
+        Returns:
+            Dict: Repository information from the API if created, empty dict if already exists
         """
         pass
 

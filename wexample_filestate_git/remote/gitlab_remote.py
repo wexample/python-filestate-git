@@ -33,17 +33,24 @@ class GitlabRemote(AbstractRemote):
             GITLAB_API_TOKEN,
         ]
 
-    def create_repository(self, name: str, namespace: str = "", description: str = "", private: bool = False) -> Dict:
+    def create_repository(self, name: str, namespace: str, description: str = "", private: bool = False) -> Dict:
+        """
+        Create a new repository in the specified namespace.
+        
+        Args:
+            name: Repository name
+            namespace: Organization or user name (mandatory)
+            description: Optional repository description
+            private: Whether the repository should be private
+        """
         data = {
             "name": name,
             "path": name,
             "description": description,
             "visibility": "private" if private else "public",
-            "initialize_with_readme": False
+            "initialize_with_readme": False,
+            "namespace_id": self._get_namespace_id(namespace)
         }
-        
-        if namespace:
-            data["namespace_id"] = self._get_namespace_id(namespace)
 
         response = self.make_request(
             method=HttpMethod.POST,
@@ -66,30 +73,55 @@ class GitlabRemote(AbstractRemote):
             return response.status_code == 200
 
         except requests.exceptions.RequestException as e:
-            print(f"Connection error: {str(e)}")
             return False
 
-    def check_repository_exists(self, name: str, namespace: str = "") -> bool:
+    def check_repository_exists(self, name: str, namespace: str) -> bool:
+        """
+        Check if a repository exists in the specified namespace.
+        
+        Args:
+            name: Repository name
+            namespace: Organization or user name (mandatory)
+        """
         try:
-            if namespace:
-                response = requests.get(
-                    f"{self.base_url.rstrip('/')}/projects",
-                    params={
-                        "search": name,
-                        "namespace": namespace
-                    },
-                    headers=self.default_headers,
-                    timeout=self.timeout
+            response = requests.get(
+                f"{self.base_url.rstrip('/')}/projects",
+                params={
+                    "search": name,
+                    "namespace": namespace
+                },
+                headers=self.default_headers,
+                timeout=self.timeout
+            )
+            if response.status_code == 200:
+                projects = response.json()
+                return any(
+                    p["path"] == name and p["namespace"]["path"] == namespace 
+                    for p in projects
                 )
-                if response.status_code == 200:
-                    projects = response.json()
-                    return any(
-                        p["path"] == name and p["namespace"]["path"] == namespace 
-                        for p in projects
-                    )
             return False
         except requests.exceptions.RequestException:
             return False
+
+    def create_repository_if_not_exists(self, remote_url: str, description: str = "", private: bool = False) -> Dict:
+        """
+        Create a repository from a complete remote URL if it doesn't exist.
+        
+        Args:
+            remote_url: Complete GitLab repository URL
+            description: Optional repository description
+            private: Whether the repository should be private
+        """
+        repo_info = self.parse_repository_url(remote_url)
+        
+        if not self.check_repository_exists(repo_info['name'], repo_info['namespace']):
+            return self.create_repository(
+                name=repo_info['name'],
+                namespace=repo_info['namespace'],
+                description=description,
+                private=private
+            )
+        return {}
 
     def _get_namespace_id(self, namespace_path: str) -> Optional[int]:
         try:
