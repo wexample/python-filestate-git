@@ -51,6 +51,12 @@ class GithubRemote(AbstractRemote):
             # If namespace is provided, use it, otherwise search in user's repositories
             if namespace:
                 endpoint = f"repos/{namespace}/{name}"
+                response = self.make_request(
+                    endpoint=endpoint,
+                    call_origin=__file__,
+                    expected_status_codes=[200, 404]
+                )
+                return response.status_code == 200
             else:
                 endpoint = f"user/repos"
                 response = self.make_request(
@@ -60,11 +66,6 @@ class GithubRemote(AbstractRemote):
                 repos = response.json()
                 return any(repo["name"] == name for repo in repos)
 
-            response = self.make_request(
-                endpoint=endpoint,
-                call_origin=__file__
-            )
-            return response.status_code == 200
         except Exception:
             return False
 
