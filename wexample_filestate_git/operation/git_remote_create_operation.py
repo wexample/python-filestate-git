@@ -13,7 +13,7 @@ from wexample_prompt.mixins.with_required_io_manager import WithRequiredIoManage
 
 if TYPE_CHECKING:
     from wexample_filestate.item.item_target_directory import TargetFileOrDirectoryType
-
+    from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 
 class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationMixin, AbstractGitOperation):
     _remote_types: List[Type[AbstractRemote]] = [GithubRemote, GitlabRemote]
@@ -24,12 +24,10 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
         return [GitRemoteAddOperation]
 
     @staticmethod
-    def applicable(target: "TargetFileOrDirectoryType") -> bool:
+    def applicable_option(target: "TargetFileOrDirectoryType", option: "AbstractConfigOption") -> bool:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
 
-        option = cast(GitConfigOption, target.get_option(GitConfigOption))
-
-        if option is not None:
+        if isinstance(option, GitConfigOption):
             value = target.get_option_value(GitConfigOption)
             if (value is not None
                 and value.is_dict()
