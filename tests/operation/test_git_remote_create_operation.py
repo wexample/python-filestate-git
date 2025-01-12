@@ -13,15 +13,13 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
     def _operation_test_setup(self) -> None:
         # Setup all mocks
         self.mock_github_connect = patch.object(GithubRemote, 'connect').start()
-        self.mock_github_check = patch.object(GithubRemote, 'check_repository_exists').start()
-        self.mock_github_create = patch.object(GithubRemote, 'create_repository').start()
+        self.mock_github_create_if_not_exists = patch.object(GithubRemote, 'create_repository_if_not_exists').start()
         self.mock_gitlab_connect = patch.object(GitlabRemote, 'connect').start()
-        self.mock_gitlab_check = patch.object(GitlabRemote, 'check_repository_exists').start()
-        self.mock_gitlab_create = patch.object(GitlabRemote, 'create_repository').start()
+        self.mock_gitlab_create_if_not_exists = patch.object(GitlabRemote, 'create_repository_if_not_exists').start()
 
         # Configure default mock behaviors
-        self.mock_github_check.return_value = False
-        self.mock_gitlab_check.return_value = False
+        self.mock_github_create_if_not_exists.return_value = False
+        self.mock_gitlab_create_if_not_exists.return_value = False
 
         # Call parent setup after mocks are ready
         super()._operation_test_setup()
@@ -61,18 +59,17 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
 
     def _operation_test_assert_initial(self) -> None:
         # Verify initial state - no repositories should exist
-        self.mock_github_check.assert_not_called()
-        self.mock_gitlab_check.assert_not_called()
+        self.mock_github_create_if_not_exists.assert_not_called()
+        self.mock_gitlab_create_if_not_exists.assert_not_called()
 
     def _operation_test_assert_applied(self) -> None:
-        # Verify that repositories were created
-        self.mock_github_create.assert_called_once_with(
-            name="test-repo",
+        # Verify that repositories were created using the new interface
+        self.mock_github_create_if_not_exists.assert_called_once_with(
+            "https://github.com/test-namespace/test-repo.git"
         )
 
-        self.mock_gitlab_create.assert_called_once_with(
-            name="test-repo",
-            namespace="test-namespace"
+        self.mock_gitlab_create_if_not_exists.assert_called_once_with(
+            "https://gitlab.com/test-namespace/test-repo.git"
         )
 
     def _operation_test_assert_rollback(self) -> None:
