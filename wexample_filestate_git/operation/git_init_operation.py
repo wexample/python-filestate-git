@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union, cast, List, Type
+from typing import TYPE_CHECKING, List, Type
 
 from git import Repo
 
@@ -12,6 +12,7 @@ from wexample_helpers.const.globals import DIR_GIT
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+    from wexample_filestate_git.config_option.abstract_config_option import AbstractConfigOption
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
@@ -24,12 +25,14 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         ]
 
     @staticmethod
-    def applicable(target: TargetFileOrDirectoryType) -> bool:
+    def applicable_option(target: TargetFileOrDirectoryType, option: "AbstractConfigOption") -> bool:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_helpers_git.helpers.git import git_is_init
 
-        option = cast(GitConfigOption, target.get_option(GitConfigOption))
-        return option is not None and option.should_have_git() and not git_is_init(target.get_path())
+        if isinstance(option, GitConfigOption):
+            return option.should_have_git() and not git_is_init(target.get_path())
+
+        return False
 
     def describe_before(self) -> str:
         return 'No initialized .git directory'
