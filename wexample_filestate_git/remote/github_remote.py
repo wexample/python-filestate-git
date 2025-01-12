@@ -42,7 +42,9 @@ class GithubRemote(AbstractRemote):
                 "private": private,
                 "auto_init": True
             },
-            call_origin=__file__
+            call_origin=__file__,
+            expected_status_codes=[201],  # Only 201 Created is acceptable
+            fatal_if_unexpected=True  # Any other status code should raise an error
         )
         return response.json()
 
