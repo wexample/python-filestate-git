@@ -22,12 +22,12 @@ class TestGitlabRemote(GitRemoteTest):
 
     def _assert_check_repository_exists_request(self, mock_request):
         """Assert the request parameters for checking repository existence."""
-        assert mock_request.call_args[1]['endpoint'] == 'projects/test-namespace%2Ftest-repo'
+        assert mock_request.call_args[1]['endpoint'] == f'projects/{self.test_namespace}%2F{self.test_repo_name}'
 
     def _assert_create_repository_request(self, mock_request):
         """Assert the request parameters for creating a repository."""
         assert mock_request.call_args[1]['endpoint'] == 'projects'
-        assert mock_request.call_args[1]['data']['name'] == 'test-repo'
+        assert mock_request.call_args[1]['data']['name'] == self.test_repo_name
 
     def test_parse_repository_url_https(self, git_remote):
         url = "https://gitlab.com/test-namespace/test-repo.git"

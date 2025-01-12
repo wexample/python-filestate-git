@@ -22,12 +22,12 @@ class TestGithubRemote(GitRemoteTest):
 
     def _assert_check_repository_exists_request(self, mock_request):
         """Assert the request parameters for checking repository existence."""
-        assert mock_request.call_args[1]['endpoint'] == 'repos/test-namespace/test-repo'
+        assert mock_request.call_args[1]['endpoint'] == f'repos/{self.test_namespace}/{self.test_repo_name}'
 
     def _assert_create_repository_request(self, mock_request):
         """Assert the request parameters for creating a repository."""
-        assert mock_request.call_args[1]['endpoint'] == 'orgs/test-namespace/repos'
-        assert mock_request.call_args[1]['data']['name'] == 'test-repo'
+        assert mock_request.call_args[1]['endpoint'] == f'orgs/{self.test_namespace}/repos'
+        assert mock_request.call_args[1]['data']['name'] == self.test_repo_name
 
     def test_parse_repository_url_https(self, git_remote):
         url = "https://github.com/test-namespace/test-repo.git"
@@ -57,8 +57,7 @@ class TestGithubRemote(GitRemoteTest):
             )
 
             mock_request.assert_called_once()
-            assert mock_request.call_args[1]['endpoint'] == 'orgs/test-namespace/repos'
-            assert mock_request.call_args[1]['data']['name'] == 'test-repo'
+            self._assert_create_repository_request(mock_request)
             assert result == {'id': 1}
 
     def test_check_repository_exists(self, git_remote):
@@ -68,7 +67,7 @@ class TestGithubRemote(GitRemoteTest):
             exists = git_remote.check_repository_exists('test-repo', 'test-namespace')
 
             mock_request.assert_called_once()
-            assert mock_request.call_args[1]['endpoint'] == 'repos/test-namespace/test-repo'
+            self._assert_check_repository_exists_request(mock_request)
             assert exists is True
 
     def test_create_repository_if_not_exists_existing(self, git_remote):
@@ -80,5 +79,5 @@ class TestGithubRemote(GitRemoteTest):
             )
 
             mock_request.assert_called_once()
-            assert mock_request.call_args[1]['endpoint'] == 'repos/test-namespace/test-repo'
+            self._assert_check_repository_exists_request(mock_request)
             assert result == {}

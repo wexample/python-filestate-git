@@ -84,23 +84,14 @@ class GitlabRemote(AbstractRemote):
             namespace: Organization or user name (mandatory)
         """
         try:
-            response = requests.get(
-                f"{self.base_url.rstrip('/')}/projects",
-                params={
-                    "search": name,
-                    "namespace": namespace
-                },
-                headers=self.default_headers,
-                timeout=self.timeout
+            endpoint = f"projects/{namespace}%2F{name}"
+            response = self.make_request(
+                endpoint=endpoint,
+                call_origin=__file__,
+                expected_status_codes=[200, 404]
             )
-            if response.status_code == 200:
-                projects = response.json()
-                return any(
-                    p["path"] == name and p["namespace"]["path"] == namespace 
-                    for p in projects
-                )
-            return False
-        except requests.exceptions.RequestException:
+            return response.status_code == 200
+        except Exception:
             return False
 
     def create_repository_if_not_exists(self, remote_url: str, description: str = "", private: bool = False) -> Dict:

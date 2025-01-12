@@ -1,5 +1,6 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from wexample_prompt.common.io_manager import IoManager
 
@@ -11,7 +12,7 @@ class GitRemoteTest:
     ENV_TOKEN_NAME = None
     SERVICE_CLASS = None
     TEST_TOKEN = 'test_token'
-    
+
     @pytest.fixture
     def remote(self):
         """Create a remote instance with mocked token."""
@@ -22,29 +23,29 @@ class GitRemoteTest:
 
     def test_parse_repository_url_https(self, remote):
         """Test parsing HTTPS repository URL."""
-        url = f"https://{remote.domain}/test-namespace/test-repo.git"
+        url = f"https://{remote.domain}/{self.test_namespace}/{self.test_repo_name}.git"
         info = remote.parse_repository_url(url)
         assert info == {
-            'name': 'test-repo',
-            'namespace': 'test-namespace'
+            'name': self.test_repo_name,
+            'namespace': self.test_namespace
         }
 
     def test_parse_repository_url_ssh(self, remote):
         """Test parsing SSH repository URL."""
-        url = f"git@{remote.domain}:test-namespace/test-repo.git"
+        url = f"git@{remote.domain}:{self.test_namespace}/{self.test_repo_name}.git"
         info = remote.parse_repository_url(url)
         assert info == {
-            'name': 'test-repo',
-            'namespace': 'test-namespace'
+            'name': self.test_repo_name,
+            'namespace': self.test_namespace
         }
 
     def test_check_repository_exists(self, remote):
         """Test checking if a repository exists."""
         with patch('wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request') as mock_request:
             mock_request.return_value.status_code = 200
-            
-            exists = remote.check_repository_exists('test-repo', 'test-namespace')
-            
+
+            exists = remote.check_repository_exists(self.test_repo_name, self.test_namespace)
+
             mock_request.assert_called_once()
             self._assert_check_repository_exists_request(mock_request)
             assert exists is True
@@ -53,11 +54,11 @@ class GitRemoteTest:
         """Test creating a repository when it already exists."""
         with patch('wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request') as mock_request:
             mock_request.return_value.status_code = 200
-            
+
             result = remote.create_repository_if_not_exists(
-                f'https://{remote.domain}/test-namespace/test-repo.git'
+                f'https://{remote.domain}/{self.test_namespace}/{self.test_repo_name}.git'
             )
-            
+
             mock_request.assert_called_once()
             self._assert_check_repository_exists_request(mock_request)
             assert result == {}
@@ -66,14 +67,14 @@ class GitRemoteTest:
         """Test creating a new repository."""
         with patch('wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request') as mock_request:
             mock_request.return_value.json.return_value = {'id': 1}
-            
+
             result = remote.create_repository(
-                name='test-repo',
-                namespace='test-namespace',
-                description='Test description',
+                name=self.test_repo_name,
+                namespace=self.test_namespace,
+                description=self.test_description,
                 private=True
             )
-            
+
             mock_request.assert_called_once()
             self._assert_create_repository_request(mock_request)
             assert result == {'id': 1}
@@ -87,3 +88,18 @@ class GitRemoteTest:
         """Assert the request parameters for creating a repository.
         To be implemented by child classes."""
         raise NotImplementedError()
+
+    @property
+    def test_repo_name(self) -> str:
+        """Return the test repository name."""
+        return 'test-repo'
+
+    @property
+    def test_namespace(self) -> str:
+        """Return the test namespace."""
+        return 'test-namespace'
+
+    @property
+    def test_description(self) -> str:
+        """Return the test repository description."""
+        return 'Test description'
