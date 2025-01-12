@@ -1,69 +1,83 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
 from wexample_prompt.common.io_manager import IoManager
-from wexample_helpers_api.enums.http import HttpMethod
 
 
-class TestGitlabRemote:
+class TestGitlabRemote(GitRemoteTest):
+    """Test cases for GitLab remote operations."""
+
+    ENV_TOKEN_NAME = 'GITLAB_API_TOKEN'
+    SERVICE_CLASS = GitlabRemote
+
     @pytest.fixture
-    def gitlab_remote(self):
+    def git_remote(self):
         io_manager = IoManager()
         with patch.dict('os.environ', {'GITLAB_API_TOKEN': 'test_token'}):
             remote = GitlabRemote(io_manager=io_manager)
             return remote
 
-    def test_parse_repository_url_https(self, gitlab_remote):
+    def _assert_check_repository_exists_request(self, mock_request):
+        """Assert the request parameters for checking repository existence."""
+        assert mock_request.call_args[1]['endpoint'] == 'projects/test-namespace%2Ftest-repo'
+
+    def _assert_create_repository_request(self, mock_request):
+        """Assert the request parameters for creating a repository."""
+        assert mock_request.call_args[1]['endpoint'] == 'projects'
+        assert mock_request.call_args[1]['data']['name'] == 'test-repo'
+
+    def test_parse_repository_url_https(self, git_remote):
         url = "https://gitlab.com/test-namespace/test-repo.git"
-        info = gitlab_remote.parse_repository_url(url)
+        info = git_remote.parse_repository_url(url)
         assert info == {
             'name': 'test-repo',
             'namespace': 'test-namespace'
         }
 
-    def test_parse_repository_url_ssh(self, gitlab_remote):
+    def test_parse_repository_url_ssh(self, git_remote):
         url = "git@gitlab.com:test-namespace/test-repo.git"
-        info = gitlab_remote.parse_repository_url(url)
+        info = git_remote.parse_repository_url(url)
         assert info == {
             'name': 'test-repo',
             'namespace': 'test-namespace'
         }
 
-    def test_create_repository(self, gitlab_remote):
+    def test_create_repository(self, git_remote):
         with patch('wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request') as mock_request:
             mock_request.return_value.json.return_value = {'id': 1}
-            
-            result = gitlab_remote.create_repository(
+
+            result = git_remote.create_repository(
                 name='test-repo',
                 namespace='test-namespace',
                 description='Test description',
                 private=True
             )
-            
+
             mock_request.assert_called_once()
-            assert mock_request.call_args[1]['endpoint'] == 'projects'
-            assert mock_request.call_args[1]['data']['name'] == 'test-repo'
+            self._assert_create_repository_request(mock_request)
             assert result == {'id': 1}
 
-    def test_check_repository_exists(self, gitlab_remote):
+    def test_check_repository_exists(self, git_remote):
         with patch('wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request') as mock_request:
             mock_request.return_value.status_code = 200
-            
-            exists = gitlab_remote.check_repository_exists('test-repo', 'test-namespace')
-            
+
+            exists = git_remote.check_repository_exists('test-repo', 'test-namespace')
+
             mock_request.assert_called_once()
-            assert mock_request.call_args[1]['endpoint'] == 'projects/test-namespace%2Ftest-repo'
+            self._assert_check_repository_exists_request(mock_request)
             assert exists is True
 
-    def test_create_repository_if_not_exists_existing(self, gitlab_remote):
+    def test_create_repository_if_not_exists_existing(self, git_remote):
         with patch('wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request') as mock_request:
             mock_request.return_value.status_code = 200
-            
-            result = gitlab_remote.create_repository_if_not_exists(
+
+            result = git_remote.create_repository_if_not_exists(
                 'https://gitlab.com/test-namespace/test-repo.git'
             )
-            
+
             mock_request.assert_called_once()
-            assert mock_request.call_args[1]['endpoint'] == 'projects/test-namespace%2Ftest-repo'
+            self._assert_check_repository_exists_request(mock_request)
             assert result == {}
