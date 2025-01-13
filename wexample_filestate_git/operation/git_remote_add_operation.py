@@ -40,8 +40,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
             if option.should_have_git() and (GitInitOperation.applicable_option(target=target, option=option) or git_is_init(target.get_path())):
                 value = target.get_option_value(GitConfigOption)
                 return (value is not None
-                        and value.is_dict()
-                        and (value.get_dict().get("remote") is not None))
+                        and value.is_dict_containing_key("remote"))
 
         return False
 
