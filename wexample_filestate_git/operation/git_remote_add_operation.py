@@ -41,7 +41,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 value = target.get_option_value(GitConfigOption)
                 return (value is not None
                         and value.is_dict()
-                        and value.get_dict().get("remote"))
+                        and (value.get_dict().get("remote") is not None))
 
         return False
 
