@@ -11,14 +11,6 @@ from wexample_helpers.helpers.directory import directory_remove_tree_if_exists
 class TestGitFileStateManagerMixin:
     _env_patcher = None
 
-    # def setup_method(self) -> None:
-    #     # Mock environment variables
-    #     self._mock_git_env()
-    #
-    # def teardown_method(self) -> None:
-    #     if self._env_patcher:
-    #         self._env_patcher.stop()
-
     def _mock_git_env(self) -> None:
         """Mock Git-related environment variables."""
         mock_env = {
