@@ -1,7 +1,7 @@
 pip-tools
 pydantic
 pytest
-wexample-filestate
-wexample-helpers
-wexample-helpers-git
-wexample-prompt
+wexample-filestate==0.0.18
+wexample-helpers==0.0.18
+wexample-helpers-git==0.0.18
+wexample-prompt==0.0.17
