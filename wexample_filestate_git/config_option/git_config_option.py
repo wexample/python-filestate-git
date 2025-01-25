@@ -11,8 +11,19 @@ if TYPE_CHECKING:
 
 class GitConfigOption(AbstractNestedConfigOption):
     @staticmethod
+    def get_raw_value_allowed_type() -> Any:
+        return dict | bool
+
+    @staticmethod
     def get_value_allowed_type() -> Any | Type | UnionType:
         return dict | bool
+
+    def set_value(self, raw_value: Any) -> None:
+        # Support True without config.
+        if raw_value is True:
+            raw_value = {}
+            
+        super().set_value(raw_value=raw_value)
 
     def should_have_git(self) -> bool:
         value = self.get_value()
