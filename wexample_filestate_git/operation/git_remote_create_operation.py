@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from wexample_filestate.item.item_target_directory import TargetFileOrDirectoryType
     from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 
+
 class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationMixin, AbstractGitOperation):
     @staticmethod
     def get_remote_types() -> List[Type[AbstractRemote]]:
@@ -30,13 +31,15 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
 
         if isinstance(option, GitConfigOption):
-            value = target.get_option_value(GitConfigOption)
-            if (value is not None
-                and value.is_dict()
-                and value.get_dict().get("remote")):
+            from wexample_filestate_git.config_option.remote_config_option import RemoteConfigOption
+            from wexample_filestate_git.config_option.create_remote_config_option import CreateRemoteConfigOption
+
+            git_option = target.get_option(GitConfigOption)
+            remote_option = git_option.get_option(RemoteConfigOption)
+            if remote_option:
                 # Check if at least one remote has create_remote: true
-                for remote in value.get_dict().get("remote"):
-                    if remote.get("create_remote") is True:
+                for remote_item_option in remote_option.children:
+                    if remote_item_option.get_option(CreateRemoteConfigOption).get_value().is_true():
                         return True
 
         return False
