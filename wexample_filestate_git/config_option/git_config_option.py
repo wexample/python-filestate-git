@@ -1,11 +1,15 @@
-from typing import Type, Any
 from types import UnionType
+from typing import Type, Any, TYPE_CHECKING
 
-from wexample_config.config_option.abstract_config_option import AbstractConfigOption
+from wexample_config.config_option.abstract_nested_config_option import AbstractNestedConfigOption
 from wexample_config.const.types import DictConfig, DictConfigValue
+from wexample_filestate_git.options_provider.git_config_options_provider import GitConfigOptionsProvider
+
+if TYPE_CHECKING:
+    from wexample_config.options_provider.abstract_options_provider import AbstractOptionsProvider
 
 
-class GitConfigOption(AbstractConfigOption):
+class GitConfigOption(AbstractNestedConfigOption):
     @staticmethod
     def get_value_allowed_type() -> Any | Type | UnionType:
         return dict | bool
@@ -25,3 +29,8 @@ class GitConfigOption(AbstractConfigOption):
         if GitConfigOption.get_name() in config and cls.dict_value_should_have_git(config[GitConfigOption.get_name()]):
             config[ShouldExistConfigOption.get_name()] = True
         return config
+
+    def get_options_providers(self) -> list[type["AbstractOptionsProvider"]]:
+        return [
+            GitConfigOptionsProvider
+        ]
