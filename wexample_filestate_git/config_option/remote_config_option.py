@@ -3,5 +3,5 @@ from wexample_filestate_git.config_option.remote_item_config_option import Remot
 
 
 class RemoteConfigOption(AbstractListConfigOption):
-    def _get_item_class_type(self):
+    def get_item_class_type(self):
         return RemoteItemConfigOption

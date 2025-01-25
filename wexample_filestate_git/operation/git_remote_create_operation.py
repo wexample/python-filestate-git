@@ -65,32 +65,46 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
     def apply(self) -> None:
         from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_helpers_git.const.common import GIT_PROVIDER_GITHUB, GIT_PROVIDER_GITLAB
+        from wexample_filestate_git.config_option.remote_config_option import RemoteConfigOption
+        from wexample_filestate_git.config_option.create_remote_config_option import CreateRemoteConfigOption
+        from wexample_filestate_git.config_option.url_config_option import UrlConfigOption
+        from wexample_filestate_git.config_option.type_config_option import TypeConfigOption
 
-        value = self.target.get_option_value(GitConfigOption)
+        git_option = self.target.get_option(GitConfigOption)
+        value = git_option.get_value()
 
-        if value.is_dict():
-            for remote in value.get_dict().get("remote"):
-                if ("create_remote" in remote) and remote["create_remote"] is True:
-                    remote_url = self._config_parse_file_value(remote["url"])
+        if git_option:
+            git_option = cast(GitConfigOption, git_option)
+            remote_option = cast(RemoteConfigOption, git_option.get_option(RemoteConfigOption))
 
-                    # Auto-detect remote type if not specified
-                    if "type" in remote:
-                        # Use specified type
-                        type_map = {
-                            GIT_PROVIDER_GITHUB: GithubRemote,
-                            GIT_PROVIDER_GITLAB: GitlabRemote
-                        }
-                        remote_type = type_map.get(remote["type"].lower())
-                    else:
-                        # Auto-detect from URL
-                        remote_type = self._detect_remote_type(remote_url)
+            if remote_option:
+                for remote_item_option in remote_option.children:
+                    remote_item_option = cast(remote_option.get_item_class_type(), remote_item_option)
+                    create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
+                    url_option = remote_item_option.get_option(UrlConfigOption)
+                    type_option = remote_item_option.get_option(TypeConfigOption)
 
-                    if remote_type:
-                        remote = remote_type(io_manager=self.io)
-                        remote.connect()
+                    if create_remote_option.get_value().is_true():
+                        remote_url = self._config_parse_file_value(url_option.get_value().get_dict())
 
-                        # Create repository directly from URL
-                        remote.create_repository_if_not_exists(remote_url)
+                        # Auto-detect remote type if not specified
+                        if type_option:
+                            # Use specified type
+                            type_map = {
+                                GIT_PROVIDER_GITHUB: GithubRemote,
+                                GIT_PROVIDER_GITLAB: GitlabRemote
+                            }
+                            remote_type = type_map.get(type_option.get_value().get_str().lower())
+                        else:
+                            # Auto-detect from URL
+                            remote_type = self._detect_remote_type(remote_url)
+
+                        if remote_type:
+                            remote = remote_type(io_manager=self.io)
+                            remote.connect()
+
+                            # Create repository directly from URL
+                            remote.create_repository_if_not_exists(remote_url)
 
     def _config_parse_file_value(self, value: Any) -> str:
         if isinstance(value, str):
