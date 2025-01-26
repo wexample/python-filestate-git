@@ -111,15 +111,16 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
     def _config_parse_file_value(self, value: ConfigValue) -> str:
         if value.is_str():
             return value.get_str()
-        elif value.is_dict() and "pattern" in value:
+        elif value.is_dict() and "pattern" in value.get_dict():
             path = cast(PosixPath, self.target.get_path())
+            value_dict = value.get_dict()
 
-            return value["pattern"].format(**{
+            return value_dict["pattern"].format(**{
                 'name': path.name,
                 'path': str(path)
             })
 
-        return value
+        return value.get_str()
 
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
