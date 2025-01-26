@@ -86,7 +86,13 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
                     if create_remote_option and create_remote_option.get_value().is_true():
-                        remote_url = self._config_parse_file_value(url_option.get_value().get_dict())
+                        url_value = url_option.get_value()
+                        
+                        # If it's a dict config value, get the dict, otherwise get the string
+                        if url_value.is_dict():
+                            remote_url = self._config_parse_file_value(url_value.get_dict())
+                        else:
+                            remote_url = url_value.get_str()
 
                         # Auto-detect remote type if not specified
                         if type_option:
@@ -108,17 +114,17 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                             remote.create_repository_if_not_exists(remote_url)
 
     def _config_parse_file_value(self, value: Any) -> str:
-        if isinstance(value, str):
+        """
+        Parse the URL value which can be either a string or a dict with pattern
+        """
+        if isinstance(value, dict):
+            # Handle URL pattern
+            return value.get('pattern', '')
+        elif isinstance(value, str):
+            # Handle direct URL string
             return value
-        elif isinstance(value, dict) and "pattern" in value:
-            path = cast(PosixPath, self.target.get_path())
-
-            return value["pattern"].format(**{
-                'name': path.name,
-                'path': str(path)
-            })
-
-        return value
+        else:
+            raise TypeError(f"Expected str or dict but got {type(value)}")
 
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
