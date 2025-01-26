@@ -39,7 +39,8 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
             if remote_option:
                 # Check if at least one remote has create_remote: true
                 for remote_item_option in remote_option.children:
-                    if remote_item_option.get_option(CreateRemoteConfigOption).get_value().is_true():
+                    create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
+                    if create_remote_option and create_remote_option.get_value().is_true():
                         return True
 
         return False
@@ -84,7 +85,7 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                     url_option = remote_item_option.get_option(UrlConfigOption)
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
-                    if create_remote_option.get_value().is_true():
+                    if create_remote_option and create_remote_option.get_value().is_true():
                         remote_url = self._config_parse_file_value(url_option.get_value().get_dict())
 
                         # Auto-detect remote type if not specified
