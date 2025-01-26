@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import PosixPath
 from typing import TYPE_CHECKING, cast, List, Type, Any, Optional
 
+from wexample_config.config_value.config_value import ConfigValue
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
@@ -86,13 +87,7 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
                     if create_remote_option and create_remote_option.get_value().is_true():
-                        url_value = url_option.get_value()
-                        
-                        # If it's a dict config value, get the dict, otherwise get the string
-                        if url_value.is_dict():
-                            remote_url = self._config_parse_file_value(url_value.get_dict())
-                        else:
-                            remote_url = url_value.get_str()
+                        remote_url = self._config_parse_file_value(url_option.get_value())
 
                         # Auto-detect remote type if not specified
                         if type_option:
@@ -113,18 +108,18 @@ class GitRemoteCreateOperation(WithRequiredIoManager, FileManipulationOperationM
                             # Create repository directly from URL
                             remote.create_repository_if_not_exists(remote_url)
 
-    def _config_parse_file_value(self, value: Any) -> str:
-        """
-        Parse the URL value which can be either a string or a dict with pattern
-        """
-        if isinstance(value, dict):
-            # Handle URL pattern
-            return value.get('pattern', '')
-        elif isinstance(value, str):
-            # Handle direct URL string
-            return value
-        else:
-            raise TypeError(f"Expected str or dict but got {type(value)}")
+    def _config_parse_file_value(self, value: ConfigValue) -> str:
+        if value.is_str():
+            return value.get_str()
+        elif value.is_dict() and "pattern" in value:
+            path = cast(PosixPath, self.target.get_path())
+
+            return value["pattern"].format(**{
+                'name': path.name,
+                'path': str(path)
+            })
+
+        return value
 
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
