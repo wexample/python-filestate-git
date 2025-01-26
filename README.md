@@ -2,7 +2,7 @@
 
 An extension for "filestate" package, which adds GIT management operations.
 
-Version: 0.0.12
+Version: 0.0.13
 
 ## Requirements
 
@@ -14,10 +14,10 @@ Version: 0.0.12
 - pydantic
 - pytest
 - requests
-- wexample-filestate==0.0.20
-- wexample-helpers-git==0.0.20
-- wexample-helpers==0.0.20
-- wexample-prompt==0.0.19
+- wexample-filestate==0.0.21
+- wexample-helpers-git==0.0.21
+- wexample-helpers==0.0.21
+- wexample-prompt==0.0.20
 
 ## Installation
 
