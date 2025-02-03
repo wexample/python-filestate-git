@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wexample-filestate-git"
-version = "0.0.16"
+version = "0.0.17"
 description = "An extension for \"filestate\" package, which adds GIT management operations."
 authors = [
     { name = "weeger", email = "contact@wexample.com" },
@@ -23,10 +23,10 @@ dependencies = [
     "pydantic",
     "pytest",
     "requests",
-    "wexample-filestate==0.0.24",
-    "wexample-helpers-git==0.0.24",
-    "wexample-helpers==0.0.24",
-    "wexample-prompt==0.0.23",
+    "wexample-filestate==0.0.25",
+    "wexample-helpers-git==0.0.25",
+    "wexample-helpers==0.0.25",
+    "wexample-prompt==0.0.24",
 ]
 
 [project.readme]
