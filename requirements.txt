@@ -89,7 +89,7 @@ wexample-helpers==0.0.26
 #   wexample-filestate
 wexample-helpers-git==0.0.26
 # via -r /home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/filestate-git/requirements.in
-wexample-prompt==0.0.25
+wexample-prompt==0.0.27
 # via
 #   -r /home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/filestate-git/requirements.in
 #   wexample-filestate

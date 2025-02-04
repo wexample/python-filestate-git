@@ -17,7 +17,7 @@ Version: 0.0.18
 - wexample-filestate==0.0.26
 - wexample-helpers-git==0.0.26
 - wexample-helpers==0.0.26
-- wexample-prompt==0.0.25
+- wexample-prompt==0.0.27
 
 ## Installation
 
