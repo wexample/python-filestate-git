@@ -2,7 +2,7 @@ pip-tools
 pydantic
 pytest
 requests
-wexample-filestate==0.0.28
-wexample-helpers==0.0.28
-wexample-helpers-git==0.0.28
-wexample-prompt==0.0.29
+wexample-filestate==0.0.29
+wexample-helpers==0.0.29
+wexample-helpers-git==0.0.29
+wexample-prompt==0.0.30
