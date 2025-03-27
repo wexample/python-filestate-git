@@ -23,8 +23,8 @@ dependencies = [
     "pydantic",
     "pytest",
     "requests",
-    "wexample-filestate==0.0.31",
-    "wexample-helpers-git==0.0.31",
+    "wexample-filestate>=0.0.31",
+    "wexample-helpers-git>=0.0.31",
 ]
 
 [project.readme]
