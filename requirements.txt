@@ -78,18 +78,18 @@ urllib3==2.3.0
 # via requests
 wcwidth==0.2.13
 # via prompt-toolkit
-wexample-config==0.0.30
+wexample-config==0.0.31
 # via wexample-filestate
-wexample-filestate==0.0.30
+wexample-filestate==0.0.31
 # via -r /home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/filestate-git/requirements.in
-wexample-helpers==0.0.30
+wexample-helpers==0.0.31
 # via
 #   -r /home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/filestate-git/requirements.in
 #   wexample-config
 #   wexample-filestate
-wexample-helpers-git==0.0.30
+wexample-helpers-git==0.0.31
 # via -r /home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/filestate-git/requirements.in
-wexample-prompt==0.0.31
+wexample-prompt==0.0.32
 # via
 #   -r /home/weeger/Desktop/WIP/WEB/WEXAMPLE/PIP/pip/filestate-git/requirements.in
 #   wexample-filestate
