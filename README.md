@@ -14,10 +14,10 @@ Version: 0.0.23
 - pydantic
 - pytest
 - requests
-- wexample-filestate==0.0.31
+- wexample-filestate==0.0.30
 - wexample-helpers-git==0.0.31
-- wexample-helpers==0.0.31
-- wexample-prompt==0.0.32
+- wexample-helpers==0.0.30
+- wexample-prompt==0.0.31
 
 ## Installation
 
