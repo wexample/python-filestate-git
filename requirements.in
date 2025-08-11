@@ -2,5 +2,5 @@ pip-tools
 pydantic
 pytest
 requests
-wexample-filestate==0.0.44
-wexample-helpers-git==0.0.44
+wexample-filestate
+wexample-helpers-git
