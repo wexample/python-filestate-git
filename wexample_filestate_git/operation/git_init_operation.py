@@ -12,7 +12,7 @@ from wexample_helpers.const.globals import DIR_GIT
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
-    from wexample_filestate_git.config_option.abstract_config_option import AbstractConfigOption
+    from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
