@@ -6,13 +6,17 @@ from git import Repo
 
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.file_create_operation import FileCreateOperation
-from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import FileManipulationOperationMixin
+from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
+    FileManipulationOperationMixin,
+)
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers.const.globals import DIR_GIT
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
-    from wexample_config.config_option.abstract_config_option import AbstractConfigOption
+    from wexample_config.config_option.abstract_config_option import (
+        AbstractConfigOption,
+    )
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
@@ -20,13 +24,15 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _has_initialized_git: bool = False
 
     def dependencies(self) -> List[Type["AbstractOperation"]]:
-        return [
-            FileCreateOperation
-        ]
+        return [FileCreateOperation]
 
     @staticmethod
-    def applicable_option(target: TargetFileOrDirectoryType, option: "AbstractConfigOption") -> bool:
-        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
+    def applicable_option(
+        target: TargetFileOrDirectoryType, option: "AbstractConfigOption"
+    ) -> bool:
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
         from wexample_helpers_git.helpers.git import git_is_init
 
         if isinstance(option, GitConfigOption):
@@ -35,13 +41,13 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         return False
 
     def describe_before(self) -> str:
-        return 'No initialized .git directory'
+        return "No initialized .git directory"
 
     def describe_after(self) -> str:
-        return 'Initialized .git directory'
+        return "Initialized .git directory"
 
     def description(self) -> str:
-        return 'Initialize .git directory'
+        return "Initialize .git directory"
 
     def apply(self) -> None:
         path = self._get_target_file_path(target=self.target)

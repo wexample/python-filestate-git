@@ -10,7 +10,9 @@ class AbstractRemote(AbstractGateway):
     """
 
     @abstractmethod
-    def create_repository(self, name: str, namespace: str, description: str = "", private: bool = False) -> Dict:
+    def create_repository(
+        self, name: str, namespace: str, description: str = "", private: bool = False
+    ) -> Dict:
         """
         Create a new repository on the remote service.
 
@@ -40,10 +42,12 @@ class AbstractRemote(AbstractGateway):
         pass
 
     @abstractmethod
-    def create_repository_if_not_exists(self, remote_url: str, description: str = "", private: bool = False) -> Dict:
+    def create_repository_if_not_exists(
+        self, remote_url: str, description: str = "", private: bool = False
+    ) -> Dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
-        
+
         Args:
             remote_url: Complete remote repository URL
             description: Optional repository description
