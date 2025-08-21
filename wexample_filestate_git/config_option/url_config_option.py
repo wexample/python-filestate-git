@@ -1,6 +1,7 @@
 from typing import Any, Union
 
-from wexample_config.config_option.abstract_config_option import AbstractConfigOption
+from wexample_config.config_option.abstract_config_option import \
+    AbstractConfigOption
 
 
 class UrlConfigOption(AbstractConfigOption):

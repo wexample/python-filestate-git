@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import Dict
+
 from wexample_helpers_api.common.abstract_gateway import AbstractGateway
 
 

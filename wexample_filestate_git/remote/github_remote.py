@@ -1,9 +1,10 @@
 import os
 import re
 from typing import Dict, List
-from pydantic import Field
 
+from pydantic import Field
 from wexample_helpers_api.enums.http import HttpMethod
+
 from .abstract_remote import AbstractRemote
 
 GITHUB_API_TOKEN: str = "GITHUB_API_TOKEN"

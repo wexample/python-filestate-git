@@ -1,7 +1,6 @@
 from unittest.mock import patch
 
 import pytest
-
 from wexample_filestate_git.remote.github_remote import GithubRemote
 from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
 from wexample_prompt.common.io_manager import IoManager

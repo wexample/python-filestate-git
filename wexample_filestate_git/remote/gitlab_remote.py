@@ -1,12 +1,12 @@
 import os
 import re
 from typing import Dict, List, Optional
-from pydantic import Field
+
 import requests
-
+from pydantic import Field
 from wexample_helpers_api.enums.http import HttpMethod
-from .abstract_remote import AbstractRemote
 
+from .abstract_remote import AbstractRemote
 
 GITLAB_API_TOKEN: str = "GITLAB_API_TOKEN"
 GITLAB_DEFAULT_URL: str = "GITLAB_DEFAULT_URL"
