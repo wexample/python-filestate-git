@@ -12,12 +12,12 @@ class GitRemoteTest:
     SERVICE_CLASS = None
     TEST_TOKEN = "test_token"
 
-    def _assert_check_repository_exists_request(self, mock_request):
+    def _assert_check_repository_exists_request(self, mock_request) -> None:
         """Assert the request parameters for checking repository existence.
         To be implemented by child classes."""
         raise NotImplementedError()
 
-    def _assert_create_repository_request(self, mock_request):
+    def _assert_create_repository_request(self, mock_request) -> None:
         """Assert the request parameters for creating a repository.
         To be implemented by child classes."""
         raise NotImplementedError()

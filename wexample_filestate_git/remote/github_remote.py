@@ -16,7 +16,7 @@ class GithubRemote(AbstractRemote):
         default="https://api.github.com", description="GitHub API base URL"
     )
 
-    def model_post_init(self, *args, **kwargs):
+    def model_post_init(self, *args, **kwargs) -> None:
         super().model_post_init(*args, **kwargs)
 
         self.default_headers.update(

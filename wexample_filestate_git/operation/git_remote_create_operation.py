@@ -5,21 +5,20 @@ from typing import TYPE_CHECKING, Any, List, Optional, Type, cast
 
 from wexample_config.config_value.config_value import ConfigValue
 from wexample_filestate.operation.abstract_operation import AbstractOperation
-from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import \
-    FileManipulationOperationMixin
-from wexample_filestate_git.operation.abstract_git_operation import \
-    AbstractGitOperation
+from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
+    FileManipulationOperationMixin,
+)
+from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_filestate_git.remote.abstract_remote import AbstractRemote
 from wexample_filestate_git.remote.github_remote import GithubRemote
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-from wexample_prompt.mixins.with_required_io_manager import \
-    WithRequiredIoManager
+from wexample_prompt.mixins.with_required_io_manager import WithRequiredIoManager
 
 if TYPE_CHECKING:
-    from wexample_config.config_option.abstract_config_option import \
-        AbstractConfigOption
-    from wexample_filestate.item.item_target_directory import \
-        TargetFileOrDirectoryType
+    from wexample_config.config_option.abstract_config_option import (
+        AbstractConfigOption,
+    )
+    from wexample_filestate.item.item_target_directory import TargetFileOrDirectoryType
 
 
 class GitRemoteCreateOperation(
@@ -30,8 +29,9 @@ class GitRemoteCreateOperation(
         return [GithubRemote, GitlabRemote]
 
     def dependencies(self) -> List[Type["AbstractOperation"]]:
-        from wexample_filestate_git.operation.git_remote_add_operation import \
-            GitRemoteAddOperation
+        from wexample_filestate_git.operation.git_remote_add_operation import (
+            GitRemoteAddOperation,
+        )
 
         return [GitRemoteAddOperation]
 
@@ -39,14 +39,17 @@ class GitRemoteCreateOperation(
     def applicable_option(
         target: "TargetFileOrDirectoryType", option: "AbstractConfigOption"
     ) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import \
-            GitConfigOption
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
 
         if isinstance(option, GitConfigOption):
-            from wexample_filestate_git.config_option.create_remote_config_option import \
-                CreateRemoteConfigOption
-            from wexample_filestate_git.config_option.remote_config_option import \
-                RemoteConfigOption
+            from wexample_filestate_git.config_option.create_remote_config_option import (
+                CreateRemoteConfigOption,
+            )
+            from wexample_filestate_git.config_option.remote_config_option import (
+                RemoteConfigOption,
+            )
 
             git_option = target.get_option(GitConfigOption)
             remote_option = git_option.get_option(RemoteConfigOption)
@@ -83,18 +86,25 @@ class GitRemoteCreateOperation(
         return None
 
     def apply(self) -> None:
-        from wexample_filestate_git.config_option.create_remote_config_option import \
-            CreateRemoteConfigOption
-        from wexample_filestate_git.config_option.git_config_option import \
-            GitConfigOption
-        from wexample_filestate_git.config_option.remote_config_option import \
-            RemoteConfigOption
-        from wexample_filestate_git.config_option.type_config_option import \
-            TypeConfigOption
-        from wexample_filestate_git.config_option.url_config_option import \
-            UrlConfigOption
-        from wexample_helpers_git.const.common import (GIT_PROVIDER_GITHUB,
-                                                       GIT_PROVIDER_GITLAB)
+        from wexample_filestate_git.config_option.create_remote_config_option import (
+            CreateRemoteConfigOption,
+        )
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
+        from wexample_filestate_git.config_option.remote_config_option import (
+            RemoteConfigOption,
+        )
+        from wexample_filestate_git.config_option.type_config_option import (
+            TypeConfigOption,
+        )
+        from wexample_filestate_git.config_option.url_config_option import (
+            UrlConfigOption,
+        )
+        from wexample_helpers_git.const.common import (
+            GIT_PROVIDER_GITHUB,
+            GIT_PROVIDER_GITLAB,
+        )
 
         git_option = self.target.get_option(GitConfigOption)
         value = git_option.get_value()

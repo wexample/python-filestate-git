@@ -19,29 +19,29 @@ class TestGitlabRemote(GitRemoteTest):
             remote = GitlabRemote(io=io_manager)
             return remote
 
-    def _assert_check_repository_exists_request(self, mock_request):
+    def _assert_check_repository_exists_request(self, mock_request) -> None:
         """Assert the request parameters for checking repository existence."""
         assert (
             mock_request.call_args[1]["endpoint"]
             == f"projects/{self.test_namespace}%2F{self.test_repo_name}"
         )
 
-    def _assert_create_repository_request(self, mock_request):
+    def _assert_create_repository_request(self, mock_request) -> None:
         """Assert the request parameters for creating a repository."""
         assert mock_request.call_args[1]["endpoint"] == "projects"
         assert mock_request.call_args[1]["data"]["name"] == self.test_repo_name
 
-    def test_parse_repository_url_https(self, remote):
+    def test_parse_repository_url_https(self, remote) -> None:
         url = "https://gitlab.com/test-namespace/test-repo.git"
         info = remote.parse_repository_url(url)
         assert info == {"name": "test-repo", "namespace": "test-namespace"}
 
-    def test_parse_repository_url_ssh(self, remote):
+    def test_parse_repository_url_ssh(self, remote) -> None:
         url = "git@gitlab.com:test-namespace/test-repo.git"
         info = remote.parse_repository_url(url)
         assert info == {"name": "test-repo", "namespace": "test-namespace"}
 
-    def test_create_repository(self, remote):
+    def test_create_repository(self, remote) -> None:
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
@@ -58,7 +58,7 @@ class TestGitlabRemote(GitRemoteTest):
             self._assert_create_repository_request(mock_request)
             assert result == {"id": 1}
 
-    def test_check_repository_exists(self, remote):
+    def test_check_repository_exists(self, remote) -> None:
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:

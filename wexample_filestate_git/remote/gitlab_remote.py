@@ -17,7 +17,7 @@ class GitlabRemote(AbstractRemote):
         default="https://gitlab.com/api/v4", description="GitLab API base URL"
     )
 
-    def model_post_init(self, *args, **kwargs):
+    def model_post_init(self, *args, **kwargs) -> None:
         super().model_post_init(*args, **kwargs)
 
         self.default_headers.update({"PRIVATE-TOKEN": os.getenv(GITLAB_API_TOKEN)})
