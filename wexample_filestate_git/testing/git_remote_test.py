@@ -1,6 +1,3 @@
-
-
-
 class GitRemoteTest:
     """Base class for Git remote service tests."""
 

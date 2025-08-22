@@ -1,4 +1,3 @@
-
 from wexample_config.const.types import DictConfig
 from wexample_filestate.const.disk import DiskItemType
 from wexample_filestate.testing.test_abstract_operation import TestAbstractOperation
