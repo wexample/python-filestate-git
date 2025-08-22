@@ -20,13 +20,13 @@ if TYPE_CHECKING:
 
 class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _original_path_str: str
-    _created_remote: Dict[str, bool]
+    _created_remote: dict[str, bool]
 
     def __init__(self, **data) -> None:
         super().__init__(**data)
         self._created_remote = {}
 
-    def dependencies(self) -> List[Type["AbstractOperation"]]:
+    def dependencies(self) -> list[type[AbstractOperation]]:
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
         if GitInitOperation.applicable(target=self.target):
@@ -36,7 +36,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
     @classmethod
     def applicable_option(
-        cls, target: "TargetFileOrDirectoryType", option: "AbstractConfigOption"
+        cls, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,

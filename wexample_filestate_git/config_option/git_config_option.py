@@ -21,7 +21,7 @@ class GitConfigOption(AbstractNestedConfigOption):
         return dict | bool
 
     @staticmethod
-    def get_value_allowed_type() -> Any | Type | UnionType:
+    def get_value_allowed_type() -> Any | type | UnionType:
         return dict | bool
 
     def set_value(self, raw_value: Any) -> None:

@@ -25,10 +25,10 @@ class GitRemoteCreateOperation(
     WithRequiredIoManager, FileManipulationOperationMixin, AbstractGitOperation
 ):
     @staticmethod
-    def get_remote_types() -> List[Type[AbstractRemote]]:
+    def get_remote_types() -> list[type[AbstractRemote]]:
         return [GithubRemote, GitlabRemote]
 
-    def dependencies(self) -> List[Type["AbstractOperation"]]:
+    def dependencies(self) -> list[type[AbstractOperation]]:
         from wexample_filestate_git.operation.git_remote_add_operation import (
             GitRemoteAddOperation,
         )
@@ -37,7 +37,7 @@ class GitRemoteCreateOperation(
 
     @classmethod
     def applicable_option(
-        cls, target: "TargetFileOrDirectoryType", option: "AbstractConfigOption"
+        cls, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
@@ -76,7 +76,7 @@ class GitRemoteCreateOperation(
     def description(self) -> str:
         return "Create remote repository on platform"
 
-    def _detect_remote_type(self, remote_url: str) -> Optional[Type[AbstractRemote]]:
+    def _detect_remote_type(self, remote_url: str) -> type[AbstractRemote] | None:
         """
         Detect the remote type (GitHub, GitLab, etc.) from the URL.
         """

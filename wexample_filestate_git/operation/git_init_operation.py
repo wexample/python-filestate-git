@@ -22,12 +22,12 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _original_path_str: str
     _has_initialized_git: bool = False
 
-    def dependencies(self) -> List[Type["AbstractOperation"]]:
+    def dependencies(self) -> list[type[AbstractOperation]]:
         return [FileCreateOperation]
 
     @classmethod
     def applicable_option(
-        cls, target: TargetFileOrDirectoryType, option: "AbstractConfigOption"
+        cls, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,

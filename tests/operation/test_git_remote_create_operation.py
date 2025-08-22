@@ -30,7 +30,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         # Call parent setup after mocks are ready
         super()._operation_test_setup()
 
-    def _operation_test_setup_configuration(self) -> Optional[DictConfig]:
+    def _operation_test_setup_configuration(self) -> DictConfig | None:
         self._remove_test_git_dir()
         self._mock_git_env()
 

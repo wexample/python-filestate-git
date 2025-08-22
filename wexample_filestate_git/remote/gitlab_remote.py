@@ -25,14 +25,14 @@ class GitlabRemote(AbstractRemote):
         if os.getenv(GITLAB_DEFAULT_URL) is not None:
             self.base_url = os.getenv(GITLAB_DEFAULT_URL)
 
-    def get_expected_env_keys(self) -> List[str]:
+    def get_expected_env_keys(self) -> list[str]:
         return [
             GITLAB_API_TOKEN,
         ]
 
     def create_repository(
         self, name: str, namespace: str, description: str = "", private: bool = False
-    ) -> Dict:
+    ) -> dict:
         """
         Create a new repository in the specified namespace.
 
@@ -90,7 +90,7 @@ class GitlabRemote(AbstractRemote):
 
     def create_repository_if_not_exists(
         self, remote_url: str, description: str = "", private: bool = False
-    ) -> Dict:
+    ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
 
@@ -110,7 +110,7 @@ class GitlabRemote(AbstractRemote):
             )
         return {}
 
-    def _get_namespace_id(self, namespace_path: str) -> Optional[int]:
+    def _get_namespace_id(self, namespace_path: str) -> int | None:
         try:
             response = requests.get(
                 f"{self.base_url.rstrip('/')}/namespaces",
@@ -132,7 +132,7 @@ class GitlabRemote(AbstractRemote):
         # Support both gitlab.com and custom GitLab instances
         return bool(re.search(r"gitlab\.[a-zA-Z0-9.-]+[:/]", remote_url))
 
-    def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
+    def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         """
         Parse a GitLab repository URL to extract repository information.
         Supports both HTTPS and SSH URLs and custom GitLab instances:

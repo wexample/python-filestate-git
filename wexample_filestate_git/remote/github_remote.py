@@ -29,14 +29,14 @@ class GithubRemote(AbstractRemote):
         if os.getenv(GITHUB_DEFAULT_URL) is not None:
             self.base_url = os.getenv(GITHUB_DEFAULT_URL)
 
-    def get_expected_env_keys(self) -> List[str]:
+    def get_expected_env_keys(self) -> list[str]:
         return [
             GITHUB_API_TOKEN,
         ]
 
     def create_repository(
         self, name: str, namespace: str, description: str = "", private: bool = False
-    ) -> Dict:
+    ) -> dict:
         """
         Create a new repository in the specified namespace.
 
@@ -84,7 +84,7 @@ class GithubRemote(AbstractRemote):
 
     def create_repository_if_not_exists(
         self, remote_url: str, description: str = "", private: bool = False
-    ) -> Dict:
+    ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
 
@@ -104,7 +104,7 @@ class GithubRemote(AbstractRemote):
             )
         return {}
 
-    def parse_repository_url(self, remote_url: str) -> Dict[str, str]:
+    def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         """
         Parse a GitHub repository URL to extract repository information.
         Supports both HTTPS and SSH URLs:

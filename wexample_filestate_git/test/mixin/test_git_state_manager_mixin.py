@@ -29,7 +29,7 @@ class TestGitFileStateManagerMixin:
 
     def _get_test_operations_providers(
         self,
-    ) -> Optional[List[Type[AbstractOperationsProvider]]]:
+    ) -> list[type[AbstractOperationsProvider]] | None:
         from wexample_filestate.operations_provider.default_operations_provider import (
             DefaultOperationsProvider,
         )
@@ -41,7 +41,7 @@ class TestGitFileStateManagerMixin:
 
     def _get_test_options_providers(
         self,
-    ) -> Optional[List[Type[AbstractOptionsProvider]]]:
+    ) -> list[type[AbstractOptionsProvider]] | None:
         from wexample_filestate.options_provider.default_options_provider import (
             DefaultOptionsProvider,
         )
