@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 class GitRemoteTest:
     """Base class for Git remote service tests."""
 

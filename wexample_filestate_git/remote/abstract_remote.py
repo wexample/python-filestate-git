@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 
 from wexample_helpers_api.common.abstract_gateway import AbstractGateway
