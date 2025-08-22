@@ -1,6 +1,5 @@
 import os
 import re
-from typing import Dict, List
 
 from pydantic import Field
 from wexample_helpers_api.enums.http import HttpMethod

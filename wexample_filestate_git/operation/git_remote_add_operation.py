@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Any, Dict, List, Type, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from git import Repo
 from wexample_filestate.operation.abstract_operation import AbstractOperation

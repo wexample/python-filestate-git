@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from typing import Dict
 
 from wexample_helpers_api.common.abstract_gateway import AbstractGateway
 
@@ -26,7 +25,6 @@ class AbstractRemote(AbstractGateway):
         Returns:
             Dict: Repository information from the API
         """
-        pass
 
     @abstractmethod
     def check_repository_exists(self, name: str, namespace: str) -> bool:
@@ -40,7 +38,6 @@ class AbstractRemote(AbstractGateway):
         Returns:
             bool: True if the repository exists
         """
-        pass
 
     @abstractmethod
     def create_repository_if_not_exists(
@@ -57,7 +54,6 @@ class AbstractRemote(AbstractGateway):
         Returns:
             Dict: Repository information from the API if created, empty dict if already exists
         """
-        pass
 
     @classmethod
     @abstractmethod
@@ -71,7 +67,6 @@ class AbstractRemote(AbstractGateway):
         Returns:
             bool: True if the URL matches this service's pattern
         """
-        pass
 
     @abstractmethod
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
@@ -86,4 +81,3 @@ class AbstractRemote(AbstractGateway):
                 - name: Repository name (without .git)
                 - namespace: Repository namespace/organization (optional)
         """
-        pass

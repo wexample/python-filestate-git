@@ -1,7 +1,4 @@
-from unittest.mock import patch
 
-import pytest
-from wexample_prompt.common.io_manager import IoManager
 
 
 class GitRemoteTest:

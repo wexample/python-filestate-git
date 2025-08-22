@@ -1,5 +1,4 @@
 import os
-from typing import List, Optional, Type
 from unittest.mock import patch
 
 from wexample_config.options_provider.abstract_options_provider import (

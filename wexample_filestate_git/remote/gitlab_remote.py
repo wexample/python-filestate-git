@@ -1,6 +1,5 @@
 import os
 import re
-from typing import Dict, List, Optional
 
 import requests
 from pydantic import Field

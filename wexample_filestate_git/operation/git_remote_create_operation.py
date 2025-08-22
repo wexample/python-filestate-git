@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Any, List, Optional, Type, cast
+from typing import TYPE_CHECKING, cast
 
 from wexample_config.config_value.config_value import ConfigValue
 from wexample_filestate.operation.abstract_operation import AbstractOperation

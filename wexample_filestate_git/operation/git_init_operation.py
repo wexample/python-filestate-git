@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Type
+from typing import TYPE_CHECKING
 
 from git import Repo
 from wexample_filestate.operation.abstract_operation import AbstractOperation

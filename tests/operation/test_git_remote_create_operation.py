@@ -1,4 +1,3 @@
-from typing import Optional
 from unittest.mock import patch
 
 from wexample_config.const.types import DictConfig

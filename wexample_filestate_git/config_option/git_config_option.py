@@ -1,5 +1,5 @@
 from types import UnionType
-from typing import TYPE_CHECKING, Any, Type
+from typing import TYPE_CHECKING, Any
 
 from wexample_config.config_option.abstract_nested_config_option import (
     AbstractNestedConfigOption,
