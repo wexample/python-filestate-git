@@ -16,5 +16,5 @@ if TYPE_CHECKING:
 
 
 class RemoteItemConfigOption(AbstractNestedConfigOption):
-    def get_options_providers(self) -> list[type["AbstractOptionsProvider"]]:
+    def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
         return [RemoteItemOptionsProvider]

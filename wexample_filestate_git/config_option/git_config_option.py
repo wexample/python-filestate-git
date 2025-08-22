@@ -53,5 +53,5 @@ class GitConfigOption(AbstractNestedConfigOption):
             config[ShouldExistConfigOption.get_name()] = True
         return config
 
-    def get_options_providers(self) -> list[type["AbstractOptionsProvider"]]:
+    def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
         return [GitConfigOptionsProvider]
