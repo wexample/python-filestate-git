@@ -2,6 +2,7 @@ from pathlib import PosixPath
 from typing import TYPE_CHECKING, Any, cast
 
 from git import Repo
+
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
@@ -34,7 +35,9 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
     @classmethod
     def applicable_option(
-        cls, target: TargetFileOrDirectoryType, option: AbstractConfigOption
+            cls,
+            target: "TargetFileOrDirectoryType",
+            option: "AbstractConfigOption"
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
@@ -43,8 +46,8 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
         if isinstance(option, GitConfigOption):
             if option.should_have_git() and (
-                GitInitOperation.applicable_option(target=target, option=option)
-                or git_is_init(target.get_path())
+                    GitInitOperation.applicable_option(target=target, option=option)
+                    or git_is_init(target.get_path())
             ):
                 value = target.get_option_value(GitConfigOption)
                 return value is not None and value.has_key_in_dict("remote")
@@ -75,7 +78,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 remote_url = self._config_parse_file_value(remote["url"])
 
                 self._created_remote[remote_name] = (
-                    git_remote_create_once(repo, remote_name, remote_url) is not None
+                        git_remote_create_once(repo, remote_name, remote_url) is not None
                 )
 
     def _config_parse_file_value(self, value: Any) -> str:
