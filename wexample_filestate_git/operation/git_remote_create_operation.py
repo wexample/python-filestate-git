@@ -107,7 +107,7 @@ class GitRemoteCreateOperation(
         )
 
         git_option = self.target.get_option(GitConfigOption)
-        value = git_option.get_value()
+        git_option.get_value()
 
         if git_option:
             git_option = cast(GitConfigOption, git_option)
