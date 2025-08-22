@@ -35,9 +35,7 @@ class GitRemoteCreateOperation(
 
     @classmethod
     def applicable_option(
-            cls,
-            target: "TargetFileOrDirectoryType",
-            option: "AbstractConfigOption"
+        cls, target: "TargetFileOrDirectoryType", option: "AbstractConfigOption"
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
