@@ -35,7 +35,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return []
 
     def applicable_operation(
-            self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
+        self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,

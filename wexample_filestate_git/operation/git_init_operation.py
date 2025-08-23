@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from git import Repo
-
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.file_create_operation import FileCreateOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
@@ -27,7 +26,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         return [FileCreateOperation]
 
     def applicable_operation(
-            self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
+        self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,

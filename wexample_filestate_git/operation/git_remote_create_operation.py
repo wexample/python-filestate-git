@@ -12,7 +12,6 @@ from wexample_filestate_git.operation.abstract_git_operation import AbstractGitO
 from wexample_filestate_git.remote.abstract_remote import AbstractRemote
 from wexample_filestate_git.remote.github_remote import GithubRemote
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-from wexample_prompt.mixins.with_required_io_manager import WithRequiredIoManager
 
 if TYPE_CHECKING:
     from wexample_config.config_option.abstract_config_option import (
@@ -21,9 +20,7 @@ if TYPE_CHECKING:
     from wexample_filestate.item.item_target_directory import TargetFileOrDirectoryType
 
 
-class GitRemoteCreateOperation(
-    FileManipulationOperationMixin, AbstractGitOperation
-):
+class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperation):
     @staticmethod
     def get_remote_types() -> list[type[AbstractRemote]]:
         return [GithubRemote, GitlabRemote]
@@ -36,7 +33,7 @@ class GitRemoteCreateOperation(
         return [GitRemoteAddOperation]
 
     def applicable_operation(
-            self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
+        self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
