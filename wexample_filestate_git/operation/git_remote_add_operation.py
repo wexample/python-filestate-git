@@ -45,7 +45,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
         if isinstance(option, GitConfigOption):
             if option.should_have_git() and (
-                GitInitOperation.applicable_option(target=target, option=option)
+                GitInitOperation.applicable_opteration(target=target, option=option)
                 or git_is_init(target.get_path())
             ):
                 value = target.get_option_value(GitConfigOption)
