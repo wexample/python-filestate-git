@@ -21,7 +21,6 @@ classifiers = [
 dependencies = [
     "pip-tools",
     "pydantic",
-    "pytest",
     "requests",
     "wexample-filestate",
     "wexample-helpers-git",
@@ -36,3 +35,6 @@ text = "MIT"
 
 [project.urls]
 homepage = "https://github.com/wexample/python-filestate-git"
+
+[project.optional-dependencies]
+dev = ["pytest"]
