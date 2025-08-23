@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 class GitRemoteCreateOperation(
-    WithRequiredIoManager, FileManipulationOperationMixin, AbstractGitOperation
+    FileManipulationOperationMixin, AbstractGitOperation
 ):
     @staticmethod
     def get_remote_types() -> list[type[AbstractRemote]]:
