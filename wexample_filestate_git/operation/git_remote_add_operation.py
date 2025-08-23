@@ -34,9 +34,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
         return []
 
-    def applicable_for_option(
-        self, option: AbstractConfigOption
-    ) -> bool:
+    def applicable_for_option(self, option: AbstractConfigOption) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
