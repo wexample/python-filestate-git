@@ -32,8 +32,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         return [GitRemoteAddOperation]
 
-    def applicable_operation(
-        self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
+    def applicable_for_option(
+        self, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
@@ -47,7 +47,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                 RemoteConfigOption,
             )
 
-            git_option = target.get_option(GitConfigOption)
+            git_option = self.target.get_option(GitConfigOption)
             remote_option = git_option.get_option(RemoteConfigOption)
             if remote_option:
                 # Check if at least one remote has create_remote: true

@@ -25,8 +25,8 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     def dependencies(self) -> list[type[AbstractOperation]]:
         return [FileCreateOperation]
 
-    def applicable_operation(
-        self, target: TargetFileOrDirectoryType, option: AbstractConfigOption
+    def applicable_for_option(
+        self, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
@@ -34,7 +34,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         from wexample_helpers_git.helpers.git import git_is_init
 
         if isinstance(option, GitConfigOption):
-            return option.should_have_git() and not git_is_init(target.get_path())
+            return option.should_have_git() and not git_is_init(self.target.get_path())
 
         return False
 
