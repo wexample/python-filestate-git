@@ -35,7 +35,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return []
 
     @classmethod
-    def applicable_option(
+    def applicable_operation(
         cls, target: TargetFileOrDirectoryType, option: AbstractConfigOption
     ) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
@@ -45,7 +45,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
         if isinstance(option, GitConfigOption):
             if option.should_have_git() and (
-                GitInitOperation.applicable_opteration(target=target, option=option)
+                GitInitOperation.applicable_operation(target=target, option=option)
                 or git_is_init(target.get_path())
             ):
                 value = target.get_option_value(GitConfigOption)
