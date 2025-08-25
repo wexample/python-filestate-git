@@ -19,6 +19,7 @@ dependencies = [
     "pydantic>=2,<3",
     "requests",
     "wexample-filestate",
+    "wexample-helpers-api",
     "wexample-helpers-git",
 ]
 
