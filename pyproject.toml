@@ -18,9 +18,9 @@ classifiers = [
 dependencies = [
     "pydantic>=2,<3",
     "requests",
-    "wexample-filestate",
-    "wexample-helpers-api",
-    "wexample-helpers-git",
+    "wexample-filestate==0.0.46",
+    "wexample-helpers-api==0.0.28",
+    "wexample-helpers-git==0.0.45",
 ]
 
 [project.readme]
