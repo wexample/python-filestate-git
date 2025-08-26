@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import PosixPath
 from typing import TYPE_CHECKING, cast
 
 from wexample_config.config_value.config_value import ConfigValue
@@ -129,9 +128,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         create_remote_option
                         and create_remote_option.get_value().is_true()
                     ):
-                        remote_url = self._config_parse_file_value(
-                            url_option.get_value()
-                        )
+                        # Support strings or callables in the UrlConfigOption value
+                        remote_url = self._build_str_value(url_option.get_value())
 
                         # Auto-detect remote type if not specified
                         if type_option:
@@ -192,7 +190,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             remote_type_label = None
 
             if url_option:
-                remote_url = self._config_parse_file_value(url_option.get_value())
+                remote_url = self._build_value(url_option.get_value())
 
             if type_option:
                 remote_type_label = type_option.get_value().get_str().lower()
@@ -212,19 +210,6 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                 parts.append(str(remote_type_label))
 
         return ", ".join(parts)
-
-    def _config_parse_file_value(self, value: ConfigValue) -> str:
-        if value.is_str():
-            return value.get_str()
-        elif value.is_dict() and "pattern" in value.get_dict():
-            path = cast(PosixPath, self.target.get_path())
-            value_dict = value.get_dict()
-
-            return value_dict["pattern"].format(
-                **{"name": path.name, "path": str(path)}
-            )
-
-        return value.get_str()
 
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation

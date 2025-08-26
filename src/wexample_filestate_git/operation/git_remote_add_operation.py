@@ -146,16 +146,6 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         # All configured remotes exist with expected URLs
         return False
 
-    def _build_value(self, value: Any) -> Any:
-        if callable(value):
-            # Execute callables to dynamically compute value. Pass the current target
-            # so the callable can derive values from the path, name, etc.
-            return value(self.target)
-        if isinstance(value, str):
-            return value
-
-        return value
-
     def _get_target_git_repo(self) -> Repo:
         return Repo(self.target.get_path())
 
@@ -170,7 +160,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         for remote in config.get("remote"):
             if self._created_remote:
                 repo = self._get_target_git_repo()
-                remote_name = self._config_parse_file_value(remote["name"])
+                remote_name = self._build_value(remote["name"]) if not isinstance(remote["name"], str) else remote["name"]
 
                 if self._created_remote[remote_name] is True:
                     repo.delete_remote(remote=repo.remote(name=remote_name))
