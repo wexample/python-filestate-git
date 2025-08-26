@@ -1,23 +1,20 @@
-# Filestate Git
+# wexample-filestate-git
 
 An extension for "filestate" package, which adds GIT management operations.
 
-Version: 0.0.23
+Version: 0.0.35
 
 ## Requirements
 
-- Python >=3.6
+- Python >=3.10
 
 ## Dependencies
 
-- pip-tools
-- pydantic
-- pytest
+- pydantic>=2,<3
 - requests
-- wexample-filestate==0.0.30
-- wexample-helpers-git==0.0.31
-- wexample-helpers==0.0.30
-- wexample-prompt==0.0.31
+- wexample-filestate==0.0.46
+- wexample-helpers-api==0.0.28
+- wexample-helpers-git==0.0.45
 
 ## Installation
 
