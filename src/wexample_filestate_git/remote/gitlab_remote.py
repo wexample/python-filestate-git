@@ -148,3 +148,31 @@ class GitlabRemote(AbstractRemote):
             return {"name": repo_name, "namespace": namespace}
 
         return {"name": url_parts[0], "namespace": ""}
+
+    @classmethod
+    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
+        """Build API base URL from a GitLab remote URL.
+
+        Supports both:
+        - https://gitlab.example.com/owner/repo.git -> https://gitlab.example.com/api/v4
+        - ssh://git@gitlab.example.com:4567/owner/repo.git -> https://gitlab.example.com/api/v4
+        - git@gitlab.example.com:owner/repo.git -> https://gitlab.example.com/api/v4
+        """
+        host = None
+        # ssh:// URL form
+        m = re.search(r"^ssh://[^@]+@([^/:]+)", remote_url)
+        if m:
+            host = m.group(1)
+        # git@host:path form
+        if host is None:
+            m = re.search(r"^git@([^:]+):", remote_url)
+            if m:
+                host = m.group(1)
+        # https://host/ form
+        if host is None:
+            m = re.search(r"^https?://([^/]+)/", remote_url)
+            if m:
+                host = m.group(1)
+        if not host:
+            return None
+        return f"https://{host}/api/v4"

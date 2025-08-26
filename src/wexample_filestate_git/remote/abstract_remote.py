@@ -87,3 +87,12 @@ class AbstractRemote(AbstractGateway):
                 - name: Repository name (without .git)
                 - namespace: Repository namespace/organization (optional)
         """
+
+    @classmethod
+    @abstractmethod
+    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
+        """Derive the REST API base URL from a git remote URL.
+
+        Implementations should support both SSH and HTTPS remotes and custom domains.
+        Return None to use the class default base_url.
+        """

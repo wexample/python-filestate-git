@@ -113,3 +113,23 @@ class GithubRemote(AbstractRemote):
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
         return bool(re.search(r"github\.com[:/]", remote_url))
+
+    @classmethod
+    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
+        """Build API base URL from a GitHub remote URL.
+
+        Supports:
+        - https://github.com/owner/repo(.git)
+        - git@github.com:owner/repo(.git)
+        - GHES custom domains: https://github.example.com/... or git@github.example.com:...
+        Returns the appropriate https://<host>/api/v3 for custom domains,
+        or https://api.github.com for github.com.
+        """
+        m = re.search(r"^(?:https://|git@)([^/:]+)", remote_url)
+        if not m:
+            return None
+        host = m.group(1)
+        if host == "github.com":
+            return "https://api.github.com"
+        # GitHub Enterprise Server
+        return f"https://{host}/api/v3"

@@ -62,7 +62,12 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         continue
 
                     remote_type, remote_url = resolved
-                    remote = self._build_remote_instance(remote_type)
+                    # Derive API base URL from repo URL (supports custom domains)
+                    base_url = remote_type.build_remote_api_url_from_repo(remote_url)
+                    remote = self._build_remote_instance(
+                        remote_type=remote_type,
+                        remote_url=remote_url
+                    )
                     if not remote:
                         continue
 
@@ -163,7 +168,11 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                             remote_type = self._detect_remote_type(remote_url)
 
                         if remote_type:
-                            remote = self._build_remote_instance(remote_type)
+                            base_url = remote_type.build_remote_api_url_from_repo(remote_url)
+                            remote = self._build_remote_instance(
+                                remote_type=remote_type,
+                                remote_url=remote_url
+                            )
                             if remote:
                                 remote.connect()
                                 # Create repository directly from URL
@@ -203,7 +212,10 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         return remote_type, remote_url
 
-    def _build_remote_instance(self, remote_type: type[AbstractRemote]) -> AbstractRemote | None:
+    def _build_remote_instance(
+            self, remote_type: type[AbstractRemote],
+            remote_url: str
+    ) -> AbstractRemote | None:
         # Instantiate the proper remote with required constructor args
         # GithubRemote expects an api_token passed explicitly
         # We may find another way to pass tokens, with an option value.
@@ -214,6 +226,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                 # GITHUB_API_TOKEN / GITLAB_API_TOKEN
                 key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
             ),
+            base_url=remote_type.build_remote_api_url_from_repo(remote_url)
         )
 
     def _create_remotes_description(self) -> str:
