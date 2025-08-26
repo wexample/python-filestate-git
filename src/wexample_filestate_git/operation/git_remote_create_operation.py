@@ -190,7 +190,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             remote_type_label = None
 
             if url_option:
-                remote_url = self._build_value(url_option.get_value())
+                remote_url = self._build_str_value(url_option.get_value())
 
             if type_option:
                 remote_type_label = type_option.get_value().get_str().lower()

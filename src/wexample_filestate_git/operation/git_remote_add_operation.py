@@ -71,8 +71,8 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
             for remote in value.get_dict().get("remote"):
                 repo = self._get_target_git_repo()
 
-                remote_name = self._build_value(remote["name"])
-                remote_url = self._build_value(remote["url"])
+                remote_name = self._build_str_value(remote["name"])
+                remote_url = self._build_str_value(remote["url"])
 
                 self._created_remote[remote_name] = (
                         git_remote_create_once(repo, remote_name, remote_url) is not None
