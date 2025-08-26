@@ -74,7 +74,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 remote_url = self._build_str_value(remote["url"])
 
                 self._created_remote[remote_name] = (
-                        git_remote_create_once(repo, remote_name, remote_url) is not None
+                    git_remote_create_once(repo, remote_name, remote_url) is not None
                 )
 
     def _remotes_description(self) -> str:
@@ -159,7 +159,11 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         for remote in config.get("remote"):
             if self._created_remote:
                 repo = self._get_target_git_repo()
-                remote_name = self._build_value(remote["name"]) if not isinstance(remote["name"], str) else remote["name"]
+                remote_name = (
+                    self._build_value(remote["name"])
+                    if not isinstance(remote["name"], str)
+                    else remote["name"]
+                )
 
                 if self._created_remote[remote_name] is True:
                     repo.delete_remote(remote=repo.remote(name=remote_name))

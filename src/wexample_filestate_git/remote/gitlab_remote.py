@@ -10,9 +10,7 @@ from .abstract_remote import AbstractRemote
 
 
 class GitlabRemote(AbstractRemote):
-    api_token: str = Field(
-        description="GitHub API token"
-    )
+    api_token: str = Field(description="GitHub API token")
     base_url: str = Field(
         default="https://gitlab.com/api/v4", description="GitLab API base URL"
     )
@@ -23,7 +21,7 @@ class GitlabRemote(AbstractRemote):
         self.default_headers.update({"PRIVATE-TOKEN": self.api_token})
 
     def create_repository(
-            self, name: str, namespace: str, description: str = "", private: bool = False
+        self, name: str, namespace: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a new repository in the specified namespace.
@@ -78,7 +76,7 @@ class GitlabRemote(AbstractRemote):
         return response.status_code == 200
 
     def create_repository_if_not_exists(
-            self, remote_url: str, description: str = "", private: bool = False
+        self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
