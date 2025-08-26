@@ -19,7 +19,6 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
 
     def dependencies(self):
         # Ensure repository is initialized before creating a branch
-        from wexample_filestate.operation.abstract_operation import AbstractOperation
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
         return [GitInitOperation]  # type: ignore[return-value]

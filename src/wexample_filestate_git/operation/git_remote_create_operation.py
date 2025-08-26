@@ -63,7 +63,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
                     remote_type, remote_url = resolved
                     # Derive API base URL from repo URL (supports custom domains)
-                    base_url = remote_type.build_remote_api_url_from_repo(remote_url)
+                    remote_type.build_remote_api_url_from_repo(remote_url)
                     remote = self._build_remote_instance(
                         remote_type=remote_type,
                         remote_url=remote_url
@@ -168,7 +168,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                             remote_type = self._detect_remote_type(remote_url)
 
                         if remote_type:
-                            base_url = remote_type.build_remote_api_url_from_repo(remote_url)
+                            remote_type.build_remote_api_url_from_repo(remote_url)
                             remote = self._build_remote_instance(
                                 remote_type=remote_type,
                                 remote_url=remote_url
