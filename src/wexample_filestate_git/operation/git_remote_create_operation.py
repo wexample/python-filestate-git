@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from wexample_config.config_value.config_value import ConfigValue
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
@@ -52,8 +51,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         CreateRemoteConfigOption
                     )
                     if (
-                        create_remote_option
-                        and create_remote_option.get_value().is_true()
+                            create_remote_option
+                            and create_remote_option.get_value().is_true()
                     ):
                         return True
 
@@ -125,8 +124,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
                     if (
-                        create_remote_option
-                        and create_remote_option.get_value().is_true()
+                            create_remote_option
+                            and create_remote_option.get_value().is_true()
                     ):
                         # Support strings or callables in the UrlConfigOption value
                         remote_url = self._build_str_value(url_option.get_value())
@@ -146,7 +145,10 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                             remote_type = self._detect_remote_type(remote_url)
 
                         if remote_type:
-                            remote = remote_type(io=self.target.io)
+                            remote = remote_type(
+                                io=self.target.io,
+                                api_token=self.target.get_env_parameter(key="GITHUB_API_TOKEN"),
+                            )
                             remote.connect()
 
                             # Create repository directly from URL

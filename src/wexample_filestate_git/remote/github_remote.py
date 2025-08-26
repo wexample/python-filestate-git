@@ -4,15 +4,15 @@ import os
 import re
 
 from pydantic import Field
+
 from wexample_helpers_api.enums.http import HttpMethod
-
 from .abstract_remote import AbstractRemote
-
-GITHUB_API_TOKEN: str = "GITHUB_API_TOKEN"
-GITHUB_DEFAULT_URL: str = "GITHUB_DEFAULT_URL"
 
 
 class GithubRemote(AbstractRemote):
+    api_token: str = Field(
+        description="GitHub API token"
+    )
     base_url: str = Field(
         default="https://api.github.com", description="GitHub API base URL"
     )
@@ -22,21 +22,13 @@ class GithubRemote(AbstractRemote):
 
         self.default_headers.update(
             {
-                "Authorization": f"token {os.getenv(GITHUB_API_TOKEN)}",
+                "Authorization": f"token {self.api_token}",
                 "Accept": "application/vnd.github.v3+json",
             }
         )
 
-        if os.getenv(GITHUB_DEFAULT_URL) is not None:
-            self.base_url = os.getenv(GITHUB_DEFAULT_URL)
-
-    def get_expected_env_keys(self) -> list[str]:
-        return [
-            GITHUB_API_TOKEN,
-        ]
-
     def create_repository(
-        self, name: str, namespace: str, description: str = "", private: bool = False
+            self, name: str, namespace: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a new repository in the specified namespace.
@@ -84,7 +76,7 @@ class GithubRemote(AbstractRemote):
             return False
 
     def create_repository_if_not_exists(
-        self, remote_url: str, description: str = "", private: bool = False
+            self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
