@@ -51,8 +51,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         CreateRemoteConfigOption
                     )
                     if not (
-                            create_remote_option
-                            and create_remote_option.get_value().is_true()
+                        create_remote_option
+                        and create_remote_option.get_value().is_true()
                     ):
                         continue
 
@@ -65,8 +65,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     # Derive API base URL from repo URL (supports custom domains)
                     remote_type.build_remote_api_url_from_repo(remote_url)
                     remote = self._build_remote_instance(
-                        remote_type=remote_type,
-                        remote_url=remote_url
+                        remote_type=remote_type, remote_url=remote_url
                     )
                     if not remote:
                         continue
@@ -74,7 +73,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     remote.connect()
                     repo_info = remote.parse_repository_url(remote_url)
                     if not remote.check_repository_exists(
-                            repo_info["name"], repo_info["namespace"]
+                        repo_info["name"], repo_info["namespace"]
                     ):
                         # At least one configured remote is missing: operation is applicable
                         return True
@@ -147,8 +146,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
                     if (
-                            create_remote_option
-                            and create_remote_option.get_value().is_true()
+                        create_remote_option
+                        and create_remote_option.get_value().is_true()
                     ):
                         # Support strings or callables in the UrlConfigOption value
                         remote_url = self._build_str_value(url_option.get_value())
@@ -170,8 +169,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         if remote_type:
                             remote_type.build_remote_api_url_from_repo(remote_url)
                             remote = self._build_remote_instance(
-                                remote_type=remote_type,
-                                remote_url=remote_url
+                                remote_type=remote_type, remote_url=remote_url
                             )
                             if remote:
                                 remote.connect()
@@ -213,8 +211,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return remote_type, remote_url
 
     def _build_remote_instance(
-            self, remote_type: type[AbstractRemote],
-            remote_url: str
+        self, remote_type: type[AbstractRemote], remote_url: str
     ) -> AbstractRemote | None:
         # Instantiate the proper remote with required constructor args
         # GithubRemote expects an api_token passed explicitly
@@ -226,7 +223,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                 # GITHUB_API_TOKEN / GITLAB_API_TOKEN
                 key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
             ),
-            base_url=remote_type.build_remote_api_url_from_repo(remote_url)
+            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
         )
 
     def _create_remotes_description(self) -> str:
@@ -256,8 +253,12 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             return ""
 
         for remote_item_option in remote_option.children:
-            create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
-            if not (create_remote_option and create_remote_option.get_value().is_true()):
+            create_remote_option = remote_item_option.get_option(
+                CreateRemoteConfigOption
+            )
+            if not (
+                create_remote_option and create_remote_option.get_value().is_true()
+            ):
                 continue
 
             url_option = remote_item_option.get_option(UrlConfigOption)

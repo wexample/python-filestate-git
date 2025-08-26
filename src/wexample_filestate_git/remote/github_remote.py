@@ -9,9 +9,7 @@ from .abstract_remote import AbstractRemote
 
 
 class GithubRemote(AbstractRemote):
-    api_token: str = Field(
-        description="GitHub API token"
-    )
+    api_token: str = Field(description="GitHub API token")
     base_url: str = Field(
         default="https://api.github.com", description="GitHub API base URL"
     )
@@ -27,7 +25,7 @@ class GithubRemote(AbstractRemote):
         )
 
     def create_repository(
-            self, name: str, namespace: str, description: str = "", private: bool = False
+        self, name: str, namespace: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a new repository in the specified namespace.
@@ -72,7 +70,7 @@ class GithubRemote(AbstractRemote):
         return response.status_code == 200
 
     def create_repository_if_not_exists(
-            self, remote_url: str, description: str = "", private: bool = False
+        self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.

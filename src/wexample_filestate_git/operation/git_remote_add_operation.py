@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 from git import Repo
-
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
