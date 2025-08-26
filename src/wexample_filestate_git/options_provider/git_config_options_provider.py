@@ -15,10 +15,12 @@ if TYPE_CHECKING:
 class GitConfigOptionsProvider(AbstractOptionsProvider):
     @classmethod
     def get_options(cls) -> list[type[AbstractConfigOption]]:
+        from wexample_filestate_git.config_option.main_branch_config_option import MainBranchConfigOption
         from wexample_filestate_git.config_option.remote_config_option import (
             RemoteConfigOption,
         )
 
         return [
+            MainBranchConfigOption,
             RemoteConfigOption,
         ]
