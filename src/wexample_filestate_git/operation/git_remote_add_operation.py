@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pathlib import PosixPath
 from typing import TYPE_CHECKING, Any, cast
 
 from git import Repo
+
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
@@ -28,22 +28,15 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
     def dependencies(self) -> list[type[AbstractOperation]]:
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
-        if GitInitOperation.applicable(target=self.target):
-            return [GitInitOperation]
-
-        return []
+        return [GitInitOperation]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
-        from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
         if isinstance(option, GitConfigOption):
-            if option.should_have_git() and (
-                GitInitOperation.applicable_operation(target=self.target, option=option)
-                or git_is_init(self.target.get_path())
-            ):
+            if option.should_have_git() and git_is_init(self.target.get_path()):
                 value = self.target.get_option_value(GitConfigOption)
                 return value is not None and value.has_key_in_dict("remote")
 
@@ -73,21 +66,20 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 remote_url = self._config_parse_file_value(remote["url"])
 
                 self._created_remote[remote_name] = (
-                    git_remote_create_once(repo, remote_name, remote_url) is not None
+                        git_remote_create_once(repo, remote_name, remote_url) is not None
                 )
 
     def _config_parse_file_value(self, value: Any) -> str:
         if isinstance(value, str):
             return value
         elif isinstance(value, dict) and "pattern" in value:
-            path = cast(PosixPath, self.target.get_path())
-
+            path = self.target.get_path()
             return value["pattern"].format(**{"name": path.name, "path": str(path)})
 
         return value
 
     def _get_target_git_repo(self) -> Repo:
-        return Repo(self._get_target_file_path(target=self.target))
+        return Repo(self.target.get_path())
 
     def undo(self) -> None:
         from wexample_filestate_git.config_option.git_config_option import (

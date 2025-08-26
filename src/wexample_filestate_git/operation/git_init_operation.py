@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from git import Repo
+
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.file_create_operation import FileCreateOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
@@ -45,7 +46,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         return "Initialize .git directory"
 
     def apply(self) -> None:
-        path = self._get_target_file_path(target=self.target)
+        path = self.target.get_path()
         self._has_initialized_git = True
 
         repo = Repo.init(path)
@@ -55,4 +56,4 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         import shutil
 
         if self._has_initialized_git:
-            shutil.rmtree(self._get_target_file_path(target=self.target) + DIR_GIT)
+            shutil.rmtree(self.target.get_path() / DIR_GIT)
