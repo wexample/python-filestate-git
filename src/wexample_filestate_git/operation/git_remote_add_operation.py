@@ -43,9 +43,15 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return False
 
     def describe_before(self) -> str:
+        desc = self._remotes_description()
+        if desc:
+            return f"Remote missing in .git directory: {desc}"
         return "Remote missing in .git directory"
 
     def describe_after(self) -> str:
+        desc = self._remotes_description()
+        if desc:
+            return f"Remote added in .git directory: {desc}"
         return "Remote added in .git directory"
 
     def description(self) -> str:
@@ -68,6 +74,37 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 self._created_remote[remote_name] = (
                         git_remote_create_once(repo, remote_name, remote_url) is not None
                 )
+
+    def _remotes_description(self) -> str:
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
+
+        value = self.target.get_option_value(GitConfigOption)
+
+        if not value or not value.is_dict():
+            return ""
+
+        remotes = value.get_dict().get("remote")
+        if not remotes:
+            return ""
+
+        parts: list[str] = []
+        for remote in remotes:
+            try:
+                name = self._build_value(remote.get("name"))
+                url = self._build_value(remote.get("url"))
+                if name and url:
+                    parts.append(f"{name} -> {url}")
+                elif name:
+                    parts.append(str(name))
+                elif url:
+                    parts.append(str(url))
+            except Exception:
+                # Be conservative: if anything goes wrong computing description, skip that entry
+                continue
+
+        return ", ".join(parts)
 
     def _build_value(self, value: Any) -> Any:
         if callable(value):
