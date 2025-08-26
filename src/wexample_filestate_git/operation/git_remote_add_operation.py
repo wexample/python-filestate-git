@@ -38,7 +38,10 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         if isinstance(option, GitConfigOption):
             if option.should_have_git() and git_is_init(self.target.get_path()):
                 value = self.target.get_option_value(GitConfigOption)
-                return value is not None and value.has_key_in_dict("remote")
+                if not value or not value.has_key_in_dict("remote"):
+                    return False
+
+                return self._is_remote_missing_or_mismatched()
 
         return False
 
@@ -105,6 +108,43 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 continue
 
         return ", ".join(parts)
+
+    def _is_remote_missing_or_mismatched(self) -> bool:
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
+
+        value = self.target.get_option_value(GitConfigOption)
+
+        # If no value or no remotes key, we consider no need to apply here.
+        if not value or not value.has_key_in_dict("remote"):
+            return False
+
+        # If any configured remote is missing by name or has a different URL, apply.
+        repo = self._get_target_git_repo()
+
+        configured_remotes = value.get_dict().get("remote", [])
+        existing_by_name = {r.name: r for r in repo.remotes}
+
+        for remote in configured_remotes:
+            desired_name = self._build_value(remote.get("name"))
+            desired_url = self._build_value(remote.get("url"))
+
+            if not desired_name:
+                # Malformed config, skip this entry
+                continue
+
+            existing = existing_by_name.get(str(desired_name))
+            if existing is None:
+                return True
+
+            if desired_url:
+                existing_urls = {u for u in existing.urls}
+                if str(desired_url) not in existing_urls:
+                    return True
+
+        # All configured remotes exist with expected URLs
+        return False
 
     def _build_value(self, value: Any) -> Any:
         if callable(value):
