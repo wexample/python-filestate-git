@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Union
+from typing import Any, Union, Callable
 
 from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 
@@ -8,4 +8,5 @@ from wexample_config.config_option.abstract_config_option import AbstractConfigO
 class UrlConfigOption(AbstractConfigOption):
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
-        return Union[str, dict[str, Any]]
+        from wexample_filestate.item.abstract_item_target import AbstractItemTarget
+        return Union[str, Callable[[AbstractItemTarget], str]]

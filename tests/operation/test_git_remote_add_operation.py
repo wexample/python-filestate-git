@@ -22,7 +22,7 @@ class TestGitRemoteAddOperation(TestGitFileStateManagerMixin, TestAbstractOperat
                         "remote": [
                             {
                                 "name": "github",
-                                "url": {"pattern": "test-remote-with-{name}"},
+                                "url": lambda target: f"test-remote-with-{target.get_path().name}",
                             },
                         ]
                     },

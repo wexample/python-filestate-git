@@ -62,19 +62,20 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
             for remote in value.get_dict().get("remote"):
                 repo = self._get_target_git_repo()
 
-                remote_name = self._config_parse_file_value(remote["name"])
-                remote_url = self._config_parse_file_value(remote["url"])
+                remote_name = self._build_value(remote["name"])
+                remote_url = self._build_value(remote["url"])
 
                 self._created_remote[remote_name] = (
                         git_remote_create_once(repo, remote_name, remote_url) is not None
                 )
 
-    def _config_parse_file_value(self, value: Any) -> str:
+    def _build_value(self, value: Any) -> Any:
+        if callable(value):
+            # Execute callables to dynamically compute value. Pass the current target
+            # so the callable can derive values from the path, name, etc.
+            return value(self.target)
         if isinstance(value, str):
             return value
-        elif isinstance(value, dict) and "pattern" in value:
-            path = self.target.get_path()
-            return value["pattern"].format(**{"name": path.name, "path": str(path)})
 
         return value
 
