@@ -5,15 +5,15 @@ import re
 
 import requests
 from pydantic import Field
+
 from wexample_helpers_api.enums.http import HttpMethod
-
 from .abstract_remote import AbstractRemote
-
-GITLAB_API_TOKEN: str = "GITLAB_API_TOKEN"
-GITLAB_DEFAULT_URL: str = "GITLAB_DEFAULT_URL"
 
 
 class GitlabRemote(AbstractRemote):
+    api_token: str = Field(
+        description="GitHub API token"
+    )
     base_url: str = Field(
         default="https://gitlab.com/api/v4", description="GitLab API base URL"
     )
@@ -21,18 +21,10 @@ class GitlabRemote(AbstractRemote):
     def model_post_init(self, *args, **kwargs) -> None:
         super().model_post_init(*args, **kwargs)
 
-        self.default_headers.update({"PRIVATE-TOKEN": os.getenv(GITLAB_API_TOKEN)})
-
-        if os.getenv(GITLAB_DEFAULT_URL) is not None:
-            self.base_url = os.getenv(GITLAB_DEFAULT_URL)
-
-    def get_expected_env_keys(self) -> list[str]:
-        return [
-            GITLAB_API_TOKEN,
-        ]
+        self.default_headers.update({"PRIVATE-TOKEN": os.getenv(self.token)})
 
     def create_repository(
-        self, name: str, namespace: str, description: str = "", private: bool = False
+            self, name: str, namespace: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a new repository in the specified namespace.
@@ -90,7 +82,7 @@ class GitlabRemote(AbstractRemote):
             return False
 
     def create_repository_if_not_exists(
-        self, remote_url: str, description: str = "", private: bool = False
+            self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
