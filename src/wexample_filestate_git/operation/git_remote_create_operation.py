@@ -61,9 +61,15 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return False
 
     def describe_before(self) -> str:
+        desc = self._create_remotes_description()
+        if desc:
+            return f"Remote repository not created on remote platform: {desc}"
         return "Remote repository not created on remote platform"
 
     def describe_after(self) -> str:
+        desc = self._create_remotes_description()
+        if desc:
+            return f"Remote repository created on remote platform: {desc}"
         return "Remote repository created on remote platform"
 
     def description(self) -> str:
@@ -147,6 +153,65 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
                             # Create repository directly from URL
                             remote.create_repository_if_not_exists(remote_url)
+
+    def _create_remotes_description(self) -> str:
+        from wexample_filestate_git.config_option.create_remote_config_option import (
+            CreateRemoteConfigOption,
+        )
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
+        from wexample_filestate_git.config_option.remote_config_option import (
+            RemoteConfigOption,
+        )
+        from wexample_filestate_git.config_option.type_config_option import (
+            TypeConfigOption,
+        )
+        from wexample_filestate_git.config_option.url_config_option import (
+            UrlConfigOption,
+        )
+
+        parts: list[str] = []
+
+        git_option = self.target.get_option(GitConfigOption)
+        if not git_option:
+            return ""
+        remote_option = git_option.get_option(RemoteConfigOption)
+        if not remote_option:
+            return ""
+
+        for remote_item_option in remote_option.children:
+            create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
+            if not (create_remote_option and create_remote_option.get_value().is_true()):
+                continue
+
+            url_option = remote_item_option.get_option(UrlConfigOption)
+            type_option = remote_item_option.get_option(TypeConfigOption)
+
+            remote_url = None
+            remote_type_label = None
+
+            if url_option:
+                remote_url = self._config_parse_file_value(url_option.get_value())
+
+            if type_option:
+                remote_type_label = type_option.get_value().get_str().lower()
+            else:
+                if remote_url:
+                    detected = self._detect_remote_type(remote_url)
+                    if detected is GithubRemote:
+                        remote_type_label = "github"
+                    elif detected is GitlabRemote:
+                        remote_type_label = "gitlab"
+
+            if remote_url and remote_type_label:
+                parts.append(f"{remote_type_label}: {remote_url}")
+            elif remote_url:
+                parts.append(str(remote_url))
+            elif remote_type_label:
+                parts.append(str(remote_type_label))
+
+        return ", ".join(parts)
 
     def _config_parse_file_value(self, value: ConfigValue) -> str:
         if value.is_str():
