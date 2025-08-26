@@ -21,7 +21,7 @@ class GitlabRemote(AbstractRemote):
     def model_post_init(self, *args, **kwargs) -> None:
         super().model_post_init(*args, **kwargs)
 
-        self.default_headers.update({"PRIVATE-TOKEN": os.getenv(self.api_token)})
+        self.default_headers.update({"PRIVATE-TOKEN": self.api_token})
 
     def create_repository(
             self, name: str, namespace: str, description: str = "", private: bool = False
@@ -70,16 +70,13 @@ class GitlabRemote(AbstractRemote):
             name: Repository name
             namespace: Organization or user name (mandatory)
         """
-        try:
-            endpoint = f"projects/{namespace}%2F{name}"
-            response = self.make_request(
-                endpoint=endpoint,
-                call_origin=__file__,
-                expected_status_codes=[200, 404],
-            )
-            return response.status_code == 200
-        except Exception:
-            return False
+        endpoint = f"projects/{namespace}%2F{name}"
+        response = self.make_request(
+            endpoint=endpoint,
+            call_origin=__file__,
+            expected_status_codes=[200, 404],
+        )
+        return response.status_code == 200
 
     def create_repository_if_not_exists(
             self, remote_url: str, description: str = "", private: bool = False
