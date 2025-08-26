@@ -8,5 +8,6 @@ from wexample_config.config_option.abstract_list_config_option import (
 
 
 class MainBranchConfigOption(AbstractListConfigOption):
-    def get_item_class_type(self) -> type | UnionType:
+    @staticmethod
+    def get_raw_value_allowed_type() -> type | UnionType:
         return str
