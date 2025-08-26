@@ -21,7 +21,7 @@ class GitlabRemote(AbstractRemote):
     def model_post_init(self, *args, **kwargs) -> None:
         super().model_post_init(*args, **kwargs)
 
-        self.default_headers.update({"PRIVATE-TOKEN": os.getenv(self.token)})
+        self.default_headers.update({"PRIVATE-TOKEN": os.getenv(self.api_token)})
 
     def create_repository(
             self, name: str, namespace: str, description: str = "", private: bool = False

@@ -51,8 +51,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         CreateRemoteConfigOption
                     )
                     if not (
-                        create_remote_option
-                        and create_remote_option.get_value().is_true()
+                            create_remote_option
+                            and create_remote_option.get_value().is_true()
                     ):
                         continue
 
@@ -69,7 +69,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     remote.connect()
                     repo_info = remote.parse_repository_url(remote_url)
                     if not remote.check_repository_exists(
-                        repo_info["name"], repo_info["namespace"]
+                            repo_info["name"], repo_info["namespace"]
                     ):
                         # At least one configured remote is missing: operation is applicable
                         return True
@@ -205,17 +205,16 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
     def _build_remote_instance(self, remote_type: type[AbstractRemote]) -> AbstractRemote | None:
         # Instantiate the proper remote with required constructor args
-        if remote_type is GithubRemote:
-            # GithubRemote expects an api_token passed explicitly
-            return remote_type(
-                io=self.target.io,
-                api_token=self.target.get_env_parameter(key="GITHUB_API_TOKEN"),
-            )
-        elif remote_type is GitlabRemote:
-            # GitlabRemote reads its token from env in model_post_init
-            return remote_type(io=self.target.io)
-        else:
-            return None
+        # GithubRemote expects an api_token passed explicitly
+        # We may find another way to pass tokens, with an option value.
+
+        return remote_type(
+            io=self.target.io,
+            api_token=self.target.get_env_parameter(
+                # GITHUB_API_TOKEN / GITLAB_API_TOKEN
+                key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+            ),
+        )
 
     def _create_remotes_description(self) -> str:
         from wexample_filestate_git.config_option.create_remote_config_option import (

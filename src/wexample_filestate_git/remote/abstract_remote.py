@@ -11,9 +11,13 @@ class AbstractRemote(AbstractGateway):
     Provides a common interface for interacting with remote repositories.
     """
 
+    @classmethod
+    def get_class_name_suffix(cls) -> str | None:
+        return "Remote"
+
     @abstractmethod
     def create_repository(
-        self, name: str, namespace: str, description: str = "", private: bool = False
+            self, name: str, namespace: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a new repository on the remote service.
@@ -43,7 +47,7 @@ class AbstractRemote(AbstractGateway):
 
     @abstractmethod
     def create_repository_if_not_exists(
-        self, remote_url: str, description: str = "", private: bool = False
+            self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
         """
         Create a repository from a complete remote URL if it doesn't exist.
