@@ -45,15 +45,33 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             git_option = self.target.get_option(GitConfigOption)
             remote_option = git_option.get_option(RemoteConfigOption)
             if remote_option:
-                # Check if at least one remote has create_remote: true
+                # Trigger only if at least one remote needs to be created (doesn't exist yet)
                 for remote_item_option in remote_option.children:
                     create_remote_option = remote_item_option.get_option(
                         CreateRemoteConfigOption
                     )
-                    if (
-                            create_remote_option
-                            and create_remote_option.get_value().is_true()
+                    if not (
+                        create_remote_option
+                        and create_remote_option.get_value().is_true()
                     ):
+                        continue
+
+                    # Resolve remote type and URL
+                    resolved = self._resolve_remote_type_and_url(remote_item_option)
+                    if not resolved:
+                        continue
+
+                    remote_type, remote_url = resolved
+                    remote = self._build_remote_instance(remote_type)
+                    if not remote:
+                        continue
+
+                    remote.connect()
+                    repo_info = remote.parse_repository_url(remote_url)
+                    if not remote.check_repository_exists(
+                        repo_info["name"], repo_info["namespace"]
+                    ):
+                        # At least one configured remote is missing: operation is applicable
                         return True
 
         return False
@@ -145,14 +163,59 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                             remote_type = self._detect_remote_type(remote_url)
 
                         if remote_type:
-                            remote = remote_type(
-                                io=self.target.io,
-                                api_token=self.target.get_env_parameter(key="GITHUB_API_TOKEN"),
-                            )
-                            remote.connect()
+                            remote = self._build_remote_instance(remote_type)
+                            if remote:
+                                remote.connect()
+                                # Create repository directly from URL
+                                remote.create_repository_if_not_exists(remote_url)
 
-                            # Create repository directly from URL
-                            remote.create_repository_if_not_exists(remote_url)
+    def _resolve_remote_type_and_url(self, remote_item_option):
+        from wexample_filestate_git.config_option.type_config_option import (
+            TypeConfigOption,
+        )
+        from wexample_filestate_git.config_option.url_config_option import (
+            UrlConfigOption,
+        )
+        from wexample_helpers_git.const.common import (
+            GIT_PROVIDER_GITHUB,
+            GIT_PROVIDER_GITLAB,
+        )
+
+        url_option = remote_item_option.get_option(UrlConfigOption)
+        type_option = remote_item_option.get_option(TypeConfigOption)
+
+        if not url_option:
+            return None
+
+        remote_url = self._build_str_value(url_option.get_value())
+
+        if type_option:
+            type_map = {
+                GIT_PROVIDER_GITHUB: GithubRemote,
+                GIT_PROVIDER_GITLAB: GitlabRemote,
+            }
+            remote_type = type_map.get(type_option.get_value().get_str().lower())
+        else:
+            remote_type = self._detect_remote_type(remote_url)
+
+        if not remote_type:
+            return None
+
+        return remote_type, remote_url
+
+    def _build_remote_instance(self, remote_type: type[AbstractRemote]) -> AbstractRemote | None:
+        # Instantiate the proper remote with required constructor args
+        if remote_type is GithubRemote:
+            # GithubRemote expects an api_token passed explicitly
+            return remote_type(
+                io=self.target.io,
+                api_token=self.target.get_env_parameter(key="GITHUB_API_TOKEN"),
+            )
+        elif remote_type is GitlabRemote:
+            # GitlabRemote reads its token from env in model_post_init
+            return remote_type(io=self.target.io)
+        else:
+            return None
 
     def _create_remotes_description(self) -> str:
         from wexample_filestate_git.config_option.create_remote_config_option import (
