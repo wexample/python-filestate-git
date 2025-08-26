@@ -10,3 +10,10 @@ class AbstractGitOperation(AbstractOperation, ABC):
     @classmethod
     def get_scope(cls) -> Scope:
         return Scope.LOCATION
+
+    # Shared Git helpers
+    def _get_target_git_repo(self):
+        """Return the GitPython Repo for the target path."""
+        from git import Repo
+
+        return Repo(self.target.get_path())

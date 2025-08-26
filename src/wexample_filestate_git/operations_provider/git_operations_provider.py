@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 class GitOperationsProvider(AbstractOperationsProvider):
     @staticmethod
     def get_operations() -> list[type[AbstractOperation]]:
+        from wexample_filestate_git.operation.git_create_branch_operation import GitCreateBranchOperation
         from wexample_filestate.const.state_items import TargetFileOrDirectory
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
         from wexample_filestate_git.operation.git_remote_add_operation import (
@@ -32,4 +33,5 @@ class GitOperationsProvider(AbstractOperationsProvider):
             GitInitOperation,
             GitRemoteAddOperation,
             GitRemoteCreateOperation,
+            GitCreateBranchOperation,
         ]
