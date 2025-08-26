@@ -146,7 +146,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                             remote_type = self._detect_remote_type(remote_url)
 
                         if remote_type:
-                            remote = remote_type(io_manager=self.io)
+                            remote = remote_type(io=self.target.io)
                             remote.connect()
 
                             # Create repository directly from URL
