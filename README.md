@@ -2,7 +2,7 @@
 
 An extension for "filestate" package, which adds GIT management operations.
 
-Version: 0.0.35
+Version: 0.0.36
 
 ## Requirements
 
