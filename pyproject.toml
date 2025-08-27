@@ -38,6 +38,9 @@ dev = [
     "pytest",
 ]
 
+[tool.pdm]
+distribution = true
+
 [tool.pdm.build]
 includes = [
     "src/wexample_filestate_git/py.typed",
