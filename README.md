@@ -12,9 +12,9 @@ Version: 0.0.36
 
 - pydantic>=2,<3
 - requests
-- wexample-filestate==0.0.46
-- wexample-helpers-api==0.0.28
-- wexample-helpers-git==0.0.45
+- wexample-filestate==0.0.47
+- wexample-helpers-api==0.0.29
+- wexample-helpers-git==0.0.46
 
 ## Installation
 
