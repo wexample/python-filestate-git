@@ -9,7 +9,7 @@ from wexample_filestate.operation.abstract_operation import AbstractOperation
 class AbstractGitOperation(AbstractOperation, ABC):
     @classmethod
     def get_scope(cls) -> Scope:
-        return Scope.LOCATION
+        return Scope.REMOTE
 
     # Shared Git helpers
     def _get_target_git_repo(self):
