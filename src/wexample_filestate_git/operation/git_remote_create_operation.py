@@ -54,20 +54,17 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         # Trigger only if at least one remote needs to be created (doesn't exist yet)
         for remote_item_option in remote_option.children:
-            # 1) creation flag must be true
+            # creation flag must be true
             create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
             create_enabled = (
                 create_remote_option is not None
                 and create_remote_option.get_value().is_true()
             )
 
-            # 2) item must be active (treat missing ActiveConfigOption as inactive)
+            # item must be active (missing flag => active by default)
             active_option = remote_item_option.get_option(ActiveConfigOption)
-            is_active = (
-                ActiveConfigOption.is_active(active_option.get_value().raw)
-                if active_option is not None
-                else False
-            )
+            raw_active = active_option.get_value().raw if active_option is not None else None
+            is_active = self._is_active_flag(raw_active)
 
             if create_enabled and is_active:
                 # 3) resolve type and url

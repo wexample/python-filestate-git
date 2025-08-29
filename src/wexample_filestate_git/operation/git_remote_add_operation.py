@@ -65,11 +65,15 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
+        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
 
         value = self.target.get_option_value(GitConfigOption)
 
         if value.is_dict():
             for remote in value.get_dict().get("remote"):
+                # Respect per-remote active flag (defaults to inactive if missing)
+                if not self._is_active_flag(remote.get(ActiveConfigOption.get_name())):
+                    continue
                 repo = self._get_target_git_repo()
 
                 remote_name = self._build_str_value(remote["name"])
@@ -114,6 +118,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
+        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
 
         value = self.target.get_option_value(GitConfigOption)
 
@@ -128,6 +133,9 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         existing_by_name = {r.name: r for r in repo.remotes}
 
         for remote in configured_remotes:
+            # Skip inactive remotes; treat missing flag as inactive
+            if not self._is_active_flag(remote.get(ActiveConfigOption.get_name())):
+                continue
             desired_name = self._build_value(remote.get("name"))
             desired_url = self._build_value(remote.get("url"))
 
