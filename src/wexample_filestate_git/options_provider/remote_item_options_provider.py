@@ -26,7 +26,7 @@ class RemoteItemOptionsProvider(AbstractOptionsProvider):
         from wexample_filestate_git.config_option.url_config_option import (
             UrlConfigOption,
         )
-        
+
         return [
             ActiveConfigOption,
             NameConfigOption,

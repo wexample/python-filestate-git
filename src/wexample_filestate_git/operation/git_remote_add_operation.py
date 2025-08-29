@@ -45,7 +45,6 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
             return self._is_remote_missing_or_mismatched()
 
-
     def describe_before(self) -> str:
         desc = self._remotes_description()
         if desc:
