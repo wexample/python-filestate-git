@@ -49,45 +49,44 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         git_option = self.target.get_option(GitConfigOption)
         remote_option = git_option.get_option(RemoteConfigOption)
-        if remote_option:
-            # Trigger only if at least one remote needs to be created (doesn't exist yet)
-            for remote_item_option in remote_option.children:
-                create_remote_option = remote_item_option.get_option(
-                    CreateRemoteConfigOption
-                )
-                if not (
-                        create_remote_option
-                        and create_remote_option.get_value().is_true()
-                ):
-                    continue
+        if not remote_option:
+            return False
 
-                active_option = remote_item_option.get_option(ActiveConfigOption)
-                if active_option is not None and not ActiveConfigOption.is_active(
-                        remote_item_option.get_option(ActiveConfigOption).get_value().raw
-                ):
-                    continue
+        # Trigger only if at least one remote needs to be created (doesn't exist yet)
+        for remote_item_option in remote_option.children:
+            # 1) creation flag must be true
+            create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
+            create_enabled = (
+                create_remote_option is not None
+                and create_remote_option.get_value().is_true()
+            )
 
-                # Resolve remote type and URL
+            # 2) item must be active (treat missing ActiveConfigOption as inactive)
+            active_option = remote_item_option.get_option(ActiveConfigOption)
+            is_active = (
+                ActiveConfigOption.is_active(active_option.get_value().raw)
+                if active_option is not None
+                else False
+            )
+
+            if create_enabled and is_active:
+                # 3) resolve type and url
                 resolved = self._resolve_remote_type_and_url(remote_item_option)
-                if not resolved:
-                    continue
-
-                remote_type, remote_url = resolved
-                # Derive API base URL from repo URL (supports custom domains)
-                remote_type.build_remote_api_url_from_repo(remote_url)
-                remote = self._build_remote_instance(
-                    remote_type=remote_type, remote_url=remote_url
-                )
-                if not remote:
-                    continue
-
-                remote.connect()
-                repo_info = remote.parse_repository_url(remote_url)
-                if not remote.check_repository_exists(
-                        repo_info["name"], repo_info["namespace"]
-                ):
-                    # At least one configured remote is missing: operation is applicable
-                    return True
+                if resolved:
+                    remote_type, remote_url = resolved
+                    # Derive API base URL from repo URL (supports custom domains)
+                    remote_type.build_remote_api_url_from_repo(remote_url)
+                    remote = self._build_remote_instance(
+                        remote_type=remote_type, remote_url=remote_url
+                    )
+                    if remote:
+                        remote.connect()
+                        repo_info = remote.parse_repository_url(remote_url)
+                        if not remote.check_repository_exists(
+                            repo_info["name"], repo_info["namespace"]
+                        ):
+                            # At least one configured remote is missing: operation is applicable
+                            return True
 
         return False
 
