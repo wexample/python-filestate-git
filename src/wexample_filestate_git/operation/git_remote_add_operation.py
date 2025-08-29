@@ -34,15 +34,17 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
             GitConfigOption,
         )
 
-        if isinstance(option, GitConfigOption):
-            if option.should_have_git() and git_is_init(self.target.get_path()):
-                value = self.target.get_option_value(GitConfigOption)
-                if not value or not value.has_key_in_dict("remote"):
-                    return False
+        if not self._is_active_git_option(option):
+            return False
 
-                return self._is_remote_missing_or_mismatched()
+        assert isinstance(option, GitConfigOption)
+        if option.should_have_git() and git_is_init(self.target.get_path()):
+            value = self.target.get_option_value(GitConfigOption)
+            if not value or not value.has_key_in_dict("remote"):
+                return False
 
-        return False
+            return self._is_remote_missing_or_mismatched()
+
 
     def describe_before(self) -> str:
         desc = self._remotes_description()

@@ -24,12 +24,8 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
         return [GitInitOperation]  # type: ignore[return-value]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
-
         # Only applicable when git is enabled and repo exists
-        if not isinstance(option, GitConfigOption):
+        if not self._is_active_git_option(option):
             return False
 
         if not option.should_have_git():

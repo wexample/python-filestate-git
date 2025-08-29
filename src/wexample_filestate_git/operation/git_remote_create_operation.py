@@ -30,53 +30,64 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return [GitRemoteAddOperation]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
+        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
 
-        if isinstance(option, GitConfigOption):
-            from wexample_filestate_git.config_option.create_remote_config_option import (
-                CreateRemoteConfigOption,
-            )
-            from wexample_filestate_git.config_option.remote_config_option import (
-                RemoteConfigOption,
-            )
+        if not self._is_active_git_option(option):
+            return False
 
-            git_option = self.target.get_option(GitConfigOption)
-            remote_option = git_option.get_option(RemoteConfigOption)
-            if remote_option:
-                # Trigger only if at least one remote needs to be created (doesn't exist yet)
-                for remote_item_option in remote_option.children:
-                    create_remote_option = remote_item_option.get_option(
-                        CreateRemoteConfigOption
-                    )
-                    if not (
+        assert isinstance(option, GitConfigOption)
+
+        from wexample_filestate_git.config_option.create_remote_config_option import (
+            CreateRemoteConfigOption,
+        )
+        from wexample_filestate_git.config_option.remote_config_option import (
+            RemoteConfigOption,
+        )
+
+        git_option = self.target.get_option(GitConfigOption)
+        remote_option = git_option.get_option(RemoteConfigOption)
+        if remote_option:
+            # Trigger only if at least one remote needs to be created (doesn't exist yet)
+            for remote_item_option in remote_option.children:
+                create_remote_option = remote_item_option.get_option(
+                    CreateRemoteConfigOption
+                )
+                if not (
                         create_remote_option
                         and create_remote_option.get_value().is_true()
-                    ):
-                        continue
+                ):
+                    continue
 
-                    # Resolve remote type and URL
-                    resolved = self._resolve_remote_type_and_url(remote_item_option)
-                    if not resolved:
-                        continue
+                active_option = remote_item_option.get_option(ActiveConfigOption)
+                if active_option is not None and not ActiveConfigOption.is_active(
+                        remote_item_option.get_option(ActiveConfigOption).get_value().raw
+                ):
+                    continue
 
-                    remote_type, remote_url = resolved
-                    # Derive API base URL from repo URL (supports custom domains)
-                    remote_type.build_remote_api_url_from_repo(remote_url)
-                    remote = self._build_remote_instance(
-                        remote_type=remote_type, remote_url=remote_url
-                    )
-                    if not remote:
-                        continue
+                # Resolve remote type and URL
+                resolved = self._resolve_remote_type_and_url(remote_item_option)
+                if not resolved:
+                    continue
 
-                    remote.connect()
-                    repo_info = remote.parse_repository_url(remote_url)
-                    if not remote.check_repository_exists(
+                remote_type, remote_url = resolved
+                # Derive API base URL from repo URL (supports custom domains)
+                remote_type.build_remote_api_url_from_repo(remote_url)
+                remote = self._build_remote_instance(
+                    remote_type=remote_type, remote_url=remote_url
+                )
+                if not remote:
+                    continue
+
+                remote.connect()
+                repo_info = remote.parse_repository_url(remote_url)
+                if not remote.check_repository_exists(
                         repo_info["name"], repo_info["namespace"]
-                    ):
-                        # At least one configured remote is missing: operation is applicable
-                        return True
+                ):
+                    # At least one configured remote is missing: operation is applicable
+                    return True
 
         return False
 
@@ -146,8 +157,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
                     if (
-                        create_remote_option
-                        and create_remote_option.get_value().is_true()
+                            create_remote_option
+                            and create_remote_option.get_value().is_true()
                     ):
                         # Support strings or callables in the UrlConfigOption value
                         remote_url = self._build_str_value(url_option.get_value())
@@ -211,7 +222,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return remote_type, remote_url
 
     def _build_remote_instance(
-        self, remote_type: type[AbstractRemote], remote_url: str
+            self, remote_type: type[AbstractRemote], remote_url: str
     ) -> AbstractRemote | None:
         # Instantiate the proper remote with required constructor args
         # GithubRemote expects an api_token passed explicitly
@@ -257,7 +268,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                 CreateRemoteConfigOption
             )
             if not (
-                create_remote_option and create_remote_option.get_value().is_true()
+                    create_remote_option and create_remote_option.get_value().is_true()
             ):
                 continue
 

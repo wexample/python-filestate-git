@@ -30,10 +30,11 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         )
         from wexample_helpers_git.helpers.git import git_is_init
 
-        if isinstance(option, GitConfigOption):
-            return option.should_have_git() and not git_is_init(self.target.get_path())
+        if not self._is_active_git_option(option):
+            return False
 
-        return False
+        assert isinstance(option, GitConfigOption)
+        return option.should_have_git() and not git_is_init(self.target.get_path())
 
     def describe_before(self) -> str:
         return "No initialized .git directory"
