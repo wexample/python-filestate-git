@@ -57,7 +57,9 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         # Trigger only if at least one remote needs to be created (doesn't exist yet)
         for remote_item_option in remote_option.children:
             # creation flag must be true
-            create_remote_option = remote_item_option.get_option(CreateRemoteConfigOption)
+            create_remote_option = remote_item_option.get_option(
+                CreateRemoteConfigOption
+            )
             create_enabled = (
                 create_remote_option is not None
                 and create_remote_option.get_value().is_true()
@@ -65,7 +67,9 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
             # item must be active (missing flag => active by default)
             active_option = remote_item_option.get_option(ActiveConfigOption)
-            raw_active = active_option.get_value().raw if active_option is not None else None
+            raw_active = (
+                active_option.get_value().raw if active_option is not None else None
+            )
             is_active = self._is_active_flag(raw_active)
 
             if create_enabled and is_active:
@@ -155,8 +159,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                     type_option = remote_item_option.get_option(TypeConfigOption)
 
                     if (
-                            create_remote_option
-                            and create_remote_option.get_value().is_true()
+                        create_remote_option
+                        and create_remote_option.get_value().is_true()
                     ):
                         # Support strings or callables in the UrlConfigOption value
                         remote_url = self._build_str_value(url_option.get_value())
@@ -220,7 +224,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return remote_type, remote_url
 
     def _build_remote_instance(
-            self, remote_type: type[AbstractRemote], remote_url: str
+        self, remote_type: type[AbstractRemote], remote_url: str
     ) -> AbstractRemote | None:
         # Instantiate the proper remote with required constructor args
         # GithubRemote expects an api_token passed explicitly
@@ -266,7 +270,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                 CreateRemoteConfigOption
             )
             if not (
-                    create_remote_option and create_remote_option.get_value().is_true()
+                create_remote_option and create_remote_option.get_value().is_true()
             ):
                 continue
 
