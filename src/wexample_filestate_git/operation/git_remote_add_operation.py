@@ -62,10 +62,12 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return "Add remote in .git directory"
 
     def apply(self) -> None:
+        from wexample_filestate.config_option.active_config_option import (
+            ActiveConfigOption,
+        )
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
-        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
 
         value = self.target.get_option_value(GitConfigOption)
 
@@ -115,10 +117,12 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return ", ".join(parts)
 
     def _is_remote_missing_or_mismatched(self) -> bool:
+        from wexample_filestate.config_option.active_config_option import (
+            ActiveConfigOption,
+        )
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
-        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
 
         value = self.target.get_option_value(GitConfigOption)
 

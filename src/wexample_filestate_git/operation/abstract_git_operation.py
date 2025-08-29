@@ -7,7 +7,9 @@ from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 
 if TYPE_CHECKING:
-    from wexample_config.config_option.abstract_config_option import AbstractConfigOption
+    from wexample_config.config_option.abstract_config_option import (
+        AbstractConfigOption,
+    )
 
 
 class AbstractGitOperation(AbstractOperation, ABC):
@@ -23,7 +25,9 @@ class AbstractGitOperation(AbstractOperation, ABC):
         return Repo(self.target.get_path())
 
     def _is_active_git_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
+        from wexample_filestate.config_option.active_config_option import (
+            ActiveConfigOption,
+        )
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
         )
@@ -40,7 +44,9 @@ class AbstractGitOperation(AbstractOperation, ABC):
     # Evaluate an 'active' flag consistently across operations.
     # Accepts raw values (bool, int, str, etc.) and treats missing as inactive.
     def _is_active_flag(self, raw_value) -> bool:
-        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
+        from wexample_filestate.config_option.active_config_option import (
+            ActiveConfigOption,
+        )
 
         if raw_value is None:
             return True
