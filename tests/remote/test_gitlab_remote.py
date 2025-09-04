@@ -15,7 +15,7 @@ class TestGitlabRemote(GitRemoteTest):
     SERVICE_CLASS = GitlabRemote
 
     @pytest.fixture
-    def remote(self):
+    def remote(self) -> GitlabRemote:
         io_manager = IoManager()
         with patch.dict("os.environ", {"GITLAB_API_TOKEN": "test_token"}):
             remote = GitlabRemote(io=io_manager)

@@ -7,6 +7,7 @@ from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 
 if TYPE_CHECKING:
+    from git import Repo
     from wexample_config.config_option.abstract_config_option import (
         AbstractConfigOption,
     )
@@ -18,7 +19,7 @@ class AbstractGitOperation(AbstractOperation, ABC):
         return Scope.REMOTE
 
     # Shared Git helpers
-    def _get_target_git_repo(self):
+    def _get_target_git_repo(self) -> Repo:
         """Return the GitPython Repo for the target path."""
         from git import Repo
 
