@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
+
+from git import Repo
 from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
@@ -41,6 +43,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 return False
 
             return self._is_remote_missing_or_mismatched()
+        return False
 
     def describe_before(self) -> str:
         desc = self._remotes_description()
