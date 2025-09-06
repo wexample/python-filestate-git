@@ -5,7 +5,6 @@ from unittest.mock import patch
 import pytest
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
-from wexample_prompt.common.io_manager import IoManager
 
 
 class TestGitlabRemote(GitRemoteTest):
