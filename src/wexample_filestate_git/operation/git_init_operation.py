@@ -1,32 +1,27 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-
-from git import Repo
-from wexample_filestate.operation.abstract_operation import AbstractOperation
-from wexample_filestate.operation.file_create_operation import FileCreateOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
-from wexample_helpers.const.globals import DIR_GIT
 
 if TYPE_CHECKING:
     from wexample_config.config_option.abstract_config_option import (
         AbstractConfigOption,
     )
+    from wexample_filestate.operation.abstract_operation import AbstractOperation
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _has_initialized_git: bool = False
 
     def dependencies(self) -> list[type[AbstractOperation]]:
+        from wexample_filestate.operation.file_create_operation import FileCreateOperation
         return [FileCreateOperation]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
         from wexample_helpers_git.helpers.git import git_is_init
 
         if not self._is_active_git_option(option):
@@ -45,6 +40,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         return "Initialize .git directory"
 
     def apply(self) -> None:
+        from git import Repo
         path = self.target.get_path()
         self._has_initialized_git = True
 
@@ -52,6 +48,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         repo.init()
 
     def undo(self) -> None:
+        from wexample_helpers.const.globals import DIR_GIT
         import shutil
 
         if self._has_initialized_git:
