@@ -9,9 +9,10 @@ from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
     def _operation_test_setup(self) -> None:
+        from unittest.mock import patch
+
         from wexample_filestate_git.remote.github_remote import GithubRemote
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-        from unittest.mock import patch
 
         # Setup all mocks
         self.mock_github_connect = patch.object(GithubRemote, "connect").start()

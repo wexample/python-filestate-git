@@ -15,7 +15,9 @@ if TYPE_CHECKING:
 class GitOptionsProvider(AbstractOptionsProvider):
     @classmethod
     def get_options(cls) -> list[type[AbstractConfigOption]]:
-        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
+        from wexample_filestate_git.config_option.git_config_option import (
+            GitConfigOption,
+        )
 
         return [
             GitConfigOption,

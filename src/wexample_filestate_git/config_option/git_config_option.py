@@ -40,7 +40,9 @@ class GitConfigOption(AbstractNestedConfigOption):
 
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:
-        from wexample_filestate.config_option.should_exist_config_option import ShouldExistConfigOption
+        from wexample_filestate.config_option.should_exist_config_option import (
+            ShouldExistConfigOption,
+        )
 
         if GitConfigOption.get_name() in config and cls.dict_value_should_have_git(
             config[GitConfigOption.get_name()]
@@ -49,5 +51,7 @@ class GitConfigOption(AbstractNestedConfigOption):
         return config
 
     def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
-        from wexample_filestate_git.options_provider.git_config_options_provider import GitConfigOptionsProvider
+        from wexample_filestate_git.options_provider.git_config_options_provider import (
+            GitConfigOptionsProvider,
+        )
         return [GitConfigOptionsProvider]

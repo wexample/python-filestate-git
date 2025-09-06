@@ -14,7 +14,5 @@ if TYPE_CHECKING:
 
 class RemoteItemConfigOption(AbstractNestedConfigOption):
     def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
-        from wexample_filestate_git.options_provider.remote_item_options_provider import (
-            RemoteItemOptionsProvider,
-        )
+        from wexample_filestate_git.options_provider.remote_item_options_provider import RemoteItemOptionsProvider
         return [RemoteItemOptionsProvider]
