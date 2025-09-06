@@ -32,6 +32,7 @@ class GitlabRemote(AbstractRemote):
             private: Whether the repository should be private
         """
         from wexample_helpers_api.enums.http import HttpMethod
+
         data = {
             "name": name,
             "path": name,

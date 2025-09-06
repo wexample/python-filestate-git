@@ -11,8 +11,8 @@ if TYPE_CHECKING:
         AbstractConfigOption,
     )
     from wexample_filestate.operation.abstract_operation import AbstractOperation
-    from wexample_filestate_git.config_option.git_config_option import GitConfigOption
     from git import Repo
+    from wexample_filestate_git.config_option.git_config_option import GitConfigOption
 
 
 class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):

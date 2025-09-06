@@ -19,6 +19,7 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
 
     def dependencies(self):
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
+
         # Ensure repository is initialized before creating a branch
 
         return [GitInitOperation]  # type: ignore[return-value]

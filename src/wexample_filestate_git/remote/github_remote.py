@@ -36,6 +36,7 @@ class GithubRemote(AbstractRemote):
             private: Whether the repository should be private
         """
         from wexample_helpers_api.enums.http import HttpMethod
+
         endpoint = f"orgs/{namespace}/repos"
 
         response = self.make_request(

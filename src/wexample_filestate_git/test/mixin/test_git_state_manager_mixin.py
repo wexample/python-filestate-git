@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 from wexample_config.options_provider.abstract_options_provider import (
     AbstractOptionsProvider,
@@ -8,7 +9,7 @@ from wexample_config.options_provider.abstract_options_provider import (
 from wexample_filestate.operations_provider.abstract_operations_provider import (
     AbstractOperationsProvider,
 )
-from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from pathlib import Path
 

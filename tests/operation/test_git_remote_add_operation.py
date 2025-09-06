@@ -10,6 +10,7 @@ from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
 class TestGitRemoteAddOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
+
         self._remove_test_git_dir()
 
         return {
