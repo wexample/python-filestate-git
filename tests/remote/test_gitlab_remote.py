@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from unittest.mock import patch
-
 import pytest
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
@@ -16,6 +14,7 @@ class TestGitlabRemote(GitRemoteTest):
     @pytest.fixture
     def remote(self) -> GitlabRemote:
         from wexample_prompt.common.io_manager import IoManager
+        from unittest.mock import patch
         io_manager = IoManager()
         with patch.dict("os.environ", {"GITLAB_API_TOKEN": "test_token"}):
             remote = GitlabRemote(io=io_manager)
@@ -44,6 +43,7 @@ class TestGitlabRemote(GitRemoteTest):
         assert info == {"name": "test-repo", "namespace": "test-namespace"}
 
     def test_create_repository(self, remote) -> None:
+        from unittest.mock import patch
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
@@ -61,6 +61,7 @@ class TestGitlabRemote(GitRemoteTest):
             assert result == {"id": 1}
 
     def test_check_repository_exists(self, remote) -> None:
+        from unittest.mock import patch
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:

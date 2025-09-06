@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from unittest.mock import patch
-
 import pytest
 from wexample_filestate_git.remote.github_remote import GithubRemote
 from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
@@ -16,6 +14,7 @@ class TestGithubRemote(GitRemoteTest):
     @pytest.fixture
     def remote(self) -> GithubRemote:
         from wexample_prompt.common.io_manager import IoManager
+        from unittest.mock import patch
         io_manager = IoManager()
         with patch.dict("os.environ", {"GITHUB_API_TOKEN": "test_token"}):
             remote = GithubRemote(io=io_manager)
@@ -46,6 +45,7 @@ class TestGithubRemote(GitRemoteTest):
         assert info == {"name": "test-repo", "namespace": "test-namespace"}
 
     def test_create_repository(self, remote) -> None:
+        from unittest.mock import patch
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
@@ -63,6 +63,7 @@ class TestGithubRemote(GitRemoteTest):
             assert result == {"id": 1}
 
     def test_check_repository_exists(self, remote) -> None:
+        from unittest.mock import patch
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:

@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
-
-from git import Repo
-from wexample_filestate.operation.abstract_operation import AbstractOperation
 from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
     FileManipulationOperationMixin,
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
-from wexample_helpers_git.helpers.git import git_is_init, git_remote_create_once
 
 if TYPE_CHECKING:
     from wexample_config.config_option.abstract_config_option import (
         AbstractConfigOption,
     )
+    from wexample_filestate.operation.abstract_operation import AbstractOperation
+    from wexample_filestate_git.config_option.git_config_option import GitConfigOption
+    from git import Repo
 
 
 class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
@@ -29,9 +28,8 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return [GitInitOperation]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
+        from wexample_helpers_git.helpers.git import git_is_init
 
         if not self._is_active_git_option(option):
             return False
@@ -61,12 +59,9 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return "Add remote in .git directory"
 
     def apply(self) -> None:
-        from wexample_filestate.config_option.active_config_option import (
-            ActiveConfigOption,
-        )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
+        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
+        from wexample_helpers_git.helpers.git import git_remote_create_once
 
         value = self.target.get_option_value(GitConfigOption)
 
@@ -85,9 +80,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
                 )
 
     def _remotes_description(self) -> str:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
 
         value = self.target.get_option_value(GitConfigOption)
 
@@ -116,12 +109,8 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return ", ".join(parts)
 
     def _is_remote_missing_or_mismatched(self) -> bool:
-        from wexample_filestate.config_option.active_config_option import (
-            ActiveConfigOption,
-        )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
+        from wexample_filestate.config_option.active_config_option import ActiveConfigOption
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
 
         value = self.target.get_option_value(GitConfigOption)
 
@@ -163,9 +152,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return Repo(self.target.get_path())
 
     def undo(self) -> None:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
+        from wexample_filestate_git.config_option.git_config_option import GitConfigOption
 
         option = cast(GitConfigOption, self.target.get_option(GitConfigOption))
 
