@@ -16,6 +16,7 @@ class TestGithubRemote(GitRemoteTest):
 
     @pytest.fixture
     def remote(self) -> GithubRemote:
+        from wexample_prompt.common.io_manager import IoManager
         io_manager = IoManager()
         with patch.dict("os.environ", {"GITHUB_API_TOKEN": "test_token"}):
             remote = GithubRemote(io=io_manager)
