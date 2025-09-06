@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from unittest.mock import patch
 
 from wexample_config.options_provider.abstract_options_provider import (
@@ -29,7 +30,7 @@ class TestGitFileStateManagerMixin:
         self._env_patcher.start()
 
     def _get_test_operations_providers(
-        self,
+            self,
     ) -> list[type[AbstractOperationsProvider]] | None:
         from wexample_filestate.operations_provider.default_operations_provider import (
             DefaultOperationsProvider,
@@ -41,7 +42,7 @@ class TestGitFileStateManagerMixin:
         return [DefaultOperationsProvider, GitOperationsProvider]
 
     def _get_test_options_providers(
-        self,
+            self,
     ) -> list[type[AbstractOptionsProvider]] | None:
         from wexample_filestate.options_provider.default_options_provider import (
             DefaultOptionsProvider,
@@ -57,10 +58,6 @@ class TestGitFileStateManagerMixin:
             self._get_absolute_path_from_state_manager("test_git_dir/.git")
         )
 
-    def _get_git_dir_path(self, item_name: str) -> str:
+    def _get_git_dir_path(self, item_name: str) -> Path:
         """Get the path to the .git directory for a given item."""
-        from os.path import join
-
-        return join(
-            self.state_manager.find_by_name_or_fail(item_name).get_resolved(), DIR_GIT
-        )
+        return self.state_manager.find_by_name_or_fail(item_name).get_path() / DIR_GIT

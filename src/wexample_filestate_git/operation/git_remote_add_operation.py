@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 
 class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
-    _original_path_str: str
     _created_remote: dict[str, bool]
 
     def __init__(self, **data) -> None:

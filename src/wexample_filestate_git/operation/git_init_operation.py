@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
-    _original_path_str: str
     _has_initialized_git: bool = False
 
     def dependencies(self) -> list[type[AbstractOperation]]:
