@@ -30,7 +30,7 @@ class TestGitFileStateManagerMixin:
         self._env_patcher.start()
 
     def _get_test_operations_providers(
-            self,
+        self,
     ) -> list[type[AbstractOperationsProvider]] | None:
         from wexample_filestate.operations_provider.default_operations_provider import (
             DefaultOperationsProvider,
@@ -42,7 +42,7 @@ class TestGitFileStateManagerMixin:
         return [DefaultOperationsProvider, GitOperationsProvider]
 
     def _get_test_options_providers(
-            self,
+        self,
     ) -> list[type[AbstractOptionsProvider]] | None:
         from wexample_filestate.options_provider.default_options_provider import (
             DefaultOptionsProvider,
