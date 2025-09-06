@@ -4,7 +4,6 @@ import re
 
 import requests
 from pydantic import Field
-from wexample_helpers_api.enums.http import HttpMethod
 
 from .abstract_remote import AbstractRemote
 
@@ -32,6 +31,7 @@ class GitlabRemote(AbstractRemote):
             description: Optional repository description
             private: Whether the repository should be private
         """
+        from wexample_helpers_api.enums.http import HttpMethod
         data = {
             "name": name,
             "path": name,
