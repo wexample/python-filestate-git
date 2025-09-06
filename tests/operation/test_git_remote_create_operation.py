@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-from unittest.mock import patch
-
 from wexample_config.const.types import DictConfig
-from wexample_filestate.const.disk import DiskItemType
 from wexample_filestate.testing.test_abstract_operation import TestAbstractOperation
-from wexample_filestate_git.remote.github_remote import GithubRemote
-from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
     TestGitFileStateManagerMixin,
 )
@@ -14,6 +9,9 @@ from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
     def _operation_test_setup(self) -> None:
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+        from unittest.mock import patch
         # Setup all mocks
         self.mock_github_connect = patch.object(GithubRemote, "connect").start()
         self.mock_github_create_if_not_exists = patch.object(
@@ -32,6 +30,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
         super()._operation_test_setup()
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
+        from wexample_filestate.const.disk import DiskItemType
         self._remove_test_git_dir()
         self._mock_git_env()
 
