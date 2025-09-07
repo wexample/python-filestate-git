@@ -32,6 +32,7 @@ class GitOperationsProvider(AbstractOperationsProvider):
         GitRemoteCreateOperation.model_rebuild()
 
         return [
+            # filestate: python-iterable-sort
             GitInitOperation,
             GitRemoteAddOperation,
             GitRemoteCreateOperation,
