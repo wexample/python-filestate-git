@@ -17,4 +17,5 @@ class RemoteItemConfigOption(AbstractNestedConfigOption):
         from wexample_filestate_git.options_provider.remote_item_options_provider import (
             RemoteItemOptionsProvider,
         )
+
         return [RemoteItemOptionsProvider]

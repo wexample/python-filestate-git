@@ -54,4 +54,5 @@ class GitConfigOption(AbstractNestedConfigOption):
         from wexample_filestate_git.options_provider.git_config_options_provider import (
             GitConfigOptionsProvider,
         )
+
         return [GitConfigOptionsProvider]

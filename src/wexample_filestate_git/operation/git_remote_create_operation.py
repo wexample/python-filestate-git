@@ -20,6 +20,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
     def get_remote_types() -> list[type[AbstractRemote]]:
         from wexample_filestate_git.remote.github_remote import GithubRemote
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+
         return [GithubRemote, GitlabRemote]
 
     def dependencies(self) -> list[type[AbstractOperation]]:

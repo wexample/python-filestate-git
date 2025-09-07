@@ -33,6 +33,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
+
         self._remove_test_git_dir()
         self._mock_git_env()
 

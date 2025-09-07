@@ -161,6 +161,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
     def _get_target_git_repo(self) -> Repo:
         from git import Repo
+
         return Repo(self.target.get_path())
 
     def undo(self) -> None:

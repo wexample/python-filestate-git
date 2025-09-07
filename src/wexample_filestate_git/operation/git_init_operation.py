@@ -21,6 +21,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         from wexample_filestate.operation.file_create_operation import (
             FileCreateOperation,
         )
+
         return [FileCreateOperation]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
@@ -46,6 +47,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
 
     def apply(self) -> None:
         from git import Repo
+
         path = self.target.get_path()
         self._has_initialized_git = True
 

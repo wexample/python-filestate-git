@@ -16,6 +16,7 @@ class TestGithubRemote(GitRemoteTest):
         from unittest.mock import patch
 
         from wexample_prompt.common.io_manager import IoManager
+
         io_manager = IoManager()
         with patch.dict("os.environ", {"GITHUB_API_TOKEN": "test_token"}):
             remote = GithubRemote(io=io_manager)
@@ -47,6 +48,7 @@ class TestGithubRemote(GitRemoteTest):
 
     def test_create_repository(self, remote) -> None:
         from unittest.mock import patch
+
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
@@ -65,6 +67,7 @@ class TestGithubRemote(GitRemoteTest):
 
     def test_check_repository_exists(self, remote) -> None:
         from unittest.mock import patch
+
         with patch(
             "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:

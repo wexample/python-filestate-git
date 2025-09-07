@@ -12,4 +12,5 @@ class RemoteConfigOption(AbstractListConfigOption):
         from wexample_filestate_git.config_option.remote_item_config_option import (
             RemoteItemConfigOption,
         )
+
         return RemoteItemConfigOption
