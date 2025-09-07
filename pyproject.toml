@@ -44,9 +44,6 @@ dev = [
 distribution = true
 
 [tool.pdm.build]
-includes = [
-    'src/wexample_filestate_git/*',
-]
 package-dir = "src"
 
 [[tool.pdm.build.packages]]
