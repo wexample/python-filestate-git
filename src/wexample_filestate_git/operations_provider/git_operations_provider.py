@@ -33,8 +33,8 @@ class GitOperationsProvider(AbstractOperationsProvider):
 
         return [
             # filestate: python-iterable-sort
+            GitCreateBranchOperation,
             GitInitOperation,
             GitRemoteAddOperation,
             GitRemoteCreateOperation,
-            GitCreateBranchOperation,
         ]
