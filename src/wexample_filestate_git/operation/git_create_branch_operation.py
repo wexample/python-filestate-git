@@ -54,7 +54,6 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
         # Ensure repository is initialized before creating a branch
-
         return [GitInitOperation]  # type: ignore[return-value]
 
     def describe_after(self) -> str:
