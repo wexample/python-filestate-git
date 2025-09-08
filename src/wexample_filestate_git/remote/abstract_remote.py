@@ -10,6 +10,7 @@ class AbstractRemote(AbstractGateway):
     Abstract base class for Git repository hosting services (GitHub, GitLab, etc.).
     Provides a common interface for interacting with remote repositories.
     """
+
     @classmethod
     @abstractmethod
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
