@@ -12,8 +12,43 @@ class AbstractRemote(AbstractGateway):
     """
 
     @classmethod
+    @abstractmethod
+    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
+        """Derive the REST API base URL from a git remote URL.
+
+        Implementations should support both SSH and HTTPS remotes and custom domains.
+        Return None to use the class default base_url.
+        """
+
+    @classmethod
+    @abstractmethod
+    def detect_remote_type(cls, remote_url: str) -> bool:
+        """
+        Detect if a remote URL corresponds to this service.
+
+        Args:
+            remote_url: Git remote URL to check
+
+        Returns:
+            bool: True if the URL matches this service's pattern
+        """
+
+    @classmethod
     def get_class_name_suffix(cls) -> str | None:
         return "Remote"
+
+    @abstractmethod
+    def check_repository_exists(self, name: str, namespace: str) -> bool:
+        """
+        Check if a repository exists on the remote service.
+
+        Args:
+            name: Repository name
+            namespace: Repository namespace/organization (mandatory)
+
+        Returns:
+            bool: True if the repository exists
+        """
 
     @abstractmethod
     def create_repository(
@@ -33,19 +68,6 @@ class AbstractRemote(AbstractGateway):
         """
 
     @abstractmethod
-    def check_repository_exists(self, name: str, namespace: str) -> bool:
-        """
-        Check if a repository exists on the remote service.
-
-        Args:
-            name: Repository name
-            namespace: Repository namespace/organization (mandatory)
-
-        Returns:
-            bool: True if the repository exists
-        """
-
-    @abstractmethod
     def create_repository_if_not_exists(
         self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
@@ -61,19 +83,6 @@ class AbstractRemote(AbstractGateway):
             Dict: Repository information from the API if created, empty dict if already exists
         """
 
-    @classmethod
-    @abstractmethod
-    def detect_remote_type(cls, remote_url: str) -> bool:
-        """
-        Detect if a remote URL corresponds to this service.
-
-        Args:
-            remote_url: Git remote URL to check
-
-        Returns:
-            bool: True if the URL matches this service's pattern
-        """
-
     @abstractmethod
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         """
@@ -86,13 +95,4 @@ class AbstractRemote(AbstractGateway):
             Dict with keys:
                 - name: Repository name (without .git)
                 - namespace: Repository namespace/organization (optional)
-        """
-
-    @classmethod
-    @abstractmethod
-    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
-        """Derive the REST API base URL from a git remote URL.
-
-        Implementations should support both SSH and HTTPS remotes and custom domains.
-        Return None to use the class default base_url.
         """

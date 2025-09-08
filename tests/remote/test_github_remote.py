@@ -22,29 +22,19 @@ class TestGithubRemote(GitRemoteTest):
             remote = GithubRemote(io=io_manager)
             return remote
 
-    def _assert_check_repository_exists_request(self, mock_request) -> None:
-        """Assert the request parameters for checking repository existence."""
-        assert (
-            mock_request.call_args[1]["endpoint"]
-            == f"repos/{self.test_namespace}/{self.test_repo_name}"
-        )
+    def test_check_repository_exists(self, remote) -> None:
+        from unittest.mock import patch
 
-    def _assert_create_repository_request(self, mock_request) -> None:
-        """Assert the request parameters for creating a repository."""
-        assert (
-            mock_request.call_args[1]["endpoint"] == f"orgs/{self.test_namespace}/repos"
-        )
-        assert mock_request.call_args[1]["data"]["name"] == self.test_repo_name
+        with patch(
+            "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
+        ) as mock_request:
+            mock_request.return_value.status_code = 200
 
-    def test_parse_repository_url_https(self, remote) -> None:
-        url = "https://github.com/test-namespace/test-repo.git"
-        info = remote.parse_repository_url(url)
-        assert info == {"name": "test-repo", "namespace": "test-namespace"}
+            exists = remote.check_repository_exists("test-repo", "test-namespace")
 
-    def test_parse_repository_url_ssh(self, remote) -> None:
-        url = "git@github.com:test-namespace/test-repo.git"
-        info = remote.parse_repository_url(url)
-        assert info == {"name": "test-repo", "namespace": "test-namespace"}
+            mock_request.assert_called_once()
+            self._assert_check_repository_exists_request(mock_request)
+            assert exists is True
 
     def test_create_repository(self, remote) -> None:
         from unittest.mock import patch
@@ -65,16 +55,26 @@ class TestGithubRemote(GitRemoteTest):
             self._assert_create_repository_request(mock_request)
             assert result == {"id": 1}
 
-    def test_check_repository_exists(self, remote) -> None:
-        from unittest.mock import patch
+    def test_parse_repository_url_https(self, remote) -> None:
+        url = "https://github.com/test-namespace/test-repo.git"
+        info = remote.parse_repository_url(url)
+        assert info == {"name": "test-repo", "namespace": "test-namespace"}
 
-        with patch(
-            "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
-        ) as mock_request:
-            mock_request.return_value.status_code = 200
+    def test_parse_repository_url_ssh(self, remote) -> None:
+        url = "git@github.com:test-namespace/test-repo.git"
+        info = remote.parse_repository_url(url)
+        assert info == {"name": "test-repo", "namespace": "test-namespace"}
 
-            exists = remote.check_repository_exists("test-repo", "test-namespace")
+    def _assert_check_repository_exists_request(self, mock_request) -> None:
+        """Assert the request parameters for checking repository existence."""
+        assert (
+            mock_request.call_args[1]["endpoint"]
+            == f"repos/{self.test_namespace}/{self.test_repo_name}"
+        )
 
-            mock_request.assert_called_once()
-            self._assert_check_repository_exists_request(mock_request)
-            assert exists is True
+    def _assert_create_repository_request(self, mock_request) -> None:
+        """Assert the request parameters for creating a repository."""
+        assert (
+            mock_request.call_args[1]["endpoint"] == f"orgs/{self.test_namespace}/repos"
+        )
+        assert mock_request.call_args[1]["data"]["name"] == self.test_repo_name

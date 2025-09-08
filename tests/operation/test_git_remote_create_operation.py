@@ -8,6 +8,28 @@ from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
 
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
+
+    def _operation_get_count(self) -> int:
+        return 3  # One operation for each remote, 1 operation to create local repo
+
+    def _operation_test_assert_applied(self) -> None:
+        # Verify that repositories were created using the new interface
+        self.mock_github_create_if_not_exists.assert_called_once_with(
+            "https://github.com/test-namespace/test-repo.git"
+        )
+
+        self.mock_gitlab_create_if_not_exists.assert_called_once_with(
+            "https://gitlab.com/test-namespace/test-repo.git"
+        )
+
+    def _operation_test_assert_initial(self) -> None:
+        # Verify initial state - no repositories should exist
+        self.mock_github_create_if_not_exists.assert_not_called()
+        self.mock_gitlab_create_if_not_exists.assert_not_called()
+
+    def _operation_test_assert_rollback(self) -> None:
+        # Add rollback assertions if needed
+        pass
     def _operation_test_setup(self) -> None:
         from unittest.mock import patch
 
@@ -62,25 +84,3 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
                 }
             ]
         }
-
-    def _operation_get_count(self) -> int:
-        return 3  # One operation for each remote, 1 operation to create local repo
-
-    def _operation_test_assert_initial(self) -> None:
-        # Verify initial state - no repositories should exist
-        self.mock_github_create_if_not_exists.assert_not_called()
-        self.mock_gitlab_create_if_not_exists.assert_not_called()
-
-    def _operation_test_assert_applied(self) -> None:
-        # Verify that repositories were created using the new interface
-        self.mock_github_create_if_not_exists.assert_called_once_with(
-            "https://github.com/test-namespace/test-repo.git"
-        )
-
-        self.mock_gitlab_create_if_not_exists.assert_called_once_with(
-            "https://gitlab.com/test-namespace/test-repo.git"
-        )
-
-    def _operation_test_assert_rollback(self) -> None:
-        # Add rollback assertions if needed
-        pass

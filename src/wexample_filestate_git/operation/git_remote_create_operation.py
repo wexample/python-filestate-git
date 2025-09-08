@@ -23,13 +23,6 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         return [GithubRemote, GitlabRemote]
 
-    def dependencies(self) -> list[type[AbstractOperation]]:
-        from wexample_filestate_git.operation.git_remote_add_operation import (
-            GitRemoteAddOperation,
-        )
-
-        return [GitRemoteAddOperation]
-
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
         from wexample_filestate.config_option.active_config_option import (
             ActiveConfigOption,
@@ -92,30 +85,6 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                             return True
 
         return False
-
-    def describe_before(self) -> str:
-        desc = self._create_remotes_description()
-        if desc:
-            return f"Remote repository not created on remote platform: {desc}"
-        return "Remote repository not created on remote platform"
-
-    def describe_after(self) -> str:
-        desc = self._create_remotes_description()
-        if desc:
-            return f"Remote repository created on remote platform: {desc}"
-        return "Remote repository created on remote platform"
-
-    def description(self) -> str:
-        return "Create remote repository on platform"
-
-    def _detect_remote_type(self, remote_url: str) -> type[AbstractRemote] | None:
-        """
-        Detect the remote type (GitHub, GitLab, etc.) from the URL.
-        """
-        for remote_type in self.get_remote_types():
-            if remote_type.detect_remote_type(remote_url):
-                return remote_type
-        return None
 
     def apply(self) -> None:
         from wexample_filestate_git.config_option.create_remote_config_option import (
@@ -191,41 +160,32 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                                 # Create repository directly from URL
                                 remote.create_repository_if_not_exists(remote_url)
 
-    def _resolve_remote_type_and_url(self, remote_item_option):
-        from wexample_filestate_git.config_option.type_config_option import (
-            TypeConfigOption,
-        )
-        from wexample_filestate_git.config_option.url_config_option import (
-            UrlConfigOption,
-        )
-        from wexample_filestate_git.remote.github_remote import GithubRemote
-        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-        from wexample_helpers_git.const.common import (
-            GIT_PROVIDER_GITHUB,
-            GIT_PROVIDER_GITLAB,
+    def dependencies(self) -> list[type[AbstractOperation]]:
+        from wexample_filestate_git.operation.git_remote_add_operation import (
+            GitRemoteAddOperation,
         )
 
-        url_option = remote_item_option.get_option(UrlConfigOption)
-        type_option = remote_item_option.get_option(TypeConfigOption)
+        return [GitRemoteAddOperation]
 
-        if not url_option:
-            return None
+    def describe_after(self) -> str:
+        desc = self._create_remotes_description()
+        if desc:
+            return f"Remote repository created on remote platform: {desc}"
+        return "Remote repository created on remote platform"
 
-        remote_url = self._build_str_value(url_option.get_value())
+    def describe_before(self) -> str:
+        desc = self._create_remotes_description()
+        if desc:
+            return f"Remote repository not created on remote platform: {desc}"
+        return "Remote repository not created on remote platform"
 
-        if type_option:
-            type_map = {
-                GIT_PROVIDER_GITHUB: GithubRemote,
-                GIT_PROVIDER_GITLAB: GitlabRemote,
-            }
-            remote_type = type_map.get(type_option.get_value().get_str().lower())
-        else:
-            remote_type = self._detect_remote_type(remote_url)
+    def description(self) -> str:
+        return "Create remote repository on platform"
 
-        if not remote_type:
-            return None
-
-        return remote_type, remote_url
+    def undo(self) -> None:
+        # Note: We don't implement undo for remote repository creation
+        # as it could be dangerous to automatically delete repositories
+        pass
 
     def _build_remote_instance(
         self, remote_type: type[AbstractRemote], remote_url: str
@@ -308,7 +268,47 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         return ", ".join(parts)
 
-    def undo(self) -> None:
-        # Note: We don't implement undo for remote repository creation
-        # as it could be dangerous to automatically delete repositories
-        pass
+    def _detect_remote_type(self, remote_url: str) -> type[AbstractRemote] | None:
+        """
+        Detect the remote type (GitHub, GitLab, etc.) from the URL.
+        """
+        for remote_type in self.get_remote_types():
+            if remote_type.detect_remote_type(remote_url):
+                return remote_type
+        return None
+
+    def _resolve_remote_type_and_url(self, remote_item_option):
+        from wexample_filestate_git.config_option.type_config_option import (
+            TypeConfigOption,
+        )
+        from wexample_filestate_git.config_option.url_config_option import (
+            UrlConfigOption,
+        )
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+        from wexample_helpers_git.const.common import (
+            GIT_PROVIDER_GITHUB,
+            GIT_PROVIDER_GITLAB,
+        )
+
+        url_option = remote_item_option.get_option(UrlConfigOption)
+        type_option = remote_item_option.get_option(TypeConfigOption)
+
+        if not url_option:
+            return None
+
+        remote_url = self._build_str_value(url_option.get_value())
+
+        if type_option:
+            type_map = {
+                GIT_PROVIDER_GITHUB: GithubRemote,
+                GIT_PROVIDER_GITLAB: GitlabRemote,
+            }
+            remote_type = type_map.get(type_option.get_value().get_str().lower())
+        else:
+            remote_type = self._detect_remote_type(remote_url)
+
+        if not remote_type:
+            return None
+
+        return remote_type, remote_url

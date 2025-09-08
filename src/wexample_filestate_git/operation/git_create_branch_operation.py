@@ -14,15 +14,6 @@ if TYPE_CHECKING:
 
 
 class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperation):
-    def description(self) -> str:
-        return "Create local Git branch if missing"
-
-    def dependencies(self):
-        from wexample_filestate_git.operation.git_init_operation import GitInitOperation
-
-        # Ensure repository is initialized before creating a branch
-
-        return [GitInitOperation]  # type: ignore[return-value]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
         # Only applicable when git is enabled and repo exists
@@ -42,14 +33,6 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
         # Apply only if the branch does not exist locally
         return not any(h.name == branch for h in getattr(repo, "heads", []))
 
-    def describe_before(self) -> str:
-        branch = self._get_desired_branch_name() or "<unknown>"
-        return f"Local branch missing: {branch}"
-
-    def describe_after(self) -> str:
-        branch = self._get_desired_branch_name() or "<unknown>"
-        return f"Local branch created: {branch}"
-
     def apply(self) -> None:
         """Create the desired branch locally if it does not exist.
 
@@ -67,6 +50,27 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         # Create new branch at current HEAD
         repo.create_head(branch)
+
+    def dependencies(self):
+        from wexample_filestate_git.operation.git_init_operation import GitInitOperation
+
+        # Ensure repository is initialized before creating a branch
+
+        return [GitInitOperation]  # type: ignore[return-value]
+
+    def describe_after(self) -> str:
+        branch = self._get_desired_branch_name() or "<unknown>"
+        return f"Local branch created: {branch}"
+
+    def describe_before(self) -> str:
+        branch = self._get_desired_branch_name() or "<unknown>"
+        return f"Local branch missing: {branch}"
+    def description(self) -> str:
+        return "Create local Git branch if missing"
+
+    def undo(self) -> None:
+        # No destructive undo: we do not auto-delete newly created branches
+        pass
 
     # --- helpers ---
     def _get_desired_branch_name(self) -> str | None:
@@ -111,7 +115,3 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         # If the option exists but has no usable value, default to "main"
         return "main"
-
-    def undo(self) -> None:
-        # No destructive undo: we do not auto-delete newly created branches
-        pass

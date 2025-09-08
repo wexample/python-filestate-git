@@ -15,28 +15,6 @@ if TYPE_CHECKING:
 
 
 class GitConfigOption(AbstractNestedConfigOption):
-    @staticmethod
-    def get_raw_value_allowed_type() -> Any:
-        return dict | bool
-
-    @staticmethod
-    def get_value_allowed_type() -> Any | type | UnionType:
-        return dict | bool
-
-    def set_value(self, raw_value: Any) -> None:
-        # Support True without config.
-        if raw_value is True:
-            raw_value = {}
-
-        super().set_value(raw_value=raw_value)
-
-    def should_have_git(self) -> bool:
-        value = self.get_value()
-        return (value.is_bool() and value.is_true()) or value.is_dict()
-
-    @staticmethod
-    def dict_value_should_have_git(value: DictConfigValue) -> bool:
-        return (value is True) or isinstance(value, dict)
 
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:
@@ -50,9 +28,31 @@ class GitConfigOption(AbstractNestedConfigOption):
             config[ShouldExistConfigOption.get_name()] = True
         return config
 
+    @staticmethod
+    def dict_value_should_have_git(value: DictConfigValue) -> bool:
+        return (value is True) or isinstance(value, dict)
+    @staticmethod
+    def get_raw_value_allowed_type() -> Any:
+        return dict | bool
+
+    @staticmethod
+    def get_value_allowed_type() -> Any | type | UnionType:
+        return dict | bool
+
     def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
         from wexample_filestate_git.options_provider.git_config_options_provider import (
             GitConfigOptionsProvider,
         )
 
         return [GitConfigOptionsProvider]
+
+    def set_value(self, raw_value: Any) -> None:
+        # Support True without config.
+        if raw_value is True:
+            raw_value = {}
+
+        super().set_value(raw_value=raw_value)
+
+    def should_have_git(self) -> bool:
+        value = self.get_value()
+        return (value.is_bool() and value.is_true()) or value.is_dict()

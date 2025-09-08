@@ -8,6 +8,15 @@ from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
 
 
 class TestGitOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
+
+    def _operation_get_count(self) -> int:
+        return 1
+
+    def _operation_test_assert_applied(self) -> None:
+        self._assert_dir_exists(self._get_git_dir_path("test_git_dir"))
+
+    def _operation_test_assert_initial(self) -> None:
+        self._assert_dir_exists(self._get_git_dir_path("test_git_dir"), positive=False)
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
 
@@ -23,12 +32,3 @@ class TestGitOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
                 }
             ]
         }
-
-    def _operation_get_count(self) -> int:
-        return 1
-
-    def _operation_test_assert_initial(self) -> None:
-        self._assert_dir_exists(self._get_git_dir_path("test_git_dir"), positive=False)
-
-    def _operation_test_assert_applied(self) -> None:
-        self._assert_dir_exists(self._get_git_dir_path("test_git_dir"))

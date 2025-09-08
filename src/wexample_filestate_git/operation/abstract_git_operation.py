@@ -27,6 +27,17 @@ class AbstractGitOperation(AbstractOperation, ABC):
 
         return Repo(self.target.get_path())
 
+    # Evaluate an 'active' flag consistently across operations.
+    # Accepts raw values (bool, int, str, etc.) and treats missing as inactive.
+    def _is_active_flag(self, raw_value) -> bool:
+        from wexample_filestate.config_option.active_config_option import (
+            ActiveConfigOption,
+        )
+
+        if raw_value is None:
+            return True
+        return ActiveConfigOption.is_active(raw_value)
+
     def _is_active_git_option(self, option: AbstractConfigOption) -> bool:
         from wexample_filestate.config_option.active_config_option import (
             ActiveConfigOption,
@@ -43,14 +54,3 @@ class AbstractGitOperation(AbstractOperation, ABC):
                     return ActiveConfigOption.is_active(active_option)
                 return True
         return False
-
-    # Evaluate an 'active' flag consistently across operations.
-    # Accepts raw values (bool, int, str, etc.) and treats missing as inactive.
-    def _is_active_flag(self, raw_value) -> bool:
-        from wexample_filestate.config_option.active_config_option import (
-            ActiveConfigOption,
-        )
-
-        if raw_value is None:
-            return True
-        return ActiveConfigOption.is_active(raw_value)
