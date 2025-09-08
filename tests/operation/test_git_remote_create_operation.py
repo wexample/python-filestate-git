@@ -8,7 +8,6 @@ from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
 
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):
-
     def _operation_get_count(self) -> int:
         return 3  # One operation for each remote, 1 operation to create local repo
 

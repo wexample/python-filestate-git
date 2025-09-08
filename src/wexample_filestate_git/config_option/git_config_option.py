@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 
 class GitConfigOption(AbstractNestedConfigOption):
-
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:
         from wexample_filestate.config_option.should_exist_config_option import (

@@ -7,7 +7,6 @@ from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
 
 class TestGithubRemote(GitRemoteTest):
     """Test cases for GitHub remote operations."""
-
     ENV_TOKEN_NAME = "GITHUB_API_TOKEN"
     SERVICE_CLASS = GithubRemote
 

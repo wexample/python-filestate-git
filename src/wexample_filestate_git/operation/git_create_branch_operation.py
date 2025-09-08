@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperation):
-
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
         # Only applicable when git is enabled and repo exists
         if not self._is_active_git_option(option):
