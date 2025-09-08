@@ -193,7 +193,6 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         # Instantiate the proper remote with required constructor args
         # GithubRemote expects an api_token passed explicitly
         # We may find another way to pass tokens, with an option value.
-
         return remote_type(
             io=self.target.io,
             api_token=self.target.get_env_parameter(
