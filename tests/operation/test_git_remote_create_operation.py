@@ -30,6 +30,7 @@ class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOpe
     def _operation_test_assert_rollback(self) -> None:
         # Add rollback assertions if needed
         pass
+
     def _operation_test_setup(self) -> None:
         from unittest.mock import patch
 

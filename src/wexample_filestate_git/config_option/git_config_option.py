@@ -31,6 +31,7 @@ class GitConfigOption(AbstractNestedConfigOption):
     @staticmethod
     def dict_value_should_have_git(value: DictConfigValue) -> bool:
         return (value is True) or isinstance(value, dict)
+
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
         return dict | bool

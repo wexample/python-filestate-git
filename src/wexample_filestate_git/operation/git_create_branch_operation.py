@@ -65,6 +65,7 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
     def describe_before(self) -> str:
         branch = self._get_desired_branch_name() or "<unknown>"
         return f"Local branch missing: {branch}"
+
     def description(self) -> str:
         return "Create local Git branch if missing"
 

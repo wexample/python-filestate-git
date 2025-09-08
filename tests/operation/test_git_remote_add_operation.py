@@ -17,6 +17,7 @@ class TestGitRemoteAddOperation(TestGitFileStateManagerMixin, TestAbstractOperat
 
     def _operation_test_assert_initial(self) -> None:
         self._assert_dir_exists(self._get_git_dir_path("test_git_dir"), positive=False)
+
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
 
