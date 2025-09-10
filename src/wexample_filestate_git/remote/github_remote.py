@@ -7,6 +7,7 @@ from wexample_helpers.decorator.base_class import base_class
 
 from .abstract_remote import AbstractRemote
 
+
 @base_class
 class GithubRemote(AbstractRemote):
     api_token: str = public_field(description="GitHub API token")
