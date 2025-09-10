@@ -9,8 +9,8 @@ from .abstract_remote import AbstractRemote
 
 
 class GitlabRemote(AbstractRemote):
-    api_token: str = Field(description="GitHub API token")
-    base_url: str = Field(
+    api_token: str = public_field(description="GitHub API token")
+    base_url: str = public_field(
         default="https://gitlab.com/api/v4", description="GitLab API base URL"
     )
 
