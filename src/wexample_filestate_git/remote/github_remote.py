@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from pydantic import Field
+from wexample_helpers.classes.field import Field
 
 from .abstract_remote import AbstractRemote
 
@@ -12,6 +12,16 @@ class GithubRemote(AbstractRemote):
     base_url: str = Field(
         default="https://api.github.com", description="GitHub API base URL"
     )
+
+    def __attrs_post_init__(self) -> None:
+        super().__init__()
+
+        self.default_headers.update(
+            {
+                "Authorization": f"token {self.api_token}",
+                "Accept": "application/vnd.github.v3+json",
+            }
+        )
 
     @classmethod
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
@@ -105,16 +115,6 @@ class GithubRemote(AbstractRemote):
                 private=private,
             )
         return {}
-
-    def model_post_init(self, *args, **kwargs) -> None:
-        super().model_post_init(*args, **kwargs)
-
-        self.default_headers.update(
-            {
-                "Authorization": f"token {self.api_token}",
-                "Accept": "application/vnd.github.v3+json",
-            }
-        )
 
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         """

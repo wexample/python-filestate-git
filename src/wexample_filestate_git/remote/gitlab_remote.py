@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 import requests
-from pydantic import Field
+from wexample_helpers.classes.field import Field
 
 from .abstract_remote import AbstractRemote
 
@@ -13,6 +13,11 @@ class GitlabRemote(AbstractRemote):
     base_url: str = Field(
         default="https://gitlab.com/api/v4", description="GitLab API base URL"
     )
+
+    def __attrs_post_init__(self) -> None:
+        super().__init__()
+
+        self.default_headers.update({"PRIVATE-TOKEN": self.api_token})
 
     @classmethod
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
@@ -125,11 +130,6 @@ class GitlabRemote(AbstractRemote):
                 private=private,
             )
         return {}
-
-    def model_post_init(self, *args, **kwargs) -> None:
-        super().model_post_init(*args, **kwargs)
-
-        self.default_headers.update({"PRIVATE-TOKEN": self.api_token})
 
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         """
