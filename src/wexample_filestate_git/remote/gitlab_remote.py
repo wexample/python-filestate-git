@@ -3,11 +3,13 @@ from __future__ import annotations
 import re
 
 import requests
-from wexample_helpers.classes.field import Field
+from wexample_helpers.classes.field import public_field
+from wexample_helpers.decorator.base_class import base_class
 
 from .abstract_remote import AbstractRemote
 
 
+@base_class
 class GitlabRemote(AbstractRemote):
     api_token: str = public_field(description="GitHub API token")
     base_url: str = public_field(
@@ -15,8 +17,6 @@ class GitlabRemote(AbstractRemote):
     )
 
     def __attrs_post_init__(self) -> None:
-        super().__init__()
-
         self.default_headers.update({"PRIVATE-TOKEN": self.api_token})
 
     @classmethod
