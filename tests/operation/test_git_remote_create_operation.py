@@ -5,6 +5,9 @@ from wexample_filestate.testing.test_abstract_operation import TestAbstractOpera
 from wexample_filestate_git.test.mixin.test_git_state_manager_mixin import (
     TestGitFileStateManagerMixin,
 )
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from wexample_config.const.types import DictConfig
 
 
 class TestGitRemoteCreateOperation(TestGitFileStateManagerMixin, TestAbstractOperation):

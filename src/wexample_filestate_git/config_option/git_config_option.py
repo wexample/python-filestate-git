@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from wexample_config.options_provider.abstract_options_provider import (
         AbstractOptionsProvider,
     )
+    from types import UnionType
 
 
 class GitConfigOption(AbstractNestedConfigOption):

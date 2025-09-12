@@ -5,6 +5,9 @@ from types import UnionType
 from wexample_config.config_option.abstract_list_config_option import (
     AbstractListConfigOption,
 )
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from types import UnionType
 
 
 class RemoteConfigOption(AbstractListConfigOption):
