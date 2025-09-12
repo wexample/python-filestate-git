@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
 from typing import TYPE_CHECKING
 
 from wexample_filestate.operation.abstract_operation import AbstractOperation
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
     from wexample_filestate.enum.scopes import Scope
 
 
-class AbstractGitOperation(AbstractOperation, ABC):
+class AbstractGitOperation(AbstractOperation):
     @classmethod
     def get_scope(cls) -> Scope:
         from wexample_filestate.enum.scopes import Scope

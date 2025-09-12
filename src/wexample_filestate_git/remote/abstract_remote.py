@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from abc import abstractmethod
-
+from wexample_helpers.classes.abstract_method import abstract_method
 from wexample_helpers_api.common.abstract_gateway import AbstractGateway
 
 
@@ -12,7 +11,7 @@ class AbstractRemote(AbstractGateway):
     """
 
     @classmethod
-    @abstractmethod
+    @abstract_method
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
         """Derive the REST API base URL from a git remote URL.
 
@@ -21,7 +20,7 @@ class AbstractRemote(AbstractGateway):
         """
 
     @classmethod
-    @abstractmethod
+    @abstract_method
     def detect_remote_type(cls, remote_url: str) -> bool:
         """
         Detect if a remote URL corresponds to this service.
@@ -37,7 +36,7 @@ class AbstractRemote(AbstractGateway):
     def get_class_name_suffix(cls) -> str | None:
         return "Remote"
 
-    @abstractmethod
+    @abstract_method
     def check_repository_exists(self, name: str, namespace: str) -> bool:
         """
         Check if a repository exists on the remote service.
@@ -50,7 +49,7 @@ class AbstractRemote(AbstractGateway):
             bool: True if the repository exists
         """
 
-    @abstractmethod
+    @abstract_method
     def create_repository(
         self, name: str, namespace: str, description: str = "", private: bool = False
     ) -> dict:
@@ -67,7 +66,7 @@ class AbstractRemote(AbstractGateway):
             Dict: Repository information from the API
         """
 
-    @abstractmethod
+    @abstract_method
     def create_repository_if_not_exists(
         self, remote_url: str, description: str = "", private: bool = False
     ) -> dict:
@@ -83,7 +82,7 @@ class AbstractRemote(AbstractGateway):
             Dict: Repository information from the API if created, empty dict if already exists
         """
 
-    @abstractmethod
+    @abstract_method
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         """
         Parse a repository URL to extract repository information.
