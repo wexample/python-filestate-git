@@ -12,8 +12,13 @@ from wexample_filestate.operations_provider.abstract_operations_provider import 
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from wexample_filestate.operations_provider.abstract_operations_provider import AbstractOperationsProvider
-    from wexample_config.options_provider.abstract_options_provider import AbstractOptionsProvider
+
+    from wexample_config.options_provider.abstract_options_provider import (
+        AbstractOptionsProvider,
+    )
+    from wexample_filestate.operations_provider.abstract_operations_provider import (
+        AbstractOperationsProvider,
+    )
 
 
 class TestGitFileStateManagerMixin:

@@ -8,11 +8,12 @@ from wexample_config.config_option.abstract_nested_config_option import (
 )
 
 if TYPE_CHECKING:
+    from types import UnionType
+
     from wexample_config.const.types import DictConfig, DictConfigValue
     from wexample_config.options_provider.abstract_options_provider import (
         AbstractOptionsProvider,
     )
-    from types import UnionType
 
 
 class GitConfigOption(AbstractNestedConfigOption):
