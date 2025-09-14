@@ -30,16 +30,16 @@ class AbstractGitOperation(AbstractOperation):
     # Accepts raw values (bool, int, str, etc.) and treats missing as inactive.
     def _is_active_flag(self, raw_value) -> bool:
         from wexample_filestate.option.active_option import (
-            ActiveConfigOption,
+            ActiveOption,
         )
 
         if raw_value is None:
             return True
-        return ActiveConfigOption.is_active(raw_value)
+        return ActiveOption.is_active(raw_value)
 
     def _is_active_git_option(self, option: AbstractConfigOption) -> bool:
         from wexample_filestate.option.active_option import (
-            ActiveConfigOption,
+            ActiveOption,
         )
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,
@@ -48,8 +48,8 @@ class AbstractGitOperation(AbstractOperation):
         if isinstance(option, GitConfigOption):
             value = self.target.get_option_value(GitConfigOption)
             if value:
-                if value.has_key_in_dict(ActiveConfigOption.get_name()):
-                    active_option = value.get_dict().get(ActiveConfigOption.get_name())
-                    return ActiveConfigOption.is_active(active_option)
+                if value.has_key_in_dict(ActiveOption.get_name()):
+                    active_option = value.get_dict().get(ActiveOption.get_name())
+                    return ActiveOption.is_active(active_option)
                 return True
         return False

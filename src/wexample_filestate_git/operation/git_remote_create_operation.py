@@ -25,7 +25,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
         from wexample_filestate.option.active_option import (
-            ActiveConfigOption,
+            ActiveOption,
         )
         from wexample_filestate_git.config_option.create_remote_config_option import (
             CreateRemoteConfigOption,
@@ -59,7 +59,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             )
 
             # item must be active (missing flag => active by default)
-            active_option = remote_item_option.get_option(ActiveConfigOption)
+            active_option = remote_item_option.get_option(ActiveOption)
             raw_active = (
                 active_option.get_value().raw if active_option is not None else None
             )

@@ -17,9 +17,9 @@ class RemoteItemOptionsProvider(AbstractOptionsProvider):
     def get_options(cls) -> list[type[AbstractConfigOption]]:
         from wexample_config.config_option.name_config_option import NameConfigOption
         from wexample_filestate.option.active_option import (
-            ActiveConfigOption,
+            ActiveOption,
         )
-        from wexample_filestate.option.type_option import TypeConfigOption
+        from wexample_filestate.option.type_option import TypeOption
         from wexample_filestate_git.config_option.create_remote_config_option import (
             CreateRemoteConfigOption,
         )
@@ -28,9 +28,9 @@ class RemoteItemOptionsProvider(AbstractOptionsProvider):
         )
 
         return [
-            ActiveConfigOption,
+            ActiveOption,
             NameConfigOption,
             UrlConfigOption,
             CreateRemoteConfigOption,
-            TypeConfigOption,
+            TypeOption,
         ]

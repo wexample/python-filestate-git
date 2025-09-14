@@ -20,13 +20,13 @@ class GitConfigOption(AbstractNestedConfigOption):
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:
         from wexample_filestate.option.should_exist_option import (
-            ShouldExistConfigOption,
+            ShouldExistOption,
         )
 
         if GitConfigOption.get_name() in config and cls.dict_value_should_have_git(
             config[GitConfigOption.get_name()]
         ):
-            config[ShouldExistConfigOption.get_name()] = True
+            config[ShouldExistOption.get_name()] = True
         return config
 
     @staticmethod
