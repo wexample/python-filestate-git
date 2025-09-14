@@ -24,7 +24,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return [GithubRemote, GitlabRemote]
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate.option.active_config_option import (
+        from wexample_filestate.option.active_option import (
             ActiveConfigOption,
         )
         from wexample_filestate_git.config_option.create_remote_config_option import (

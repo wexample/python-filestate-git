@@ -29,7 +29,7 @@ class AbstractGitOperation(AbstractOperation):
     # Evaluate an 'active' flag consistently across operations.
     # Accepts raw values (bool, int, str, etc.) and treats missing as inactive.
     def _is_active_flag(self, raw_value) -> bool:
-        from wexample_filestate.option.active_config_option import (
+        from wexample_filestate.option.active_option import (
             ActiveConfigOption,
         )
 
@@ -38,7 +38,7 @@ class AbstractGitOperation(AbstractOperation):
         return ActiveConfigOption.is_active(raw_value)
 
     def _is_active_git_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate.option.active_config_option import (
+        from wexample_filestate.option.active_option import (
             ActiveConfigOption,
         )
         from wexample_filestate_git.config_option.git_config_option import (

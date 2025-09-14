@@ -41,7 +41,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return False
 
     def apply(self) -> None:
-        from wexample_filestate.option.active_config_option import (
+        from wexample_filestate.option.active_option import (
             ActiveConfigOption,
         )
         from wexample_filestate_git.config_option.git_config_option import (
@@ -111,7 +111,7 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return Repo(self.target.get_path())
 
     def _is_remote_missing_or_mismatched(self) -> bool:
-        from wexample_filestate.option.active_config_option import (
+        from wexample_filestate.option.active_option import (
             ActiveConfigOption,
         )
         from wexample_filestate_git.config_option.git_config_option import (
