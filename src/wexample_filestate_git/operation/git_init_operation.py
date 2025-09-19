@@ -8,26 +8,12 @@ from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
 if TYPE_CHECKING:
-    from wexample_config.config_option.abstract_config_option import (
-        AbstractConfigOption,
-    )
-    from wexample_filestate.operation.abstract_operation import AbstractOperation
+    pass
 
 
 class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _has_initialized_git: bool = False
 
-    def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.option.git_option import (
-            GitOption,
-        )
-        from wexample_helpers_git.helpers.git import git_is_init
-
-        if not self._is_active_git_option(option):
-            return False
-
-        assert isinstance(option, GitOption)
-        return option.should_have_git() and not git_is_init(self.target.get_path())
 
     def apply(self) -> None:
         from git import Repo
@@ -38,12 +24,6 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         repo = Repo.init(path)
         repo.init()
 
-    def dependencies(self) -> list[type[AbstractOperation]]:
-        from wexample_filestate.operation.file_create_operation import (
-            FileCreateOperation,
-        )
-
-        return [FileCreateOperation]
 
     def undo(self) -> None:
         import shutil

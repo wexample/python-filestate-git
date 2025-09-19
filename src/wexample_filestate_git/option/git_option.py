@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from wexample_config.options_provider.abstract_options_provider import (
         AbstractOptionsProvider,
     )
+    from wexample_filestate.operation.abstract_operation import AbstractOperation
+    from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
 
 
 @base_class
@@ -60,3 +62,27 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
     def should_have_git(self) -> bool:
         value = self.get_value()
         return (value.is_bool() and value.is_true()) or value.is_dict()
+
+    def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
+        """Create GitInitOperation if Git is required but not initialized."""
+        from wexample_helpers_git.helpers.git import git_is_init
+        
+        # Check if Git is required
+        if not self.should_have_git():
+            return None
+        
+        # Check if target path exists (Git can only be initialized in existing directories)
+        target_path = target.get_path()
+        if not target_path.exists():
+            return None
+        
+        # Check if Git is already initialized
+        if git_is_init(target_path):
+            return None
+        
+        # Create GitInitOperation
+        from wexample_filestate_git.operation.git_init_operation import GitInitOperation
+        
+        return GitInitOperation(
+            target=target
+        )
