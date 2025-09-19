@@ -31,4 +31,4 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
         from wexample_helpers.const.globals import DIR_GIT
 
         if self._has_initialized_git:
-            shutil.rmtree(self.target.get_path() / DIR_GIT)
+            shutil.rmtree(f"{self.target.get_path()}/{DIR_GIT}")

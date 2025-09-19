@@ -27,8 +27,7 @@ class TestGitFileStateManagerMixin:
     def _get_git_dir_path(self, item_name: str) -> Path:
         """Get the path to the .git directory for a given item."""
         from wexample_helpers.const.globals import DIR_GIT
-
-        return self.state_manager.find_by_name_or_fail(item_name).get_path() / DIR_GIT
+        return f"{self.state_manager.find_by_name_or_fail(item_name).get_path()}/{DIR_GIT}"
 
     def _get_test_operations_providers(
         self,
