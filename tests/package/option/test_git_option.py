@@ -112,3 +112,57 @@ class TestGitOptionDict(AbstractGitTestOption):
                 }
             ]
         }
+
+
+class TestGitOptionExistingGit(AbstractGitTestOption):
+    """Test GitOption with existing Git repository (should create config)."""
+    test_dir_name: str = "test_git_dir_with_git"
+
+    def _operation_get_count(self) -> int:
+        return 1  # Git init operation (should create config in existing .git)
+
+    def _operation_test_assert_applied(self) -> None:
+        from wexample_helpers.const.globals import DIR_GIT
+        
+        # Verify the directory exists
+        dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
+        self._assert_file_exists(file_path=dir_path, positive=True)
+        
+        # Verify Git repository still exists
+        git_dir = f"{dir_path}/{DIR_GIT}"
+        self._assert_file_exists(file_path=git_dir, positive=True)
+        
+        # Verify Git config file was created
+        git_config = f"{git_dir}/config"
+        self._assert_file_exists(file_path=git_config, positive=True)
+
+    def _operation_test_assert_initial(self) -> None:
+        from wexample_helpers.const.globals import DIR_GIT
+        
+        # Verify the directory exists initially (from resources)
+        dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
+        self._assert_file_exists(file_path=dir_path, positive=True)
+        
+        # Verify Git repository exists initially (empty .git folder)
+        git_dir = f"{dir_path}/{DIR_GIT}"
+        self._assert_file_exists(file_path=git_dir, positive=True)
+        
+        # Verify Git config file doesn't exist initially
+        git_config = f"{dir_path}/config"
+        self._assert_file_exists(file_path=git_config, positive=False)
+
+    def _operation_test_setup_configuration(self) -> DictConfig | None:
+        from wexample_filestate.const.disk import DiskItemType
+
+        return {
+            "children": [
+                {
+                    "name": self.test_dir_name,
+                    "should_exist": True,
+                    "type": DiskItemType.DIRECTORY,
+                    "git": {
+                        "active": True
+                    },
+                }
+            ]
+        }
