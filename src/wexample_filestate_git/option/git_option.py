@@ -84,5 +84,7 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         from wexample_filestate_git.operation.git_init_operation import GitInitOperation
         
         return GitInitOperation(
-            target=target
+            option=self,
+            target=target,
+            description="Initialize Git repository"
         )
