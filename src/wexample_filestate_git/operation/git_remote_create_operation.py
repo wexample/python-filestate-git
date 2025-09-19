@@ -167,21 +167,6 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         return [GitRemoteAddOperation]
 
-    def describe_after(self) -> str:
-        desc = self._create_remotes_description()
-        if desc:
-            return f"Remote repository created on remote platform: {desc}"
-        return "Remote repository created on remote platform"
-
-    def describe_before(self) -> str:
-        desc = self._create_remotes_description()
-        if desc:
-            return f"Remote repository not created on remote platform: {desc}"
-        return "Remote repository not created on remote platform"
-
-    def description(self) -> str:
-        return "Create remote repository on platform"
-
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
         # as it could be dangerous to automatically delete repositories

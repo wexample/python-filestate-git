@@ -70,21 +70,6 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
 
         return [GitInitOperation]
 
-    def describe_after(self) -> str:
-        desc = self._remotes_description()
-        if desc:
-            return f"Remote added in .git directory: {desc}"
-        return "Remote added in .git directory"
-
-    def describe_before(self) -> str:
-        desc = self._remotes_description()
-        if desc:
-            return f"Remote missing in .git directory: {desc}"
-        return "Remote missing in .git directory"
-
-    def description(self) -> str:
-        return "Add remote in .git directory"
-
     def undo(self) -> None:
         from wexample_filestate_git.config_option.git_config_option import (
             GitConfigOption,

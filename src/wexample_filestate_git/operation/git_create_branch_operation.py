@@ -56,17 +56,6 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
         # Ensure repository is initialized before creating a branch
         return [GitInitOperation]  # type: ignore[return-value]
 
-    def describe_after(self) -> str:
-        branch = self._get_desired_branch_name() or "<unknown>"
-        return f"Local branch created: {branch}"
-
-    def describe_before(self) -> str:
-        branch = self._get_desired_branch_name() or "<unknown>"
-        return f"Local branch missing: {branch}"
-
-    def description(self) -> str:
-        return "Create local Git branch if missing"
-
     def undo(self) -> None:
         # No destructive undo: we do not auto-delete newly created branches
         pass

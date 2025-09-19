@@ -45,15 +45,6 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
 
         return [FileCreateOperation]
 
-    def describe_after(self) -> str:
-        return "Initialized .git directory"
-
-    def describe_before(self) -> str:
-        return "No initialized .git directory"
-
-    def description(self) -> str:
-        return "Initialize .git directory"
-
     def undo(self) -> None:
         import shutil
 
