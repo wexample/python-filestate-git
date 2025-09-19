@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from types import UnionType
 from typing import TYPE_CHECKING, Any
 
 from wexample_config.config_option.abstract_nested_config_option import (
     AbstractNestedConfigOption,
 )
+from wexample_filestate.option.mixin.option_mixin import OptionMixin
+from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
     from types import UnionType
@@ -16,15 +17,16 @@ if TYPE_CHECKING:
     )
 
 
-class GitConfigOption(AbstractNestedConfigOption):
+@base_class
+class GitOption(OptionMixin, AbstractNestedConfigOption):
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:
         from wexample_filestate.option.should_exist_option import (
             ShouldExistOption,
         )
 
-        if GitConfigOption.get_name() in config and cls.dict_value_should_have_git(
-            config[GitConfigOption.get_name()]
+        if GitOption.get_name() in config and cls.dict_value_should_have_git(
+            config[GitOption.get_name()]
         ):
             config[ShouldExistOption.get_name()] = True
         return config

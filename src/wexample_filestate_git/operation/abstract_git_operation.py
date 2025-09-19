@@ -41,12 +41,12 @@ class AbstractGitOperation(AbstractOperation):
         from wexample_filestate.option.active_option import (
             ActiveOption,
         )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
 
-        if isinstance(option, GitConfigOption):
-            value = self.target.get_option_value(GitConfigOption)
+        if isinstance(option, GitOption):
+            value = self.target.get_option_value(GitOption)
             if value:
                 if value.has_key_in_dict(ActiveOption.get_name()):
                     active_option = value.get_dict().get(ActiveOption.get_name())

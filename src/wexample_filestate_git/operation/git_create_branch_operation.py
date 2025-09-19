@@ -67,14 +67,14 @@ class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperat
         Accepts either a list (first item) or a single string value.
         Defaults to "main" if the option exists but is empty/invalid.
         """
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_filestate_git.config_option.main_branch_config_option import (
             MainBranchConfigOption,
         )
 
-        git_option = self.target.get_option(GitConfigOption)
+        git_option = self.target.get_option(GitOption)
         if not git_option:
             return None
 

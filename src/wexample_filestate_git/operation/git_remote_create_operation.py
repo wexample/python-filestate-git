@@ -30,8 +30,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         from wexample_filestate_git.config_option.create_remote_config_option import (
             CreateRemoteConfigOption,
         )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_filestate_git.config_option.remote_config_option import (
             RemoteConfigOption,
@@ -40,9 +40,9 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         if not self._is_active_git_option(option):
             return False
 
-        assert isinstance(option, GitConfigOption)
+        assert isinstance(option, GitOption)
 
-        git_option = self.target.get_option(GitConfigOption)
+        git_option = self.target.get_option(GitOption)
         remote_option = git_option.get_option(RemoteConfigOption)
         if not remote_option:
             return False
@@ -90,8 +90,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         from wexample_filestate_git.config_option.create_remote_config_option import (
             CreateRemoteConfigOption,
         )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_filestate_git.config_option.remote_config_option import (
             RemoteConfigOption,
@@ -109,11 +109,11 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             GIT_PROVIDER_GITLAB,
         )
 
-        git_option = self.target.get_option(GitConfigOption)
+        git_option = self.target.get_option(GitOption)
         git_option.get_value()
 
         if git_option:
-            git_option = cast(GitConfigOption, git_option)
+            git_option = cast(GitOption, git_option)
             remote_option = cast(
                 RemoteConfigOption, git_option.get_option(RemoteConfigOption)
             )
@@ -191,8 +191,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         from wexample_filestate_git.config_option.create_remote_config_option import (
             CreateRemoteConfigOption,
         )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_filestate_git.config_option.remote_config_option import (
             RemoteConfigOption,
@@ -208,7 +208,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         parts: list[str] = []
 
-        git_option = self.target.get_option(GitConfigOption)
+        git_option = self.target.get_option(GitOption)
         if not git_option:
             return ""
         remote_option = git_option.get_option(RemoteConfigOption)

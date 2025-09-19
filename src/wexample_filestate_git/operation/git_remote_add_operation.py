@@ -23,17 +23,17 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         self._created_remote = {}
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_helpers_git.helpers.git import git_is_init
 
         if not self._is_active_git_option(option):
             return False
 
-        assert isinstance(option, GitConfigOption)
+        assert isinstance(option, GitOption)
         if option.should_have_git() and git_is_init(self.target.get_path()):
-            value = self.target.get_option_value(GitConfigOption)
+            value = self.target.get_option_value(GitOption)
             if not value or not value.has_key_in_dict("remote"):
                 return False
 
@@ -44,12 +44,12 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         from wexample_filestate.option.active_option import (
             ActiveOption,
         )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_helpers_git.helpers.git import git_remote_create_once
 
-        value = self.target.get_option_value(GitConfigOption)
+        value = self.target.get_option_value(GitOption)
 
         if value.is_dict():
             for remote in value.get_dict().get("remote"):
@@ -71,11 +71,11 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return [GitInitOperation]
 
     def undo(self) -> None:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
 
-        option = cast(GitConfigOption, self.target.get_option(GitConfigOption))
+        option = cast(GitOption, self.target.get_option(GitOption))
 
         config = option.get_value().get_dict()
         for remote in config.get("remote"):
@@ -99,11 +99,11 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         from wexample_filestate.option.active_option import (
             ActiveOption,
         )
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
 
-        value = self.target.get_option_value(GitConfigOption)
+        value = self.target.get_option_value(GitOption)
 
         # If no value or no remotes key, we consider no need to apply here.
         if not value or not value.has_key_in_dict("remote"):
@@ -139,11 +139,11 @@ class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation
         return False
 
     def _remotes_description(self) -> str:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
 
-        value = self.target.get_option_value(GitConfigOption)
+        value = self.target.get_option_value(GitOption)
 
         if not value or not value.is_dict():
             return ""

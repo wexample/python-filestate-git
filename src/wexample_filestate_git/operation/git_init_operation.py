@@ -18,15 +18,15 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _has_initialized_git: bool = False
 
     def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
+        from wexample_filestate_git.option.git_option import (
+            GitOption,
         )
         from wexample_helpers_git.helpers.git import git_is_init
 
         if not self._is_active_git_option(option):
             return False
 
-        assert isinstance(option, GitConfigOption)
+        assert isinstance(option, GitOption)
         return option.should_have_git() and not git_is_init(self.target.get_path())
 
     def apply(self) -> None:
