@@ -8,9 +8,9 @@ if TYPE_CHECKING:
     from wexample_config.const.types import DictConfig
 
 
-class TestMainBranchOptionString(AbstractGitTestOption):
-    """Test MainBranchOption with string value - only tests branch creation."""
-    test_dir_name: str = "test-git-branch-string"
+class TestMainBranchOptionDefault(AbstractGitTestOption):
+    """Test MainBranchOption with default 'main' branch."""
+    test_dir_name: str = "test-git-branch-default"
 
     def _operation_get_count(self) -> int:
         return 1  # Only branch creation operation
@@ -18,11 +18,11 @@ class TestMainBranchOptionString(AbstractGitTestOption):
     def _operation_test_assert_applied(self) -> None:
         from git import Repo
         
-        # Verify branch was created
+        # Verify default 'main' branch was created
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
         repo = Repo(str(dir_path))
         branch_names = [h.name for h in repo.heads]
-        assert "develop" in branch_names, f"Branch 'develop' not found in {branch_names}"
+        assert "main" in branch_names, f"Branch 'main' not found in {branch_names}"
 
     def _operation_test_assert_initial(self) -> None:
         from git import Repo
@@ -31,7 +31,7 @@ class TestMainBranchOptionString(AbstractGitTestOption):
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
         repo = Repo(str(dir_path))
         branch_names = [h.name for h in repo.heads]
-        assert "develop" not in branch_names, f"Branch 'develop' should not exist initially"
+        assert "main" not in branch_names, f"Branch 'main' should not exist initially"
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
@@ -44,7 +44,7 @@ class TestMainBranchOptionString(AbstractGitTestOption):
                     "type": DiskItemType.DIRECTORY,
                     "git": {
                         "active": True,  # Git already initialized
-                        "main_branch": "develop"
+                        "main_branch": []  # Empty list should default to "main"
                     },
                 }
             ]
