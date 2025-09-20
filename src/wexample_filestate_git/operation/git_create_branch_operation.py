@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
-    FileManipulationOperationMixin,
+from wexample_filestate.operation.abstract_file_manipulation_operation import (
+    AbstractFileManipulationOperation,
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
@@ -12,8 +12,9 @@ if TYPE_CHECKING:
         AbstractConfigOption,
     )
 
-
-class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperation):
+from wexample_helpers.decorator.base_class import base_class
+@base_class
+class GitCreateBranchOperation(AbstractFileManipulationOperation):
     def __init__(self, option, target, branch_name: str, description: str):
         super().__init__(option=option, target=target, description=description)
         self.branch_name = branch_name

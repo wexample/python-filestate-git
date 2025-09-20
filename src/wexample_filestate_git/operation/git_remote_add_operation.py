@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
-    FileManipulationOperationMixin,
+from wexample_filestate.operation.abstract_file_manipulation_operation import (
+    AbstractFileManipulationOperation,
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
@@ -14,8 +14,9 @@ if TYPE_CHECKING:
     )
     from wexample_filestate.operation.abstract_operation import AbstractOperation
 
-
-class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
+from wexample_helpers.decorator.base_class import base_class
+@base_class
+class GitRemoteAddOperation(AbstractFileManipulationOperation):
     _created_remote: dict[str, bool]
 
     def __init__(self, option, target, remotes: list[dict], description="Add Git remotes"):
