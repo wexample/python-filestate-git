@@ -12,6 +12,9 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
     """Test RemoteOption for adding a simple remote locally."""
     test_dir_name: str = "test_git_dir"  # Use existing test directory
 
+    def _operation_get_count(self) -> int:
+        return 1  # Only remote add operation
+
     def _operation_test_assert_applied(self) -> None:
         from git import Repo
         from wexample_helpers.const.globals import DIR_GIT
@@ -33,12 +36,20 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
         assert expected_url in remote_urls, f"Expected URL {expected_url} not found in {remote_urls}"
 
     def _operation_test_assert_initial(self) -> None:
+        from git import Repo
+        from wexample_helpers.const.globals import DIR_GIT
+        
         # Verify directory exists
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
         self._assert_file_exists(file_path=dir_path, positive=True)
         
-        # Ensure NO Git repo exists initially - clean slate
-        self._ensure_no_git(dir_path)
+        # Ensure Git repo exists but no remotes
+        self._ensure_git_initialized(dir_path)
+        
+        # Verify no remotes exist initially
+        repo = Repo(str(dir_path))
+        remote_names = [r.name for r in repo.remotes]
+        assert "origin" not in remote_names, f"Remote 'origin' should not exist initially"
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType

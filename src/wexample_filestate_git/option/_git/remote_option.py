@@ -197,7 +197,10 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         # Check if Git repo exists
         repo = self._get_target_git_repo(target)
         if not repo:
-            return False
+            # If no Git repo but remotes are configured, they need to be added later
+            return self._has_active_remotes_configured()
+        
+        # Git repo exists, check if remotes match
         
         # Get existing remotes by name
         existing_by_name = {r.name: r for r in repo.remotes}
@@ -246,3 +249,23 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         except Exception:
             pass
         return None
+
+    def _has_active_remotes_configured(self) -> bool:
+        """Check if there are any active remotes configured."""
+        from wexample_filestate.option.active_option import ActiveOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
+        
+        for remote_item_option in self.children:
+            # Check if item is active (missing flag => active by default)
+            active_option = remote_item_option.get_option_or_none(ActiveOption)
+            raw_active = (
+                active_option.get_value().raw if active_option is not None else None
+            )
+            is_active = self._is_active_flag(raw_active)
+            
+            if is_active:
+                url_option = remote_item_option.get_option_or_none(UrlOption)
+                if url_option:
+                    return True
+        
+        return False

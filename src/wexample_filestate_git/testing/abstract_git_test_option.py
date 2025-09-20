@@ -19,12 +19,18 @@ class AbstractGitTestOption(AbstractTestOperation):
 
         return [DefaultOptionsProvider, GitOptionsProvider]
 
-    def _ensure_no_git(self, dir_path) -> None:
-        """Ensure no Git repository exists in the given directory."""
+    def _ensure_git_initialized(self, dir_path) -> None:
+        """Ensure Git repository is initialized in the given directory."""
+        from git import Repo
         from wexample_helpers.const.globals import DIR_GIT
         import shutil
 
         git_dir = dir_path / DIR_GIT
+
+        # Clean existing Git repo if any
         if git_dir.exists():
             shutil.rmtree(git_dir)
-        self._assert_file_exists(file_path=git_dir, positive=False)
+
+        # Initialize fresh Git repo
+        Repo.init(str(dir_path))
+        self._assert_file_exists(file_path=git_dir, positive=True)
