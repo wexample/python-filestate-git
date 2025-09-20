@@ -14,7 +14,6 @@ class AbstractGitOptionTest(AbstractGitTestOption):
     # To be overridden by child classes
     test_dir_name: str = None
     git_config: bool | dict = None
-    should_directory_exist_initially: bool = True
 
     def _operation_get_count(self) -> int:
         return 1  # Only Git init operation
@@ -28,16 +27,10 @@ class AbstractGitOptionTest(AbstractGitTestOption):
         self._assert_file_exists(file_path=git_dir, positive=True)
 
     def _operation_test_assert_initial(self) -> None:
-        from wexample_helpers.const.globals import DIR_GIT
-        
-        # Verify directory exists (or not) as expected
+        # Ensure directory exists but Git is NOT initialized
+        # This way we test only GitInitOperation
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
-        self._assert_file_exists(file_path=dir_path, positive=self.should_directory_exist_initially)
-        
-        # Verify Git is not initialized initially
-        if self.should_directory_exist_initially:
-            git_dir = dir_path / DIR_GIT
-            self._assert_file_exists(file_path=git_dir, positive=False)
+        self._ensure_no_git(dir_path)
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType

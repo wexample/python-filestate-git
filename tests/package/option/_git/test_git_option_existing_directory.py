@@ -7,4 +7,3 @@ class TestGitOptionExistingDirectory(AbstractGitOptionTest):
     """Test GitOption on existing directory."""
     test_dir_name: str = "test_git_dir"
     git_config: bool = True
-    should_directory_exist_initially: bool = True  # Directory already exists

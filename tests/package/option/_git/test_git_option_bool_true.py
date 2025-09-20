@@ -7,4 +7,4 @@ class TestGitOptionBoolTrue(AbstractGitOptionTest):
     """Test GitOption with boolean True value."""
     test_dir_name: str = "test-git-repo"
     git_config: bool = True
-    should_directory_exist_initially: bool = True  # Directory already exists
+    # Directory already exists
