@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union
 
+from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 from wexample_config.config_option.abstract_nested_config_option import (
     AbstractNestedConfigOption,
 )
@@ -39,13 +40,16 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
 
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
-        return dict | bool
+        from wexample_filestate_git.config_value.git_config_value import GitConfigValue
+        from wexample_helpers.const.types import StringKeysDict
+
+        return Union[dict, bool, StringKeysDict, GitConfigValue]
 
     @staticmethod
     def get_value_allowed_type() -> Any | type | UnionType:
         return dict | bool
 
-    def get_allowed_options(self) -> list[type[OptionMixin]]:
+    def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
         from wexample_filestate_git.option._git.main_branch_option import MainBranchOption
         from wexample_filestate_git.option._git.remote_option import RemoteOption
         from wexample_filestate.option.active_option import ActiveOption

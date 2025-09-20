@@ -180,7 +180,13 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
     def _get_remote_name(self, remote_item_option) -> str:
         """Get remote name from option or default to 'origin'."""
-        # For now, default to "origin" - in the future we could add a NameOption
+        from wexample_filestate_git.option._git.name_option import NameOption
+        
+        name_option = remote_item_option.get_option_or_none(NameOption)
+        if name_option and name_option.get_value().is_str():
+            return name_option.get_value().get_str()
+        
+        # Default to "origin" if no name specified
         return "origin"
 
     def _is_remote_missing_or_mismatched(self, target) -> bool:
