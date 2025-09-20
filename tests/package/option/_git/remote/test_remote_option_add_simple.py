@@ -12,9 +12,6 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
     """Test RemoteOption for adding a simple remote locally."""
     test_dir_name: str = "test_git_dir"  # Use existing test directory
 
-    def _operation_get_count(self) -> int:
-        return 2  # Git init + Remote add operation
-
     def _operation_test_assert_applied(self) -> None:
         from git import Repo
         from wexample_helpers.const.globals import DIR_GIT
