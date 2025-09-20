@@ -37,10 +37,12 @@ class MainBranchOption(OptionMixin, AbstractConfigOption):
 
         # Create operation with branch name parameter
         from wexample_filestate_git.operation.git_create_branch_operation import GitCreateBranchOperation
-        
+
         return GitCreateBranchOperation(
+            option=self,
             target=target,
-            branch_name=branch_name
+            branch_name=branch_name,
+            description=f"Create Git branch '{branch_name}'"
         )
 
     def _get_desired_branch_name(self) -> str | None:

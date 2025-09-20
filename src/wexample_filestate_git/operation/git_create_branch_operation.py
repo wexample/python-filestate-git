@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 
 class GitCreateBranchOperation(FileManipulationOperationMixin, AbstractGitOperation):
-    def __init__(self, target, branch_name: str):
-        super().__init__(target=target)
+    def __init__(self, option, target, branch_name: str, description: str):
+        super().__init__(option=option, target=target, description=description)
         self.branch_name = branch_name
 
     def apply(self) -> None:
