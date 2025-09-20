@@ -18,9 +18,8 @@ class TestGithubRemote(GitRemoteTest):
         from wexample_prompt.common.io_manager import IoManager
 
         io_manager = IoManager()
-        with patch.dict("os.environ", {"GITHUB_API_TOKEN": "test_token"}):
-            remote = GithubRemote(io=io_manager)
-            return remote
+        remote = GithubRemote(io=io_manager, api_token="test_token")
+        return remote
 
     def test_check_repository_exists(self, remote) -> None:
         from unittest.mock import patch
