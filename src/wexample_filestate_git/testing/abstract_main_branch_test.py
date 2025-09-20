@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from typing import TYPE_CHECKING
 
 from wexample_filestate_git.testing.abstract_git_test_option import AbstractGitTestOption
@@ -27,6 +28,9 @@ class AbstractMainBranchTest(AbstractGitTestOption):
         repo = Repo(str(dir_path))
         branch_names = [h.name for h in repo.heads]
         assert self.expected_branch_name in branch_names, f"Branch '{self.expected_branch_name}' not found in {branch_names}"
+
+        # Cleanup to avoid git diff after test ran.
+        shutil.rmtree(dir_path)
 
     def _operation_test_assert_initial(self) -> None:
         from git import Repo
