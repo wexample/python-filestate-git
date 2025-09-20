@@ -23,84 +23,22 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
 
         return [GithubRemote, GitlabRemote]
 
-    def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate.option.active_option import (
-            ActiveOption,
-        )
-        from wexample_filestate_git.config_option.create_remote_config_option import (
-            CreateRemoteConfigOption,
-        )
-        from wexample_filestate_git.option.git_option import (
-            GitOption,
-        )
-        from wexample_filestate_git.config_option.remote_config_option import (
-            RemoteConfigOption,
-        )
-
-        if not self._is_active_git_option(option):
-            return False
-
-        assert isinstance(option, GitOption)
-
-        git_option = self.target.get_option(GitOption)
-        remote_option = git_option.get_option(RemoteConfigOption)
-        if not remote_option:
-            return False
-
-        # Trigger only if at least one remote needs to be created (doesn't exist yet)
-        for remote_item_option in remote_option.children:
-            # creation flag must be true
-            create_remote_option = remote_item_option.get_option(
-                CreateRemoteConfigOption
-            )
-            create_enabled = (
-                create_remote_option is not None
-                and create_remote_option.get_value().is_true()
-            )
-
-            # item must be active (missing flag => active by default)
-            active_option = remote_item_option.get_option(ActiveOption)
-            raw_active = (
-                active_option.get_value().raw if active_option is not None else None
-            )
-            is_active = self._is_active_flag(raw_active)
-
-            if create_enabled and is_active:
-                # 3) resolve type and url
-                resolved = self._resolve_remote_type_and_url(remote_item_option)
-                if resolved:
-                    remote_type, remote_url = resolved
-                    # Derive API base URL from repo URL (supports custom domains)
-                    remote_type.build_remote_api_url_from_repo(remote_url)
-                    remote = self._build_remote_instance(
-                        remote_type=remote_type, remote_url=remote_url
-                    )
-                    if remote:
-                        remote.connect()
-                        repo_info = remote.parse_repository_url(remote_url)
-                        if not remote.check_repository_exists(
-                            repo_info["name"], repo_info["namespace"]
-                        ):
-                            # At least one configured remote is missing: operation is applicable
-                            return True
-
-        return False
 
     def apply(self) -> None:
-        from wexample_filestate_git.config_option.create_remote_config_option import (
-            CreateRemoteConfigOption,
+        from wexample_filestate_git.option._git.create_remote_option import (
+            CreateRemoteOption,
         )
         from wexample_filestate_git.option.git_option import (
             GitOption,
         )
-        from wexample_filestate_git.config_option.remote_config_option import (
-            RemoteConfigOption,
+        from wexample_filestate_git.option._git.remote_option import (
+            RemoteOption,
         )
-        from wexample_filestate_git.config_option.type_config_option import (
-            TypeConfigOption,
+        from wexample_filestate_git.option._git.type_option import (
+            TypeOption,
         )
-        from wexample_filestate_git.config_option.url_config_option import (
-            UrlConfigOption,
+        from wexample_filestate_git.option._git.url_option import (
+            UrlOption,
         )
         from wexample_filestate_git.remote.github_remote import GithubRemote
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
@@ -115,7 +53,7 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         if git_option:
             git_option = cast(GitOption, git_option)
             remote_option = cast(
-                RemoteConfigOption, git_option.get_option(RemoteConfigOption)
+                RemoteOption, git_option.get_option(RemoteOption)
             )
 
             if remote_option:
@@ -124,10 +62,10 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                         remote_option.get_item_class_type(), remote_item_option
                     )
                     create_remote_option = remote_item_option.get_option(
-                        CreateRemoteConfigOption
+                        CreateRemoteOption
                     )
-                    url_option = remote_item_option.get_option(UrlConfigOption)
-                    type_option = remote_item_option.get_option(TypeConfigOption)
+                    url_option = remote_item_option.get_option(UrlOption)
+                    type_option = remote_item_option.get_option(TypeOption)
 
                     if (
                         create_remote_option
@@ -160,12 +98,6 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
                                 # Create repository directly from URL
                                 remote.create_repository_if_not_exists(remote_url)
 
-    def dependencies(self) -> list[type[AbstractOperation]]:
-        from wexample_filestate_git.operation.git_remote_add_operation import (
-            GitRemoteAddOperation,
-        )
-
-        return [GitRemoteAddOperation]
 
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
@@ -188,20 +120,20 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         )
 
     def _create_remotes_description(self) -> str:
-        from wexample_filestate_git.config_option.create_remote_config_option import (
-            CreateRemoteConfigOption,
+        from wexample_filestate_git.option._git.create_remote_option import (
+            CreateRemoteOption,
         )
         from wexample_filestate_git.option.git_option import (
             GitOption,
         )
-        from wexample_filestate_git.config_option.remote_config_option import (
-            RemoteConfigOption,
+        from wexample_filestate_git.option._git.remote_option import (
+            RemoteOption,
         )
-        from wexample_filestate_git.config_option.type_config_option import (
-            TypeConfigOption,
+        from wexample_filestate_git.option._git.type_option import (
+            TypeOption,
         )
-        from wexample_filestate_git.config_option.url_config_option import (
-            UrlConfigOption,
+        from wexample_filestate_git.option._git.url_option import (
+            UrlOption,
         )
         from wexample_filestate_git.remote.github_remote import GithubRemote
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
@@ -211,21 +143,21 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         git_option = self.target.get_option(GitOption)
         if not git_option:
             return ""
-        remote_option = git_option.get_option(RemoteConfigOption)
+        remote_option = git_option.get_option(RemoteOption)
         if not remote_option:
             return ""
 
         for remote_item_option in remote_option.children:
             create_remote_option = remote_item_option.get_option(
-                CreateRemoteConfigOption
+                CreateRemoteOption
             )
             if not (
                 create_remote_option and create_remote_option.get_value().is_true()
             ):
                 continue
 
-            url_option = remote_item_option.get_option(UrlConfigOption)
-            type_option = remote_item_option.get_option(TypeConfigOption)
+            url_option = remote_item_option.get_option(UrlOption)
+            type_option = remote_item_option.get_option(TypeOption)
 
             remote_url = None
             remote_type_label = None
@@ -262,11 +194,11 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
         return None
 
     def _resolve_remote_type_and_url(self, remote_item_option):
-        from wexample_filestate_git.config_option.type_config_option import (
-            TypeConfigOption,
+        from wexample_filestate_git.option._git.type_option import (
+            TypeOption,
         )
-        from wexample_filestate_git.config_option.url_config_option import (
-            UrlConfigOption,
+        from wexample_filestate_git.option._git.url_option import (
+            UrlOption,
         )
         from wexample_filestate_git.remote.github_remote import GithubRemote
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
@@ -275,8 +207,8 @@ class GitRemoteCreateOperation(FileManipulationOperationMixin, AbstractGitOperat
             GIT_PROVIDER_GITLAB,
         )
 
-        url_option = remote_item_option.get_option(UrlConfigOption)
-        type_option = remote_item_option.get_option(TypeConfigOption)
+        url_option = remote_item_option.get_option(UrlOption)
+        type_option = remote_item_option.get_option(TypeOption)
 
         if not url_option:
             return None

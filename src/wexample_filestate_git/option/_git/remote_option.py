@@ -1,0 +1,147 @@
+from __future__ import annotations
+
+from types import UnionType
+from typing import TYPE_CHECKING, Any, Union
+
+from wexample_config.config_option.abstract_list_config_option import (
+    AbstractListConfigOption,
+)
+from wexample_filestate.option.mixin.option_mixin import OptionMixin
+from wexample_helpers.decorator.base_class import base_class
+
+if TYPE_CHECKING:
+    from types import UnionType
+    from wexample_filestate.operation.abstract_operation import AbstractOperation
+    from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+
+
+@base_class
+class RemoteOption(OptionMixin, AbstractListConfigOption):
+    @staticmethod
+    def get_raw_value_allowed_type() -> Any:
+        return Union[list, dict]
+
+    def get_item_class_type(self) -> type | UnionType:
+        from wexample_filestate_git.option._git.remote_item_option import (
+            RemoteItemOption,
+        )
+
+        return RemoteItemOption
+
+    def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
+        """Create GitRemoteCreateOperation if remotes need to be created."""
+        from wexample_filestate.option.active_option import ActiveOption
+        from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
+        from wexample_filestate_git.option._git.type_option import TypeOption
+        
+        # Check if any remote needs to be created
+        needs_creation = False
+        
+        for remote_item_option in self.children:
+            # Check if creation is enabled
+            create_remote_option = remote_item_option.get_option_or_none(CreateRemoteOption)
+            create_enabled = (
+                create_remote_option is not None
+                and create_remote_option.get_value().is_true()
+            )
+            
+            # Check if item is active (missing flag => active by default)
+            active_option = remote_item_option.get_option_or_none(ActiveOption)
+            raw_active = (
+                active_option.get_value().raw if active_option is not None else None
+            )
+            is_active = self._is_active_flag(raw_active)
+            
+            if create_enabled and is_active:
+                # Check if we have URL
+                url_option = remote_item_option.get_option_or_none(UrlOption)
+                if url_option:
+                    # Resolve type and url
+                    resolved = self._resolve_remote_type_and_url(remote_item_option)
+                    if resolved:
+                        remote_type, remote_url = resolved
+                        # Check if remote repository exists
+                        remote = self._build_remote_instance(
+                            remote_type=remote_type, remote_url=remote_url, target=target
+                        )
+                        if remote:
+                            remote.connect()
+                            repo_info = remote.parse_repository_url(remote_url)
+                            if not remote.check_repository_exists(
+                                repo_info["name"], repo_info["namespace"]
+                            ):
+                                needs_creation = True
+                                break
+        
+        if needs_creation:
+            from wexample_filestate_git.operation.git_remote_create_operation import GitRemoteCreateOperation
+            
+            return GitRemoteCreateOperation(
+                target=target
+            )
+        
+        return None
+
+    def _is_active_flag(self, raw_value) -> bool:
+        """Evaluate an 'active' flag consistently. Treats missing as active."""
+        from wexample_filestate.option.active_option import ActiveOption
+        
+        if raw_value is None:
+            return True
+        return ActiveOption.is_active(raw_value)
+
+    def _resolve_remote_type_and_url(self, remote_item_option):
+        """Resolve remote type and URL from remote item option."""
+        from wexample_filestate_git.option._git.type_option import TypeOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+        from wexample_helpers_git.const.common import (
+            GIT_PROVIDER_GITHUB,
+            GIT_PROVIDER_GITLAB,
+        )
+
+        url_option = remote_item_option.get_option_or_none(UrlOption)
+        type_option = remote_item_option.get_option_or_none(TypeOption)
+
+        if not url_option:
+            return None
+
+        remote_url = self._build_str_value(url_option.get_value())
+
+        if type_option:
+            type_map = {
+                GIT_PROVIDER_GITHUB: GithubRemote,
+                GIT_PROVIDER_GITLAB: GitlabRemote,
+            }
+            remote_type = type_map.get(type_option.get_value().get_str().lower())
+        else:
+            remote_type = self._detect_remote_type(remote_url)
+
+        if not remote_type:
+            return None
+
+        return remote_type, remote_url
+
+    def _detect_remote_type(self, remote_url: str):
+        """Detect the remote type (GitHub, GitLab, etc.) from the URL."""
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+        
+        remote_types = [GithubRemote, GitlabRemote]
+        
+        for remote_type in remote_types:
+            if remote_type.detect_remote_type(remote_url):
+                return remote_type
+        return None
+
+    def _build_remote_instance(self, remote_type, remote_url: str, target):
+        """Build remote instance with proper configuration."""
+        return remote_type(
+            io=target.io,
+            api_token=target.get_env_parameter(
+                key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+            ),
+            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
+        )
