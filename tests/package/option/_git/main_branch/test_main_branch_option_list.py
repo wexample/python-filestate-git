@@ -29,6 +29,14 @@ class TestMainBranchOptionList(AbstractGitTestOption):
         
         # Verify branch doesn't exist initially (but Git repo exists)
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
+
+        # Ensure Git is initialized (creates directory + .git if needed)
+        self._ensure_git_initialized(dir_path)
+
+        # Verify directory and Git exist
+        self._assert_file_exists(file_path=dir_path, positive=True)
+
+        # Verify branch doesn't exist initially
         repo = Repo(str(dir_path))
         branch_names = [h.name for h in repo.heads]
         assert "feature" not in branch_names, f"Branch 'feature' should not exist initially"
@@ -40,7 +48,6 @@ class TestMainBranchOptionList(AbstractGitTestOption):
             "children": [
                 {
                     "name": self.test_dir_name,
-                    "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
                         "main_branch": ["feature", "backup"]
