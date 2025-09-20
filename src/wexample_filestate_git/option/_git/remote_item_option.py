@@ -10,11 +10,7 @@ from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
-    from wexample_config.options_provider.abstract_options_provider import (
-        AbstractOptionsProvider,
-    )
-    from wexample_filestate.operation.abstract_operation import AbstractOperation
-    from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+    from wexample_filestate.option.name_option import NameOption
 
 
 @base_class
@@ -23,13 +19,6 @@ class RemoteItemOption(OptionMixin, AbstractNestedConfigOption):
     def get_raw_value_allowed_type() -> Any:
         return Union[dict]
 
-    def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
-        from wexample_filestate_git.options_provider.remote_item_options_provider import (
-            RemoteItemOptionsProvider,
-        )
-
-        return [RemoteItemOptionsProvider]
-
     def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
         from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
         from wexample_filestate_git.option._git.type_option import TypeOption
@@ -37,6 +26,7 @@ class RemoteItemOption(OptionMixin, AbstractNestedConfigOption):
         from wexample_filestate.option.active_option import ActiveOption
 
         return [
+            NameOption,
             CreateRemoteOption,
             TypeOption,
             UrlOption,

@@ -45,12 +45,16 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
     def get_value_allowed_type() -> Any | type | UnionType:
         return dict | bool
 
-    def get_options_providers(self) -> list[type[AbstractOptionsProvider]]:
-        from wexample_filestate_git.options_provider.git_config_options_provider import (
-            GitConfigOptionsProvider,
-        )
+    def get_allowed_options(self) -> list[type[OptionMixin]]:
+        from wexample_filestate_git.option._git.main_branch_option import MainBranchOption
+        from wexample_filestate_git.option._git.remote_option import RemoteOption
+        from wexample_filestate.option.active_option import ActiveOption
 
-        return [GitConfigOptionsProvider]
+        return [
+            ActiveOption,
+            MainBranchOption,
+            RemoteOption,
+        ]
 
     def set_value(self, raw_value: Any) -> None:
         # Support True without config.
