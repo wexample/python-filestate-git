@@ -50,9 +50,7 @@ class TestGitOptionExistingDirectory(AbstractGitTestOption):
                     "name": self.test_dir_name,
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
-                    "git": {
-                        "active": True
-                    },
+                    "git": {},
                 }
             ]
         }
