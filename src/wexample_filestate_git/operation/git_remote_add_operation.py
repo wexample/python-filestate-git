@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 class GitRemoteAddOperation(FileManipulationOperationMixin, AbstractGitOperation):
     _created_remote: dict[str, bool]
 
-    def __init__(self, target, remotes: list[dict]):
-        super().__init__(target=target)
+    def __init__(self, option, target, remotes: list[dict], description="Add Git remotes"):
+        super().__init__(option=option, target=target, description=description)
         self.remotes = remotes  # List of {"name": str, "url": str}
         self._created_remote = {}
 

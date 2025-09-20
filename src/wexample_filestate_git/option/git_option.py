@@ -67,9 +67,8 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         return (value.is_bool() and value.is_true()) or value.is_dict()
 
     def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
-        """Create GitInitOperation if Git is required but not initialized."""
+        """Create GitInitOperation if Git is required but not initialized, or delegate to children."""
         from wexample_helpers_git.helpers.git import git_is_init
-
         # Check if Git is required
         if not self.should_have_git():
             return None
@@ -80,14 +79,15 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
             return None
 
         # Check if Git is already initialized
-        if git_is_init(target_path):
-            return None
+        if not git_is_init(target_path):
+            # Git needs to be initialized first
+            from wexample_filestate_git.operation.git_init_operation import GitInitOperation
 
-        # Create GitInitOperation
-        from wexample_filestate_git.operation.git_init_operation import GitInitOperation
+            return GitInitOperation(
+                option=self,
+                target=target,
+                description="Initialize Git repository"
+            )
 
-        return GitInitOperation(
-            option=self,
-            target=target,
-            description="Initialize Git repository"
-        )
+        # Git is already initialized, delegate to children for other operations
+        return self._create_child_required_operation(target=target)

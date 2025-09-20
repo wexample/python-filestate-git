@@ -23,7 +23,7 @@ class RemoteItemOption(OptionMixin, AbstractNestedConfigOption):
 
         return Union[dict, StringKeysDict, RemoteConfigValue]
 
-    def get_allowed_options(self) -> list[type[OptionMixin]]:
+    def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
         from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
         from wexample_filestate_git.option._git.type_option import TypeOption
         from wexample_filestate_git.option._git.url_option import UrlOption

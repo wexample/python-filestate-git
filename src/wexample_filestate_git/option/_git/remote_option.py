@@ -37,7 +37,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         # First priority: Check if any remote repository needs to be created
         for remote_item_option in self.children:
             # Check if creation is enabled
-            create_remote_option = remote_item_option.get_option_or_none(CreateRemoteOption)
+            create_remote_option = remote_item_option.get_option(CreateRemoteOption)
             create_enabled = (
                 create_remote_option is not None
                 and create_remote_option.get_value().is_true()
@@ -45,7 +45,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             
             if create_enabled:
                 # Check if we have URL
-                url_option = remote_item_option.get_option_or_none(UrlOption)
+                url_option = remote_item_option.get_option(UrlOption)
                 if url_option:
                     # Resolve type and url
                     resolved = self._resolve_remote_type_and_url(remote_item_option)
@@ -80,9 +80,9 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             # Collect all remotes that need to be added
             remotes_to_add = []
             for remote_item_option in self.children:
-                url_option = remote_item_option.get_option_or_none(UrlOption)
+                url_option = remote_item_option.get_option(UrlOption)
                 if url_option:
-                    remote_url = self._build_str_value(url_option.get_value())
+                    remote_url = url_option.get_value().to_str()
                     # For remote add, we need a name - use "origin" as default or derive from URL
                     remote_name = self._get_remote_name(remote_item_option)
                     if remote_name and remote_url:
@@ -92,7 +92,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                         })
             
             if remotes_to_add:
-                return GitRemoteAddOperation(
+                return GitRemoteAddOperation(option=self, 
                     target=target,
                     remotes=remotes_to_add
                 )
@@ -111,13 +111,13 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             GIT_PROVIDER_GITLAB,
         )
 
-        url_option = remote_item_option.get_option_or_none(UrlOption)
-        type_option = remote_item_option.get_option_or_none(TypeOption)
+        url_option = remote_item_option.get_option(UrlOption)
+        type_option = remote_item_option.get_option(TypeOption)
 
         if not url_option:
             return None
 
-        remote_url = self._build_str_value(url_option.get_value())
+        remote_url = url_option.get_value().to_str()
 
         if type_option:
             type_map = {
@@ -159,7 +159,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         """Get remote name from option or default to 'origin'."""
         from wexample_filestate.option.name_option import NameOption
         
-        name_option = remote_item_option.get_option_or_none(NameOption)
+        name_option = remote_item_option.get_option(NameOption)
         if name_option and name_option.get_value().is_str():
             return name_option.get_value().get_str()
         
@@ -181,12 +181,12 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         existing_by_name = {r.name: r for r in repo.remotes}
         
         for remote_item_option in self.children:
-            url_option = remote_item_option.get_option_or_none(UrlOption)
+            url_option = remote_item_option.get_option(UrlOption)
             if not url_option:
                 continue
                 
             desired_name = self._get_remote_name(remote_item_option)
-            desired_url = self._build_str_value(url_option.get_value())
+            desired_url = url_option.get_value().to_str()
             
             if not desired_name or not desired_url:
                 continue
@@ -220,7 +220,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         from wexample_filestate_git.option._git.url_option import UrlOption
         
         for remote_item_option in self.children:
-            url_option = remote_item_option.get_option_or_none(UrlOption)
+            url_option = remote_item_option.get_option(UrlOption)
             if url_option:
                 return True
         
