@@ -36,18 +36,12 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
         assert expected_url in remote_urls, f"Expected URL {expected_url} not found in {remote_urls}"
 
     def _operation_test_assert_initial(self) -> None:
-        from wexample_helpers.const.globals import DIR_GIT
-        import shutil
-        
         # Verify directory exists
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
         self._assert_file_exists(file_path=dir_path, positive=True)
         
         # Ensure NO Git repo exists initially - clean slate
-        git_dir = dir_path / DIR_GIT
-        if git_dir.exists():
-            shutil.rmtree(git_dir)
-        self._assert_file_exists(file_path=git_dir, positive=False)
+        self._ensure_no_git(dir_path)
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
@@ -71,3 +65,13 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
                 }
             ]
         }
+
+    def _ensure_no_git(self, dir_path) -> None:
+        """Ensure no Git repository exists in the given directory."""
+        from wexample_helpers.const.globals import DIR_GIT
+        import shutil
+        
+        git_dir = dir_path / DIR_GIT
+        if git_dir.exists():
+            shutil.rmtree(git_dir)
+        self._assert_file_exists(file_path=git_dir, positive=False)
