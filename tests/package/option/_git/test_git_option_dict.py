@@ -35,6 +35,7 @@ class TestGitOptionDict(AbstractGitTestOption):
         
         # Verify Git repository doesn't exist initially
         git_dir = f"{dir_path}/{DIR_GIT}"
+        self._ensure_no_git(dir_path)
         self._assert_file_exists(file_path=git_dir, positive=False)
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
@@ -46,9 +47,7 @@ class TestGitOptionDict(AbstractGitTestOption):
                     "name": self.test_dir_name,
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
-                    "git": {
-                        "active": True
-                    },
+                    "git": {},
                 }
             ]
         }
