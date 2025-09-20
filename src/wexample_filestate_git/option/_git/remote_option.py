@@ -29,12 +29,13 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         return RemoteItemOption
 
     def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
-        """Create GitRemoteCreateOperation for the first remote that needs to be created."""
+        """Create GitRemoteCreateOperation or GitRemoteAddOperation as needed."""
         from wexample_filestate.option.active_option import ActiveOption
         from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
         from wexample_filestate_git.option._git.url_option import UrlOption
         from wexample_filestate_git.option._git.type_option import TypeOption
         
+        # First priority: Check if any remote repository needs to be created
         for remote_item_option in self.children:
             # Check if creation is enabled
             create_remote_option = remote_item_option.get_option_or_none(CreateRemoteOption)
@@ -79,6 +80,38 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                                         key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
                                     )
                                 )
+        
+        # Second priority: Check if any remote needs to be added locally
+        if self._is_remote_missing_or_mismatched(target):
+            from wexample_filestate_git.operation.git_remote_add_operation import GitRemoteAddOperation
+            
+            # Collect all remotes that need to be added
+            remotes_to_add = []
+            for remote_item_option in self.children:
+                # Check if item is active (missing flag => active by default)
+                active_option = remote_item_option.get_option_or_none(ActiveOption)
+                raw_active = (
+                    active_option.get_value().raw if active_option is not None else None
+                )
+                is_active = self._is_active_flag(raw_active)
+                
+                if is_active:
+                    url_option = remote_item_option.get_option_or_none(UrlOption)
+                    if url_option:
+                        remote_url = self._build_str_value(url_option.get_value())
+                        # For remote add, we need a name - use "origin" as default or derive from URL
+                        remote_name = self._get_remote_name(remote_item_option)
+                        if remote_name and remote_url:
+                            remotes_to_add.append({
+                                "name": remote_name,
+                                "url": remote_url
+                            })
+            
+            if remotes_to_add:
+                return GitRemoteAddOperation(
+                    target=target,
+                    remotes=remotes_to_add
+                )
         
         return None
 
@@ -144,3 +177,66 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             ),
             base_url=remote_type.build_remote_api_url_from_repo(remote_url),
         )
+
+    def _get_remote_name(self, remote_item_option) -> str:
+        """Get remote name from option or default to 'origin'."""
+        # For now, default to "origin" - in the future we could add a NameOption
+        return "origin"
+
+    def _is_remote_missing_or_mismatched(self, target) -> bool:
+        """Check if any configured remote is missing locally or has different URL."""
+        from wexample_filestate.option.active_option import ActiveOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
+        
+        # Check if Git repo exists
+        repo = self._get_target_git_repo(target)
+        if not repo:
+            return False
+        
+        # Get existing remotes by name
+        existing_by_name = {r.name: r for r in repo.remotes}
+        
+        for remote_item_option in self.children:
+            # Check if item is active (missing flag => active by default)
+            active_option = remote_item_option.get_option_or_none(ActiveOption)
+            raw_active = (
+                active_option.get_value().raw if active_option is not None else None
+            )
+            is_active = self._is_active_flag(raw_active)
+            
+            if not is_active:
+                continue
+                
+            url_option = remote_item_option.get_option_or_none(UrlOption)
+            if not url_option:
+                continue
+                
+            desired_name = self._get_remote_name(remote_item_option)
+            desired_url = self._build_str_value(url_option.get_value())
+            
+            if not desired_name or not desired_url:
+                continue
+                
+            existing = existing_by_name.get(desired_name)
+            if existing is None:
+                return True  # Remote missing
+                
+            # Check if URL matches
+            existing_urls = {u for u in existing.urls}
+            if desired_url not in existing_urls:
+                return True  # URL mismatch
+        
+        return False
+
+    def _get_target_git_repo(self, target):
+        """Get Git repository for the target."""
+        try:
+            from git import Repo
+            from wexample_helpers.const.globals import DIR_GIT
+            
+            git_dir = target.get_path() / DIR_GIT
+            if git_dir.exists():
+                return Repo(str(target.get_path()))
+        except Exception:
+            pass
+        return None
