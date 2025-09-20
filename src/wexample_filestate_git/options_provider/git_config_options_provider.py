@@ -18,15 +18,15 @@ class GitConfigOptionsProvider(AbstractOptionsProvider):
         from wexample_filestate.option.active_option import (
             ActiveOption,
         )
-        from wexample_filestate_git.config_option.main_branch_config_option import (
-            MainBranchConfigOption,
+        from wexample_filestate_git.option._git.main_branch_option import (
+            MainBranchOption,
         )
-        from wexample_filestate_git.config_option.remote_config_option import (
-            RemoteConfigOption,
+        from wexample_filestate_git.option._git.remote_option import (
+            RemoteOption,
         )
 
         return [
             ActiveOption,
-            MainBranchConfigOption,
-            RemoteConfigOption,
+            MainBranchOption,
+            RemoteOption,
         ]
