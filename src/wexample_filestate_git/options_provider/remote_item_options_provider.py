@@ -7,30 +7,24 @@ from wexample_config.options_provider.abstract_options_provider import (
 )
 
 if TYPE_CHECKING:
-    from wexample_config.config_option.abstract_config_option import (
-        AbstractConfigOption,
-    )
+    from wexample_filestate.option.mixin.option_mixin import OptionMixin
 
 
 class RemoteItemOptionsProvider(AbstractOptionsProvider):
     @classmethod
-    def get_options(cls) -> list[type[AbstractConfigOption]]:
-        from wexample_config.config_option.name_config_option import NameConfigOption
+    def get_options(cls) -> list[type[OptionMixin]]:
         from wexample_filestate.option.active_option import (
             ActiveOption,
         )
         from wexample_filestate.option.type_option import TypeOption
-        from wexample_filestate_git.config_option.create_remote_config_option import (
-            CreateRemoteConfigOption,
-        )
-        from wexample_filestate_git.config_option.url_config_option import (
-            UrlConfigOption,
-        )
+        from wexample_filestate.option.name_option import NameOption
+        from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
 
         return [
             ActiveOption,
-            NameConfigOption,
-            UrlConfigOption,
-            CreateRemoteConfigOption,
+            NameOption,
+            UrlOption,
+            CreateRemoteOption,
             TypeOption,
         ]
