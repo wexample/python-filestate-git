@@ -29,14 +29,11 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         return RemoteItemOption
 
     def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
-        """Create GitRemoteCreateOperation if remotes need to be created."""
+        """Create GitRemoteCreateOperation for the first remote that needs to be created."""
         from wexample_filestate.option.active_option import ActiveOption
         from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
         from wexample_filestate_git.option._git.url_option import UrlOption
         from wexample_filestate_git.option._git.type_option import TypeOption
-        
-        # Check if any remote needs to be created
-        needs_creation = False
         
         for remote_item_option in self.children:
             # Check if creation is enabled
@@ -71,15 +68,17 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                             if not remote.check_repository_exists(
                                 repo_info["name"], repo_info["namespace"]
                             ):
-                                needs_creation = True
-                                break
-        
-        if needs_creation:
-            from wexample_filestate_git.operation.git_remote_create_operation import GitRemoteCreateOperation
-            
-            return GitRemoteCreateOperation(
-                target=target
-            )
+                                # Create operation with all necessary parameters
+                                from wexample_filestate_git.operation.git_remote_create_operation import GitRemoteCreateOperation
+                                
+                                return GitRemoteCreateOperation(
+                                    target=target,
+                                    remote_type=remote_type,
+                                    remote_url=remote_url,
+                                    api_token=target.get_env_parameter(
+                                        key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+                                    )
+                                )
         
         return None
 
