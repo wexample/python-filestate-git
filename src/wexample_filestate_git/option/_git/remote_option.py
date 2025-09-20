@@ -30,7 +30,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
     def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
         """Create GitRemoteCreateOperation or GitRemoteAddOperation as needed."""
-        from wexample_filestate.option.active_option import ActiveOption
         from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
         from wexample_filestate_git.option._git.url_option import UrlOption
         from wexample_filestate_git.option._git.type_option import TypeOption
@@ -44,14 +43,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                 and create_remote_option.get_value().is_true()
             )
             
-            # Check if item is active (missing flag => active by default)
-            active_option = remote_item_option.get_option_or_none(ActiveOption)
-            raw_active = (
-                active_option.get_value().raw if active_option is not None else None
-            )
-            is_active = self._is_active_flag(raw_active)
-            
-            if create_enabled and is_active:
+            if create_enabled:
                 # Check if we have URL
                 url_option = remote_item_option.get_option_or_none(UrlOption)
                 if url_option:
@@ -88,24 +80,16 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             # Collect all remotes that need to be added
             remotes_to_add = []
             for remote_item_option in self.children:
-                # Check if item is active (missing flag => active by default)
-                active_option = remote_item_option.get_option_or_none(ActiveOption)
-                raw_active = (
-                    active_option.get_value().raw if active_option is not None else None
-                )
-                is_active = self._is_active_flag(raw_active)
-                
-                if is_active:
-                    url_option = remote_item_option.get_option_or_none(UrlOption)
-                    if url_option:
-                        remote_url = self._build_str_value(url_option.get_value())
-                        # For remote add, we need a name - use "origin" as default or derive from URL
-                        remote_name = self._get_remote_name(remote_item_option)
-                        if remote_name and remote_url:
-                            remotes_to_add.append({
-                                "name": remote_name,
-                                "url": remote_url
-                            })
+                url_option = remote_item_option.get_option_or_none(UrlOption)
+                if url_option:
+                    remote_url = self._build_str_value(url_option.get_value())
+                    # For remote add, we need a name - use "origin" as default or derive from URL
+                    remote_name = self._get_remote_name(remote_item_option)
+                    if remote_name and remote_url:
+                        remotes_to_add.append({
+                            "name": remote_name,
+                            "url": remote_url
+                        })
             
             if remotes_to_add:
                 return GitRemoteAddOperation(
@@ -115,13 +99,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         
         return None
 
-    def _is_active_flag(self, raw_value) -> bool:
-        """Evaluate an 'active' flag consistently. Treats missing as active."""
-        from wexample_filestate.option.active_option import ActiveOption
-        
-        if raw_value is None:
-            return True
-        return ActiveOption.is_active(raw_value)
 
     def _resolve_remote_type_and_url(self, remote_item_option):
         """Resolve remote type and URL from remote item option."""
@@ -191,31 +168,19 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
     def _is_remote_missing_or_mismatched(self, target) -> bool:
         """Check if any configured remote is missing locally or has different URL."""
-        from wexample_filestate.option.active_option import ActiveOption
         from wexample_filestate_git.option._git.url_option import UrlOption
         
         # Check if Git repo exists
         repo = self._get_target_git_repo(target)
         if not repo:
             # If no Git repo but remotes are configured, they need to be added later
-            return self._has_active_remotes_configured()
+            return self._has_remotes_configured()
         
         # Git repo exists, check if remotes match
-        
         # Get existing remotes by name
         existing_by_name = {r.name: r for r in repo.remotes}
         
         for remote_item_option in self.children:
-            # Check if item is active (missing flag => active by default)
-            active_option = remote_item_option.get_option_or_none(ActiveOption)
-            raw_active = (
-                active_option.get_value().raw if active_option is not None else None
-            )
-            is_active = self._is_active_flag(raw_active)
-            
-            if not is_active:
-                continue
-                
             url_option = remote_item_option.get_option_or_none(UrlOption)
             if not url_option:
                 continue
@@ -250,22 +215,13 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             pass
         return None
 
-    def _has_active_remotes_configured(self) -> bool:
-        """Check if there are any active remotes configured."""
-        from wexample_filestate.option.active_option import ActiveOption
+    def _has_remotes_configured(self) -> bool:
+        """Check if there are any remotes configured."""
         from wexample_filestate_git.option._git.url_option import UrlOption
         
         for remote_item_option in self.children:
-            # Check if item is active (missing flag => active by default)
-            active_option = remote_item_option.get_option_or_none(ActiveOption)
-            raw_active = (
-                active_option.get_value().raw if active_option is not None else None
-            )
-            is_active = self._is_active_flag(raw_active)
-            
-            if is_active:
-                url_option = remote_item_option.get_option_or_none(UrlOption)
-                if url_option:
-                    return True
+            url_option = remote_item_option.get_option_or_none(UrlOption)
+            if url_option:
+                return True
         
         return False

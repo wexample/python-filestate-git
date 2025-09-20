@@ -61,7 +61,6 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "active": True,  # Git should be initialized
                         "remote": [
                             {
                                 "name": "origin",
