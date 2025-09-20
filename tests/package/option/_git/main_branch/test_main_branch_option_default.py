@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
+
 from tests.common.abstract_main_branch_test import AbstractMainBranchTest
 
 
