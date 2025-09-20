@@ -29,6 +29,7 @@ class TestMainBranchOptionDefault(AbstractGitTestOption):
         
         # Verify branch doesn't exist initially (but Git repo exists)
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
+        self._ensure_git_initialized(dir_path)
         repo = Repo(str(dir_path))
         branch_names = [h.name for h in repo.heads]
         assert "main" not in branch_names, f"Branch 'main' should not exist initially"
@@ -43,7 +44,6 @@ class TestMainBranchOptionDefault(AbstractGitTestOption):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "active": True,  # Git already initialized
                         "main_branch": []  # Empty list should default to "main"
                     },
                 }

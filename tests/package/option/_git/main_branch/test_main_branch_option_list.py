@@ -43,7 +43,6 @@ class TestMainBranchOptionList(AbstractGitTestOption):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "active": True,  # Git already initialized
                         "main_branch": ["feature", "backup"]
                     },
                 }
