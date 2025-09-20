@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-from wexample_filestate_git.testing.git_remote_test import GitRemoteTest
+from tests.common.abstract_git_remote_test import AbstractGitRemoteTest
 
 
-class TestGitlabRemote(GitRemoteTest):
+class TestGitlabRemote(AbstractGitRemoteTest):
     """Test cases for GitLab remote operations."""
 
     ENV_TOKEN_NAME = "GITLAB_API_TOKEN"

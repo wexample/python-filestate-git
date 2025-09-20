@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-class GitRemoteTest:
+class AbstractGitRemoteTest:
     """Base class for Git remote service tests."""
 
     # Service specific attributes to be overridden by child classes
