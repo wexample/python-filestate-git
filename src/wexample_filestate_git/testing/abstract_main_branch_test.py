@@ -22,6 +22,7 @@ class AbstractMainBranchTest(AbstractGitTestOption):
 
     def _operation_test_assert_applied(self) -> None:
         from git import Repo
+
         
         # Verify expected branch was created
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
@@ -30,7 +31,6 @@ class AbstractMainBranchTest(AbstractGitTestOption):
         assert self.expected_branch_name in branch_names, f"Branch '{self.expected_branch_name}' not found in {branch_names}"
 
         # Cleanup to avoid git diff after test ran.
-        shutil.rmtree(dir_path)
 
     def _operation_test_assert_initial(self) -> None:
         from git import Repo
