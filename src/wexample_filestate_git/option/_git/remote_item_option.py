@@ -8,6 +8,7 @@ from wexample_config.config_option.abstract_nested_config_option import (
 )
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
+from wexample_filestate.option.mixin.option_mixin import OptionMixin
 
 if TYPE_CHECKING:
     pass
@@ -26,7 +27,7 @@ class RemoteItemOption(OptionMixin, AbstractNestedConfigOption):
         from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
         from wexample_filestate_git.option._git.type_option import TypeOption
         from wexample_filestate_git.option._git.url_option import UrlOption
-        from wexample_filestate_git.option._git.name_option import NameOption
+        from wexample_filestate.option.name_option import NameOption
         from wexample_filestate.option.active_option import ActiveOption
 
         return [
