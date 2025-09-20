@@ -10,16 +10,21 @@ if TYPE_CHECKING:
 
 class TestRemoteOptionAddSimple(AbstractGitTestOption):
     """Test RemoteOption for adding a simple remote locally."""
-    test_dir_name: str = "test-git-remote-add-simple"
+    test_dir_name: str = "test_git_dir"  # Use existing test directory
 
     def _operation_get_count(self) -> int:
         return 1  # Only remote add operation
 
     def _operation_test_assert_applied(self) -> None:
         from git import Repo
+        from wexample_helpers.const.globals import DIR_GIT
+        
+        # Verify Git repo exists
+        dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
+        git_dir = dir_path / DIR_GIT
+        self._assert_file_exists(file_path=git_dir, positive=True)
         
         # Verify remote was added
-        dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
         repo = Repo(str(dir_path))
         remote_names = [r.name for r in repo.remotes]
         assert "origin" in remote_names, f"Remote 'origin' not found in {remote_names}"
@@ -31,10 +36,16 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
         assert expected_url in remote_urls, f"Expected URL {expected_url} not found in {remote_urls}"
 
     def _operation_test_assert_initial(self) -> None:
-        from git import Repo
+        from wexample_helpers.const.globals import DIR_GIT
         
-        # Verify remote doesn't exist initially (but Git repo exists)
+        # Verify Git repo exists but remote doesn't
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
+        git_dir = dir_path / DIR_GIT
+        self._assert_file_exists(file_path=dir_path, positive=True)
+        self._assert_file_exists(file_path=git_dir, positive=False)
+        
+        # Check if remote exists (should not)
+        from git import Repo
         repo = Repo(str(dir_path))
         remote_names = [r.name for r in repo.remotes]
         assert "origin" not in remote_names, f"Remote 'origin' should not exist initially"
@@ -49,7 +60,7 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "active": True,  # Git already initialized
+                        "active": True,  # Git should be initialized
                         "remote": [
                             {
                                 "name": "origin",
