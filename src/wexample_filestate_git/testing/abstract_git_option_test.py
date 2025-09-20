@@ -51,9 +51,5 @@ class AbstractGitOptionTest(AbstractGitTestOption):
                 }
             ]
         }
-        
-        # Add should_exist only if directory should exist initially
-        if self.should_directory_exist_initially:
-            config["children"][0]["should_exist"] = True
-            
+
         return config
