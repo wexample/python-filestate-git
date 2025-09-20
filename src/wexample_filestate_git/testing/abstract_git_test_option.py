@@ -42,5 +42,9 @@ class AbstractGitTestOption(AbstractTestOperation):
             shutil.rmtree(git_dir)
 
         # Initialize fresh Git repo
-        Repo.init(str(dir_path))
+        repo = Repo.init(str(dir_path))
+
+        # Create initial commit so HEAD exists
+        repo.index.commit("Initial commit")
+
         self._assert_file_exists(file_path=git_dir, positive=True)
