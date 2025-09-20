@@ -2,52 +2,36 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from wexample_filestate.testing.abstract_test_operation import AbstractTestOperation
+from wexample_filestate_git.testing.abstract_git_test_option import AbstractGitTestOption
 
 if TYPE_CHECKING:
     from wexample_config.const.types import DictConfig
 
 
-class TestRemoteAddOption(AbstractTestOperation):
-    """Test RemoteOption for adding remotes locally."""
-    test_dir_name: str = "test-git-remote-add"
+class TestMainBranchOptionString(AbstractGitTestOption):
+    """Test MainBranchOption with string value - only tests branch creation."""
+    test_dir_name: str = "test-git-branch-string"
 
     def _operation_get_count(self) -> int:
-        return 3  # Directory creation + Git init + Remote add
+        return 1  # Only branch creation operation
 
     def _operation_test_assert_applied(self) -> None:
-        from wexample_helpers.const.globals import DIR_GIT
         from git import Repo
         
-        # Verify the directory exists
+        # Verify branch was created
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
-        self._assert_file_exists(file_path=dir_path, positive=True)
-        
-        # Verify Git repository was initialized
-        git_dir = dir_path / DIR_GIT
-        self._assert_file_exists(file_path=git_dir, positive=True)
-        
-        # Verify remote was added
         repo = Repo(str(dir_path))
-        remote_names = [r.name for r in repo.remotes]
-        assert "origin" in remote_names, f"Remote 'origin' not found in {remote_names}"
-        
-        # Verify remote URL
-        origin_remote = repo.remote("origin")
-        remote_urls = list(origin_remote.urls)
-        expected_url = "https://github.com/test/test-repo.git"
-        assert expected_url in remote_urls, f"Expected URL {expected_url} not found in {remote_urls}"
+        branch_names = [h.name for h in repo.heads]
+        assert "develop" in branch_names, f"Branch 'develop' not found in {branch_names}"
 
     def _operation_test_assert_initial(self) -> None:
-        from wexample_helpers.const.globals import DIR_GIT
+        from git import Repo
         
-        # Verify the directory doesn't exist initially
+        # Verify branch doesn't exist initially (but Git repo exists)
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
-        self._assert_file_exists(file_path=dir_path, positive=False)
-        
-        # Verify Git repository doesn't exist initially
-        git_dir = dir_path / DIR_GIT
-        self._assert_file_exists(file_path=git_dir, positive=False)
+        repo = Repo(str(dir_path))
+        branch_names = [h.name for h in repo.heads]
+        assert "develop" not in branch_names, f"Branch 'develop' should not exist initially"
 
     def _operation_test_setup_configuration(self) -> DictConfig | None:
         from wexample_filestate.const.disk import DiskItemType
@@ -59,25 +43,20 @@ class TestRemoteAddOption(AbstractTestOperation):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "remote": [
-                            {
-                                "url": "https://github.com/test/test-repo.git",
-                                "type": "github",
-                                "create_remote": False,  # Don't create remote repository, just add locally
-                            }
-                        ]
+                        "active": True,  # Git already initialized
+                        "main_branch": "develop"
                     },
                 }
             ]
         }
 
 
-class TestRemoteAddMultiple(AbstractTestOperation):
-    """Test RemoteOption for adding multiple remotes."""
-    test_dir_name: str = "test-git-remote-add-multiple"
+class TestMainBranchOptionList(AbstractTestOperation):
+    """Test MainBranchOption with list value."""
+    test_dir_name: str = "test-git-branch-list"
 
     def _operation_get_count(self) -> int:
-        return 3  # Directory creation + Git init + Remote add (handles multiple remotes)
+        return 3  # Directory creation + Git init + Branch creation
 
     def _operation_test_assert_applied(self) -> None:
         from wexample_helpers.const.globals import DIR_GIT
@@ -91,10 +70,10 @@ class TestRemoteAddMultiple(AbstractTestOperation):
         git_dir = dir_path / DIR_GIT
         self._assert_file_exists(file_path=git_dir, positive=True)
         
-        # Verify remotes were added
+        # Verify branch was created (first item from list)
         repo = Repo(str(dir_path))
-        remote_names = [r.name for r in repo.remotes]
-        assert "origin" in remote_names, f"Remote 'origin' not found in {remote_names}"
+        branch_names = [h.name for h in repo.heads]
+        assert "feature" in branch_names, f"Branch 'feature' not found in {branch_names}"
 
     def _operation_test_assert_initial(self) -> None:
         from wexample_helpers.const.globals import DIR_GIT
@@ -117,30 +96,19 @@ class TestRemoteAddMultiple(AbstractTestOperation):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "remote": [
-                            {
-                                "url": "https://github.com/test/repo1.git",
-                                "type": "github",
-                                "create_remote": False,
-                            },
-                            {
-                                "url": "https://gitlab.com/test/repo2.git", 
-                                "type": "gitlab",
-                                "create_remote": False,
-                            }
-                        ]
+                        "main_branch": ["feature", "backup"]
                     },
                 }
             ]
         }
 
 
-class TestRemoteAddInactive(AbstractTestOperation):
-    """Test RemoteOption when remote is inactive."""
-    test_dir_name: str = "test-git-remote-add-inactive"
+class TestMainBranchOptionDefault(AbstractTestOperation):
+    """Test MainBranchOption with default 'main' branch."""
+    test_dir_name: str = "test-git-branch-default"
 
     def _operation_get_count(self) -> int:
-        return 2  # Directory creation + Git init (no remote add)
+        return 3  # Directory creation + Git init + Branch creation
 
     def _operation_test_assert_applied(self) -> None:
         from wexample_helpers.const.globals import DIR_GIT
@@ -154,10 +122,10 @@ class TestRemoteAddInactive(AbstractTestOperation):
         git_dir = dir_path / DIR_GIT
         self._assert_file_exists(file_path=git_dir, positive=True)
         
-        # Verify NO remote was added (inactive)
+        # Verify default 'main' branch was created
         repo = Repo(str(dir_path))
-        remote_names = [r.name for r in repo.remotes]
-        assert len(remote_names) == 0, f"Expected no remotes but found {remote_names}"
+        branch_names = [h.name for h in repo.heads]
+        assert "main" in branch_names, f"Branch 'main' not found in {branch_names}"
 
     def _operation_test_assert_initial(self) -> None:
         from wexample_helpers.const.globals import DIR_GIT
@@ -180,14 +148,7 @@ class TestRemoteAddInactive(AbstractTestOperation):
                     "should_exist": True,
                     "type": DiskItemType.DIRECTORY,
                     "git": {
-                        "remote": [
-                            {
-                                "url": "https://github.com/test/test-repo.git",
-                                "type": "github",
-                                "create_remote": False,
-                                "active": False,  # Inactive remote
-                            }
-                        ]
+                        "main_branch": []  # Empty list should default to "main"
                     },
                 }
             ]
