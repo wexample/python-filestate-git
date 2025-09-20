@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from tests.common.abstract_main_branch_test import AbstractMainBranchTest
+from wexample_filestate_git.testing.abstract_main_branch_test import AbstractMainBranchTest
 
 
 class TestMainBranchOptionString(AbstractMainBranchTest):

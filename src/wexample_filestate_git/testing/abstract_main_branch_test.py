@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tests.common.abstract_git_test_option import AbstractGitTestOption
+from wexample_filestate_git.testing.abstract_git_test_option import AbstractGitTestOption
 
 if TYPE_CHECKING:
     from wexample_config.const.types import DictConfig

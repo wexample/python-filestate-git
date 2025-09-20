@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-from tests.common.abstract_main_branch_test import AbstractMainBranchTest
+from wexample_filestate_git.testing.abstract_main_branch_test import AbstractMainBranchTest
 
 
 class TestMainBranchOptionDefault(AbstractMainBranchTest):

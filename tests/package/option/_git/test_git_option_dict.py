@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from tests.common.abstract_git_option_test import AbstractGitOptionTest
+from wexample_filestate_git.testing.abstract_git_option_test import AbstractGitOptionTest
 
 
 class TestGitOptionDict(AbstractGitOptionTest):
