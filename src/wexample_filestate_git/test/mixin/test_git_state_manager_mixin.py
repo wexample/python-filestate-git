@@ -3,21 +3,11 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from wexample_config.options_provider.abstract_options_provider import (
-    AbstractOptionsProvider,
-)
-from wexample_filestate.operations_provider.abstract_operations_provider import (
-    AbstractOperationsProvider,
-)
-
 if TYPE_CHECKING:
     from pathlib import Path
 
     from wexample_config.options_provider.abstract_options_provider import (
         AbstractOptionsProvider,
-    )
-    from wexample_filestate.operations_provider.abstract_operations_provider import (
-        AbstractOperationsProvider,
     )
 
 
@@ -28,18 +18,6 @@ class TestGitFileStateManagerMixin:
         """Get the path to the .git directory for a given item."""
         from wexample_helpers.const.globals import DIR_GIT
         return f"{self.state_manager.find_by_name_or_fail(item_name).get_path()}/{DIR_GIT}"
-
-    def _get_test_operations_providers(
-        self,
-    ) -> list[type[AbstractOperationsProvider]] | None:
-        from wexample_filestate.operations_provider.default_operations_provider import (
-            DefaultOperationsProvider,
-        )
-        from wexample_filestate_git.operations_provider.git_operations_provider import (
-            GitOperationsProvider,
-        )
-
-        return [DefaultOperationsProvider, GitOperationsProvider]
 
     def _get_test_options_providers(
         self,
