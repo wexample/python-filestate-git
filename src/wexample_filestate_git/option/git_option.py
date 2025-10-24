@@ -46,28 +46,6 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
     def get_value_allowed_type() -> Any | type | UnionType:
         return dict | bool
 
-    def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
-        from wexample_filestate_git.option._git.main_branch_option import (
-            MainBranchOption,
-        )
-        from wexample_filestate_git.option._git.remote_option import RemoteOption
-
-        return [
-            MainBranchOption,
-            RemoteOption,
-        ]
-
-    def set_value(self, raw_value: Any) -> None:
-        # Support True without config.
-        if raw_value is True:
-            raw_value = {}
-
-        super().set_value(raw_value=raw_value)
-
-    def should_have_git(self) -> bool:
-        value = self.get_value()
-        return (value.is_bool() and value.is_true()) or value.is_dict()
-
     def create_required_operation(
         self, target: TargetFileOrDirectoryType
     ) -> AbstractOperation | None:
@@ -96,3 +74,25 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
 
         # Git is already initialized, delegate to children for other operations
         return self._create_child_required_operation(target=target)
+
+    def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
+        from wexample_filestate_git.option._git.main_branch_option import (
+            MainBranchOption,
+        )
+        from wexample_filestate_git.option._git.remote_option import RemoteOption
+
+        return [
+            MainBranchOption,
+            RemoteOption,
+        ]
+
+    def set_value(self, raw_value: Any) -> None:
+        # Support True without config.
+        if raw_value is True:
+            raw_value = {}
+
+        super().set_value(raw_value=raw_value)
+
+    def should_have_git(self) -> bool:
+        value = self.get_value()
+        return (value.is_bool() and value.is_true()) or value.is_dict()

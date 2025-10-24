@@ -15,7 +15,7 @@ class TestGitlabRemote(AbstractGitRemoteTest):
 
     @pytest.fixture
     def remote(self) -> GitlabRemote:
-        from unittest.mock import patch
+        pass
 
         from wexample_prompt.common.io_manager import IoManager
 

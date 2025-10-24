@@ -5,10 +5,6 @@ from typing import Any
 from pydantic import ConfigDict
 
 from wexample_config.config_value.config_value import ConfigValue
-from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
-from wexample_filestate_git.option._git.type_option import TypeOption
-from wexample_filestate_git.option._git.url_option import UrlOption
-from wexample_filestate.option.name_option import NameOption
 from wexample_helpers.classes.field import public_field
 from wexample_helpers.decorator.base_class import base_class
 
@@ -36,6 +32,10 @@ class RemoteConfigValue(ConfigValue):
     )
 
     def to_option_raw_value(self) -> ConfigDict:
+        from wexample_filestate_git.option._git.create_remote_option import CreateRemoteOption
+        from wexample_filestate.option.name_option import NameOption
+        from wexample_filestate_git.option._git.type_option import TypeOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
         return {
             NameOption.get_name(): self.name,
             UrlOption.get_name(): self.url,

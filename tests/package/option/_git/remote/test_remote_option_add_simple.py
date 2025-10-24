@@ -42,7 +42,6 @@ class TestRemoteOptionAddSimple(AbstractGitTestOption):
 
     def _operation_test_assert_initial(self) -> None:
         from git import Repo
-        from wexample_helpers.const.globals import DIR_GIT
 
         # Verify directory exists
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)

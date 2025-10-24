@@ -28,8 +28,7 @@ class GitRemoteCreateOperation(AbstractFileManipulationOperation):
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 
         return [GithubRemote, GitlabRemote]
-
-
+    
     def apply(self) -> None:
         """Create the remote repository using the configured parameters."""
         # Build remote instance with the provided parameters
@@ -38,8 +37,7 @@ class GitRemoteCreateOperation(AbstractFileManipulationOperation):
             remote.connect()
             # Create repository directly from URL
             remote.create_repository_if_not_exists(self.remote_url)
-
-
+    
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
         # as it could be dangerous to automatically delete repositories

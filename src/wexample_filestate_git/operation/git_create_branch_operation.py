@@ -35,8 +35,7 @@ class GitCreateBranchOperation(AbstractFileManipulationOperation):
 
         # Create new branch at current HEAD
         repo.create_head(self.branch_name)
-
-
+    
     def undo(self) -> None:
         # No destructive undo: we do not auto-delete newly created branches
         pass

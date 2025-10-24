@@ -7,7 +7,7 @@ from wexample_filestate_git.testing.abstract_main_branch_test import (
 
 class TestMainBranchOptionList(AbstractMainBranchTest):
     """Test MainBranchOption with list value."""
-
-    test_dir_name: str = "test-git-branch-list"
     expected_branch_name: str = "feature"  # First item from list
     main_branch_config: list = ["feature", "backup"]
+
+    test_dir_name: str = "test-git-branch-list"

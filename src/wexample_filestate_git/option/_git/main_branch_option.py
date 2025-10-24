@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from types import UnionType
 from typing import TYPE_CHECKING, Any, Union
 
 from wexample_config.config_option.abstract_config_option import AbstractConfigOption
@@ -8,7 +7,6 @@ from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
-    from types import UnionType
     from wexample_filestate.operation.abstract_operation import AbstractOperation
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
 

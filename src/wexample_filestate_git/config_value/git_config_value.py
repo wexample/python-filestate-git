@@ -5,8 +5,6 @@ from typing import Any
 from pydantic import ConfigDict
 
 from wexample_config.config_value.config_value import ConfigValue
-from wexample_filestate_git.option._git.main_branch_option import MainBranchOption
-from wexample_filestate_git.option._git.remote_option import RemoteOption
 from wexample_helpers.classes.field import public_field
 from wexample_helpers.decorator.base_class import base_class
 
@@ -26,6 +24,8 @@ class GitConfigValue(ConfigValue):
     )
 
     def to_option_raw_value(self) -> ConfigDict:
+        from wexample_filestate_git.option._git.main_branch_option import MainBranchOption
+        from wexample_filestate_git.option._git.remote_option import RemoteOption
         return {
             MainBranchOption.get_name(): self.main_branch,
             RemoteOption.get_name(): self.remote,

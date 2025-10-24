@@ -23,8 +23,7 @@ class GitRemoteAddOperation(AbstractFileManipulationOperation):
         super().__init__(option=option, target=target, description=description)
         self.remotes = remotes  # List of {"name": str, "url": str}
         self._created_remote = {}
-
-
+    
     def apply(self) -> None:
         """Add configured remotes to the Git repository."""
         from wexample_helpers_git.helpers.git import git_remote_create_once
@@ -40,8 +39,7 @@ class GitRemoteAddOperation(AbstractFileManipulationOperation):
             self._created_remote[remote_name] = (
                 git_remote_create_once(repo, remote_name, remote_url) is not None
             )
-
-
+    
     def undo(self) -> None:
         """Remove remotes that were created by this operation."""
         if not self._created_remote:
