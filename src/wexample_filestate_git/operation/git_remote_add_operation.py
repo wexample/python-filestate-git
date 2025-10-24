@@ -19,7 +19,7 @@ from wexample_helpers.decorator.base_class import base_class
 class GitRemoteAddOperation(AbstractFileManipulationOperation):
     _created_remote: dict[str, bool]
 
-    def __init__(self, option, target, remotes: list[dict], description="Add Git remotes"):
+    def __init__(self, option, target, remotes: list[dict], description="Add Git remotes") -> None:
         super().__init__(option=option, target=target, description=description)
         self.remotes = remotes  # List of {"name": str, "url": str}
         self._created_remote = {}

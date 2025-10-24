@@ -98,8 +98,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                 )
         
         return None
-
-
+    
     def _resolve_remote_type_and_url(self, remote_item_option):
         """Resolve remote type and URL from remote item option."""
         from wexample_filestate_git.option._git.type_option import TypeOption

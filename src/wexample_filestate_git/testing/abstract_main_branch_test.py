@@ -22,7 +22,6 @@ class AbstractMainBranchTest(AbstractGitTestOption):
 
     def _operation_test_assert_applied(self) -> None:
         from git import Repo
-
         
         # Verify expected branch was created
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)

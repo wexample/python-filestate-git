@@ -14,8 +14,7 @@ from wexample_helpers.decorator.base_class import base_class
 @base_class
 class GitInitOperation(AbstractFileManipulationOperation):
     _has_initialized_git: bool = False
-
-
+    
     def apply(self) -> None:
         from git import Repo
 
@@ -24,8 +23,7 @@ class GitInitOperation(AbstractFileManipulationOperation):
 
         repo = Repo.init(path)
         repo.init()
-
-
+    
     def undo(self) -> None:
         import shutil
 

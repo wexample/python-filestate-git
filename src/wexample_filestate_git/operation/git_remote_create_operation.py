@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 from wexample_helpers.decorator.base_class import base_class
 @base_class
 class GitRemoteCreateOperation(AbstractFileManipulationOperation):
-    def __init__(self, target, remote_type: type[AbstractRemote], remote_url: str, api_token: str | None = None):
+    def __init__(self, target, remote_type: type[AbstractRemote], remote_url: str, api_token: str | None = None) -> None:
         super().__init__(target=target)
         self.remote_type = remote_type
         self.remote_url = remote_url

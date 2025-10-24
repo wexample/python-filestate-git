@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 from wexample_helpers.decorator.base_class import base_class
 @base_class
 class GitCreateBranchOperation(AbstractFileManipulationOperation):
-    def __init__(self, option, target, branch_name: str, description: str):
+    def __init__(self, option, target, branch_name: str, description: str) -> None:
         super().__init__(option=option, target=target, description=description)
         self.branch_name = branch_name
 

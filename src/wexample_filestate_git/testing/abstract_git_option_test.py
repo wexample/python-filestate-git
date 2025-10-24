@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from wexample_filestate_git.testing.abstract_git_test_option import AbstractGitTestOption
+from wexample_filestate_git.testing.abstract_git_test_option import (
+    AbstractGitTestOption,
+)
 
 if TYPE_CHECKING:
     from wexample_config.const.types import DictConfig
@@ -10,7 +12,7 @@ if TYPE_CHECKING:
 
 class AbstractGitOptionTest(AbstractGitTestOption):
     """Base class for GitOption tests."""
-    
+
     # To be overridden by child classes
     test_dir_name: str = None
     git_config: bool | dict = None
@@ -20,7 +22,7 @@ class AbstractGitOptionTest(AbstractGitTestOption):
 
     def _operation_test_assert_applied(self) -> None:
         from wexample_helpers.const.globals import DIR_GIT
-        
+
         # Verify Git repository was created
         dir_path = self._get_absolute_path_from_state_manager(self.test_dir_name)
         git_dir = dir_path / DIR_GIT

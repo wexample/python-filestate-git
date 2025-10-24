@@ -19,7 +19,9 @@ class MainBranchOption(OptionMixin, AbstractConfigOption):
     def get_raw_value_allowed_type() -> Any:
         return Union[str, list]
 
-    def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
+    def create_required_operation(
+        self, target: TargetFileOrDirectoryType
+    ) -> AbstractOperation | None:
         """Create GitCreateBranchOperation if branch needs to be created."""
         # Get desired branch name
         branch_name = self._get_desired_branch_name()
@@ -36,18 +38,20 @@ class MainBranchOption(OptionMixin, AbstractConfigOption):
             return None
 
         # Create operation with branch name parameter
-        from wexample_filestate_git.operation.git_create_branch_operation import GitCreateBranchOperation
+        from wexample_filestate_git.operation.git_create_branch_operation import (
+            GitCreateBranchOperation,
+        )
 
         return GitCreateBranchOperation(
             option=self,
             target=target,
             branch_name=branch_name,
-            description=f"Create Git branch '{branch_name}'"
+            description=f"Create Git branch '{branch_name}'",
         )
 
     def _get_desired_branch_name(self) -> str | None:
         """Resolve desired branch name from config.
-        
+
         Accepts either a list (first item) or a single string value.
         Defaults to "main" if the option exists but is empty/invalid.
         """
@@ -78,7 +82,7 @@ class MainBranchOption(OptionMixin, AbstractConfigOption):
         try:
             from git import Repo
             from wexample_helpers.const.globals import DIR_GIT
-            
+
             git_dir = target.get_path() / DIR_GIT
             if git_dir.exists():
                 return Repo(str(target.get_path()))

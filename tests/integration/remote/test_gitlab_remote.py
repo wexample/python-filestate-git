@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import pytest
 from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-from wexample_filestate_git.testing.abstract_git_remote_test import AbstractGitRemoteTest
+from wexample_filestate_git.testing.abstract_git_remote_test import (
+    AbstractGitRemoteTest,
+)
 
 
 class TestGitlabRemote(AbstractGitRemoteTest):

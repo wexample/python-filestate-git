@@ -15,24 +15,24 @@ from wexample_helpers.decorator.base_class import base_class
 
 @base_class
 class RemoteConfigValue(ConfigValue):
-    raw: Any = public_field(
-        default=None, description="Disabled raw value for this config."
+    create_remote: bool | None = public_field(
+        default=None,
+        description="Whether to create the remote repository if it doesn't exist",
     )
     name: str | None = public_field(
         default=None,
         description="Name of the remote (e.g., 'origin')",
     )
-    url: str | None = public_field(
-        default=None,
-        description="URL of the remote repository",
+    raw: Any = public_field(
+        default=None, description="Disabled raw value for this config."
     )
     type: str | None = public_field(
         default=None,
         description="Type of remote (github, gitlab, etc.)",
     )
-    create_remote: bool | None = public_field(
+    url: str | None = public_field(
         default=None,
-        description="Whether to create the remote repository if it doesn't exist",
+        description="URL of the remote repository",
     )
 
     def to_option_raw_value(self) -> ConfigDict:

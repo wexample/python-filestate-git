@@ -13,12 +13,12 @@ from wexample_helpers.decorator.base_class import base_class
 
 @base_class
 class GitConfigValue(ConfigValue):
-    raw: Any = public_field(
-        default=None, description="Disabled raw value for this config."
-    )
     main_branch: str | list[str] | None = public_field(
         default=None,
         description="Main branch name(s) to create",
+    )
+    raw: Any = public_field(
+        default=None, description="Disabled raw value for this config."
     )
     remote: list[dict] | dict | None = public_field(
         default=None,

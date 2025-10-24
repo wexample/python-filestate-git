@@ -26,7 +26,7 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         )
 
         if GitOption.get_name() in config and cls.dict_value_should_have_git(
-                config[GitOption.get_name()]
+            config[GitOption.get_name()]
         ):
             config[ShouldExistOption.get_name()] = True
         return config
@@ -47,7 +47,9 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         return dict | bool
 
     def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
-        from wexample_filestate_git.option._git.main_branch_option import MainBranchOption
+        from wexample_filestate_git.option._git.main_branch_option import (
+            MainBranchOption,
+        )
         from wexample_filestate_git.option._git.remote_option import RemoteOption
 
         return [
@@ -66,9 +68,12 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         value = self.get_value()
         return (value.is_bool() and value.is_true()) or value.is_dict()
 
-    def create_required_operation(self, target: TargetFileOrDirectoryType) -> AbstractOperation | None:
+    def create_required_operation(
+        self, target: TargetFileOrDirectoryType
+    ) -> AbstractOperation | None:
         """Create GitInitOperation if Git is required but not initialized, or delegate to children."""
         from wexample_helpers_git.helpers.git import git_is_init
+
         # Check if Git is required
         if not self.should_have_git():
             return None
@@ -81,12 +86,12 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         # Check if Git is already initialized
         if not git_is_init(target_path):
             # Git needs to be initialized first
-            from wexample_filestate_git.operation.git_init_operation import GitInitOperation
+            from wexample_filestate_git.operation.git_init_operation import (
+                GitInitOperation,
+            )
 
             return GitInitOperation(
-                option=self,
-                target=target,
-                description="Initialize Git repository"
+                option=self, target=target, description="Initialize Git repository"
             )
 
         # Git is already initialized, delegate to children for other operations
