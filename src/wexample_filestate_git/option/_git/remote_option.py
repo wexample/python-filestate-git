@@ -21,13 +21,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
     def get_raw_value_allowed_type() -> Any:
         return Union[list, dict]
 
-    def get_item_class_type(self) -> type | UnionType:
-        from wexample_filestate_git.option._git.remote_item_option import (
-            RemoteItemOption,
-        )
-
-        return RemoteItemOption
-
     def create_required_operation(
         self, target: TargetFileOrDirectoryType
     ) -> AbstractOperation | None:
@@ -36,7 +29,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             CreateRemoteOption,
         )
         from wexample_filestate_git.option._git.url_option import UrlOption
-        from wexample_filestate_git.option._git.type_option import TypeOption
 
         # First priority: Check if any remote repository needs to be created
         for remote_item_option in self.children:
@@ -105,38 +97,22 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
         return None
 
-    def _resolve_remote_type_and_url(self, remote_item_option):
-        """Resolve remote type and URL from remote item option."""
-        from wexample_filestate_git.option._git.type_option import TypeOption
-        from wexample_filestate_git.option._git.url_option import UrlOption
-        from wexample_filestate_git.remote.github_remote import GithubRemote
-        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-        from wexample_helpers_git.const.common import (
-            GIT_PROVIDER_GITHUB,
-            GIT_PROVIDER_GITLAB,
+    def get_item_class_type(self) -> type | UnionType:
+        from wexample_filestate_git.option._git.remote_item_option import (
+            RemoteItemOption,
         )
 
-        url_option = remote_item_option.get_option(UrlOption)
-        type_option = remote_item_option.get_option(TypeOption)
+        return RemoteItemOption
 
-        if not url_option:
-            return None
-
-        remote_url = url_option.get_value().to_str()
-
-        if type_option:
-            type_map = {
-                GIT_PROVIDER_GITHUB: GithubRemote,
-                GIT_PROVIDER_GITLAB: GitlabRemote,
-            }
-            remote_type = type_map.get(type_option.get_value().get_str().lower())
-        else:
-            remote_type = self._detect_remote_type(remote_url)
-
-        if not remote_type:
-            return None
-
-        return remote_type, remote_url
+    def _build_remote_instance(self, remote_type, remote_url: str, target):
+        """Build remote instance with proper configuration."""
+        return remote_type(
+            io=target.io,
+            api_token=target.get_env_parameter(
+                key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+            ),
+            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
+        )
 
     def _detect_remote_type(self, remote_url: str):
         """Detect the remote type (GitHub, GitLab, etc.) from the URL."""
@@ -150,16 +126,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                 return remote_type
         return None
 
-    def _build_remote_instance(self, remote_type, remote_url: str, target):
-        """Build remote instance with proper configuration."""
-        return remote_type(
-            io=target.io,
-            api_token=target.get_env_parameter(
-                key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
-            ),
-            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
-        )
-
     def _get_remote_name(self, remote_item_option) -> str:
         """Get remote name from option or default to 'origin'."""
         from wexample_filestate.option.name_option import NameOption
@@ -170,6 +136,30 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
         # Default to "origin" if no name specified
         return "origin"
+
+    def _get_target_git_repo(self, target):
+        """Get Git repository for the target."""
+        try:
+            from git import Repo
+            from wexample_helpers.const.globals import DIR_GIT
+
+            git_dir = target.get_path() / DIR_GIT
+            if git_dir.exists():
+                return Repo(str(target.get_path()))
+        except Exception:
+            pass
+        return None
+
+    def _has_remotes_configured(self) -> bool:
+        """Check if there are any remotes configured."""
+        from wexample_filestate_git.option._git.url_option import UrlOption
+
+        for remote_item_option in self.children:
+            url_option = remote_item_option.get_option(UrlOption)
+            if url_option:
+                return True
+
+        return False
 
     def _is_remote_missing_or_mismatched(self, target) -> bool:
         """Check if any configured remote is missing locally or has different URL."""
@@ -207,26 +197,35 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
         return False
 
-    def _get_target_git_repo(self, target):
-        """Get Git repository for the target."""
-        try:
-            from git import Repo
-            from wexample_helpers.const.globals import DIR_GIT
-
-            git_dir = target.get_path() / DIR_GIT
-            if git_dir.exists():
-                return Repo(str(target.get_path()))
-        except Exception:
-            pass
-        return None
-
-    def _has_remotes_configured(self) -> bool:
-        """Check if there are any remotes configured."""
+    def _resolve_remote_type_and_url(self, remote_item_option):
+        """Resolve remote type and URL from remote item option."""
+        from wexample_filestate_git.option._git.type_option import TypeOption
         from wexample_filestate_git.option._git.url_option import UrlOption
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+        from wexample_helpers_git.const.common import (
+            GIT_PROVIDER_GITHUB,
+            GIT_PROVIDER_GITLAB,
+        )
 
-        for remote_item_option in self.children:
-            url_option = remote_item_option.get_option(UrlOption)
-            if url_option:
-                return True
+        url_option = remote_item_option.get_option(UrlOption)
+        type_option = remote_item_option.get_option(TypeOption)
 
-        return False
+        if not url_option:
+            return None
+
+        remote_url = url_option.get_value().to_str()
+
+        if type_option:
+            type_map = {
+                GIT_PROVIDER_GITHUB: GithubRemote,
+                GIT_PROVIDER_GITLAB: GitlabRemote,
+            }
+            remote_type = type_map.get(type_option.get_value().get_str().lower())
+        else:
+            remote_type = self._detect_remote_type(remote_url)
+
+        if not remote_type:
+            return None
+
+        return remote_type, remote_url

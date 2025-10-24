@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 
 class AbstractGitOptionTest(AbstractGitTestOption):
     """Base class for GitOption tests."""
-    git_config: bool | dict = None
 
+    git_config: bool | dict = None
     # To be overridden by child classes
     test_dir_name: str = None
 

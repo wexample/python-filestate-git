@@ -7,6 +7,7 @@ from wexample_filestate.operation.abstract_file_manipulation_operation import (
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
+from wexample_helpers.decorator.base_class import base_class
 if TYPE_CHECKING:
     from git import Repo
     from wexample_config.config_option.abstract_config_option import (
@@ -14,16 +15,18 @@ if TYPE_CHECKING:
     )
     from wexample_filestate.operation.abstract_operation import AbstractOperation
 
-from wexample_helpers.decorator.base_class import base_class
+
 @base_class
 class GitRemoteAddOperation(AbstractFileManipulationOperation):
     _created_remote: dict[str, bool]
 
-    def __init__(self, option, target, remotes: list[dict], description="Add Git remotes") -> None:
+    def __init__(
+        self, option, target, remotes: list[dict], description="Add Git remotes"
+    ) -> None:
         super().__init__(option=option, target=target, description=description)
         self.remotes = remotes  # List of {"name": str, "url": str}
         self._created_remote = {}
-    
+
     def apply(self) -> None:
         """Add configured remotes to the Git repository."""
         from wexample_helpers_git.helpers.git import git_remote_create_once
@@ -39,12 +42,12 @@ class GitRemoteAddOperation(AbstractFileManipulationOperation):
             self._created_remote[remote_name] = (
                 git_remote_create_once(repo, remote_name, remote_url) is not None
             )
-    
+
     def undo(self) -> None:
         """Remove remotes that were created by this operation."""
         if not self._created_remote:
             return
-            
+
         repo = self._get_target_git_repo()
         if not repo:
             return

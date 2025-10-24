@@ -13,8 +13,8 @@ if TYPE_CHECKING:
     from types import UnionType
 
     from wexample_config.const.types import DictConfig, DictConfigValue
-    from wexample_filestate.operation.abstract_operation import AbstractOperation
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+    from wexample_filestate.operation.abstract_operation import AbstractOperation
 
 
 @base_class
@@ -37,8 +37,9 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
 
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
-        from wexample_filestate_git.config_value.git_config_value import GitConfigValue
         from wexample_helpers.const.types import StringKeysDict
+
+        from wexample_filestate_git.config_value.git_config_value import GitConfigValue
 
         return Union[dict, bool, StringKeysDict, GitConfigValue]
 

@@ -7,12 +7,13 @@ from wexample_filestate.operation.abstract_file_manipulation_operation import (
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
+from wexample_helpers.decorator.base_class import base_class
 if TYPE_CHECKING:
     from wexample_config.config_option.abstract_config_option import (
         AbstractConfigOption,
     )
 
-from wexample_helpers.decorator.base_class import base_class
+
 @base_class
 class GitCreateBranchOperation(AbstractFileManipulationOperation):
     def __init__(self, option, target, branch_name: str, description: str) -> None:
@@ -29,14 +30,13 @@ class GitCreateBranchOperation(AbstractFileManipulationOperation):
         repo = self._get_target_git_repo()
         if not repo:
             return
-            
+
         if any(h.name == self.branch_name for h in getattr(repo, "heads", [])):
             return  # Already exists
 
         # Create new branch at current HEAD
         repo.create_head(self.branch_name)
-    
+
     def undo(self) -> None:
         # No destructive undo: we do not auto-delete newly created branches
         pass
-

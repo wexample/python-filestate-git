@@ -7,10 +7,10 @@ from wexample_filestate.operation.abstract_file_manipulation_operation import (
 )
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
+from wexample_helpers.decorator.base_class import base_class
+
 if TYPE_CHECKING:
     pass
-
-from wexample_helpers.decorator.base_class import base_class
 
 
 @base_class

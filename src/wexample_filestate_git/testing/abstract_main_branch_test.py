@@ -13,11 +13,10 @@ if TYPE_CHECKING:
 
 class AbstractMainBranchTest(AbstractGitTestOption):
     """Base class for MainBranchOption tests."""
-
-    # To be overridden by child classes
-    test_dir_name: str = None
     expected_branch_name: str = None
     main_branch_config: str | list[str] = None
+    # To be overridden by child classes
+    test_dir_name: str = None
 
     def _operation_get_count(self) -> int:
         return 1  # Only branch creation operation

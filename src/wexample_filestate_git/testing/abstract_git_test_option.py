@@ -11,9 +11,10 @@ class AbstractGitTestOption(AbstractTestOperation):
 
     def _ensure_git_initialized(self, dir_path) -> None:
         """Ensure Git repository is initialized in the given directory."""
+        import shutil
+
         from git import Repo
         from wexample_helpers.const.globals import DIR_GIT
-        import shutil
 
         git_dir = dir_path / DIR_GIT
 
@@ -31,8 +32,9 @@ class AbstractGitTestOption(AbstractTestOperation):
 
     def _ensure_no_git(self, dir_path) -> None:
         """Ensure no Git repository exists in the given directory."""
-        from wexample_helpers.const.globals import DIR_GIT
         import shutil
+
+        from wexample_helpers.const.globals import DIR_GIT
 
         git_dir = dir_path / DIR_GIT
         if git_dir.exists():
@@ -45,6 +47,7 @@ class AbstractGitTestOption(AbstractTestOperation):
         from wexample_filestate.options_provider.default_options_provider import (
             DefaultOptionsProvider,
         )
+
         from wexample_filestate_git.options_provider.git_options_provider import (
             GitOptionsProvider,
         )
