@@ -11,8 +11,9 @@ from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
     from types import UnionType
-    from wexample_filestate.operation.abstract_operation import AbstractOperation
+
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+    from wexample_filestate.operation.abstract_operation import AbstractOperation
 
 
 @base_class
@@ -199,14 +200,15 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
     def _resolve_remote_type_and_url(self, remote_item_option):
         """Resolve remote type and URL from remote item option."""
-        from wexample_filestate_git.option._git.type_option import TypeOption
-        from wexample_filestate_git.option._git.url_option import UrlOption
-        from wexample_filestate_git.remote.github_remote import GithubRemote
-        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
         from wexample_helpers_git.const.common import (
             GIT_PROVIDER_GITHUB,
             GIT_PROVIDER_GITLAB,
         )
+
+        from wexample_filestate_git.option._git.type_option import TypeOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 
         url_option = remote_item_option.get_option(UrlOption)
         type_option = remote_item_option.get_option(TypeOption)

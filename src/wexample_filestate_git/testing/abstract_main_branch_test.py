@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 class AbstractMainBranchTest(AbstractGitTestOption):
     """Base class for MainBranchOption tests."""
+
     expected_branch_name: str = None
     main_branch_config: str | list[str] = None
     # To be overridden by child classes
