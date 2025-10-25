@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from wexample_filestate.operation.abstract_file_manipulation_operation import (
     AbstractFileManipulationOperation,
 )
-
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
