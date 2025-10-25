@@ -5,14 +5,11 @@ from typing import TYPE_CHECKING
 from wexample_filestate.operation.abstract_file_manipulation_operation import (
     AbstractFileManipulationOperation,
 )
-from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
-    from wexample_config.config_option.abstract_config_option import (
-        AbstractConfigOption,
-    )
+    pass
 
 
 @base_class
