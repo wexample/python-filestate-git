@@ -47,6 +47,7 @@ class AbstractGitTestOption(AbstractTestOperation):
         from wexample_filestate.options_provider.default_options_provider import (
             DefaultOptionsProvider,
         )
+
         from wexample_filestate_git.options_provider.git_options_provider import (
             GitOptionsProvider,
         )
