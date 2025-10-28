@@ -17,15 +17,17 @@ if TYPE_CHECKING:
 class RemoteItemOption(OptionMixin, AbstractNestedConfigOption):
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
+        from wexample_helpers.const.types import StringKeysDict
+
         from wexample_filestate_git.config_value.remote_config_value import (
             RemoteConfigValue,
         )
-        from wexample_helpers.const.types import StringKeysDict
 
         return Union[dict, StringKeysDict, RemoteConfigValue]
 
     def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
         from wexample_filestate.option.name_option import NameOption
+
         from wexample_filestate_git.option._git.create_remote_option import (
             CreateRemoteOption,
         )
