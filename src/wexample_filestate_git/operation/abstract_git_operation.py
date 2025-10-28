@@ -41,7 +41,6 @@ class AbstractGitOperation(AbstractOperation):
         from wexample_filestate.option.active_option import (
             ActiveOption,
         )
-
         from wexample_filestate_git.option.git_option import (
             GitOption,
         )

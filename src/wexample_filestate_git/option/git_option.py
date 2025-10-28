@@ -37,9 +37,8 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
 
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
-        from wexample_helpers.const.types import StringKeysDict
-
         from wexample_filestate_git.config_value.git_config_value import GitConfigValue
+        from wexample_helpers.const.types import StringKeysDict
 
         return Union[dict, bool, StringKeysDict, GitConfigValue]
 
