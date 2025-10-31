@@ -60,6 +60,7 @@ class GithubRemote(AbstractRemote):
             endpoint=endpoint,
             call_origin=__file__,
             expected_status_codes=[200, 404],
+            fatal_if_unexpected=True
         )
         return response.status_code == 200
 

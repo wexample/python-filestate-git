@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from wexample_filestate.operation.abstract_file_manipulation_operation import (
-    AbstractFileManipulationOperation,
-)
+from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
+from wexample_helpers.classes.field import public_field
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
@@ -12,18 +11,16 @@ if TYPE_CHECKING:
 
 
 @base_class
-class GitRemoteCreateOperation(AbstractFileManipulationOperation):
-    def __init__(
-        self,
-        target,
-        remote_type: type[AbstractRemote],
-        remote_url: str,
-        api_token: str | None = None,
-    ) -> None:
-        super().__init__(target=target)
-        self.remote_type = remote_type
-        self.remote_url = remote_url
-        self.api_token = api_token
+class GitRemoteCreateOperation(AbstractGitOperation):
+    remote_type: str = public_field(
+        description="The remote type (github/gitlab)",
+    )
+    remote_url: str = public_field(
+        description="The remote URL",
+    )
+    api_token: str = public_field(
+        description="The remote API token",
+    )
 
     @staticmethod
     def get_remote_types() -> list[type[AbstractRemote]]:

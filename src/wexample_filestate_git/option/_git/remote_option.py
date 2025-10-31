@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from types import UnionType
 from typing import TYPE_CHECKING, Any, Union
 
 from wexample_config.config_option.abstract_list_config_option import (
@@ -23,7 +22,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         return Union[list, dict]
 
     def create_required_operation(
-        self, target: TargetFileOrDirectoryType
+            self, target: TargetFileOrDirectoryType
     ) -> AbstractOperation | None:
         """Create GitRemoteCreateOperation or GitRemoteAddOperation as needed."""
         from wexample_filestate_git.option._git.create_remote_option import (
@@ -36,8 +35,8 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             # Check if creation is enabled
             create_remote_option = remote_item_option.get_option(CreateRemoteOption)
             create_enabled = (
-                create_remote_option is not None
-                and create_remote_option.get_value().is_true()
+                    create_remote_option is not None
+                    and create_remote_option.get_value().is_true()
             )
 
             if create_enabled:
@@ -45,7 +44,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                 url_option = remote_item_option.get_option(UrlOption)
                 if url_option:
                     # Resolve type and url
-                    resolved = self._resolve_remote_type_and_url(remote_item_option)
+                    resolved = self._resolve_remote_type_and_url(remote_item_option, target)
                     if resolved:
                         remote_type, remote_url = resolved
                         # Check if remote repository exists
@@ -58,20 +57,32 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                             remote.connect()
                             repo_info = remote.parse_repository_url(remote_url)
                             if not remote.check_repository_exists(
-                                repo_info["name"], repo_info["namespace"]
+                                    repo_info["name"], repo_info["namespace"]
                             ):
                                 # Create operation with all necessary parameters
                                 from wexample_filestate_git.operation.git_remote_create_operation import (
                                     GitRemoteCreateOperation,
                                 )
 
+                                api_token_env_key = f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+                                api_token = target.get_env_parameter_or_suite_fallback(api_token_env_key)
+                                
+                                if not api_token:
+                                    from wexample_filestate.exception.missing_env_variable_exception import (
+                                        MissingEnvVariableException,
+                                    )
+                                    raise MissingEnvVariableException(
+                                        message=f"Missing required environment variable: {api_token_env_key}",
+                                        env_key=api_token_env_key,
+                                    )
+
                                 return GitRemoteCreateOperation(
+                                    option=self,
+                                    description=f"The remote should exist: {remote_url}",
                                     target=target,
                                     remote_type=remote_type,
                                     remote_url=remote_url,
-                                    api_token=target.get_env_parameter(
-                                        key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
-                                    ),
+                                    api_token=api_token,
                                 )
 
         # Second priority: Check if any remote needs to be added locally
@@ -107,11 +118,21 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
     def _build_remote_instance(self, remote_type, remote_url: str, target):
         """Build remote instance with proper configuration."""
+        api_token_env_key = f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+        api_token = target.get_env_parameter_or_suite_fallback(api_token_env_key)
+        
+        if not api_token:
+            from wexample_filestate.exception.missing_env_variable_exception import (
+                MissingEnvVariableException,
+            )
+            raise MissingEnvVariableException(
+                message=f"Missing required environment variable: {api_token_env_key}",
+                env_key=api_token_env_key,
+            )
+        
         return remote_type(
             io=target.io,
-            api_token=target.get_env_parameter(
-                key=f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
-            ),
+            api_token=api_token,
             base_url=remote_type.build_remote_api_url_from_repo(remote_url),
         )
 
@@ -198,7 +219,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
         return False
 
-    def _resolve_remote_type_and_url(self, remote_item_option):
+    def _resolve_remote_type_and_url(self, remote_item_option, target: TargetFileOrDirectoryType):
         """Resolve remote type and URL from remote item option."""
         from wexample_filestate_git.option._git.type_option import TypeOption
         from wexample_filestate_git.option._git.url_option import UrlOption
@@ -215,7 +236,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         if not url_option:
             return None
 
-        remote_url = url_option.get_value().to_str()
+        remote_url = url_option.get_url(target=target)
 
         if type_option:
             type_map = {

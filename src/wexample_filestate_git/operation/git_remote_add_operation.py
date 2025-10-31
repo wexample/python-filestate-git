@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from wexample_filestate.operation.abstract_file_manipulation_operation import (
-    AbstractFileManipulationOperation,
-)
+from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
@@ -12,11 +10,11 @@ if TYPE_CHECKING:
 
 
 @base_class
-class GitRemoteAddOperation(AbstractFileManipulationOperation):
+class GitRemoteAddOperation(AbstractGitOperation):
     _created_remote: dict[str, bool]
 
     def __init__(
-        self, option, target, remotes: list[dict], description="Add Git remotes"
+            self, option, target, remotes: list[dict], description="Add Git remotes"
     ) -> None:
         super().__init__(option=option, target=target, description=description)
         self.remotes = remotes  # List of {"name": str, "url": str}
@@ -35,7 +33,7 @@ class GitRemoteAddOperation(AbstractFileManipulationOperation):
             remote_url = remote["url"]
 
             self._created_remote[remote_name] = (
-                git_remote_create_once(repo, remote_name, remote_url) is not None
+                    git_remote_create_once(repo, remote_name, remote_url) is not None
             )
 
     def undo(self) -> None:
