@@ -22,7 +22,7 @@ class GitConfigValue(ConfigValue):
         description="Remote repositories configuration",
     )
 
-    def to_option_raw_value(self) -> ConfigDict:
+    def to_option_raw_value(self) -> Any:
         from wexample_filestate_git.option._git.main_branch_option import (
             MainBranchOption,
         )

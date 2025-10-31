@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import ConfigDict
 from wexample_config.config_value.config_value import ConfigValue
 from wexample_helpers.classes.field import public_field
 from wexample_helpers.decorator.base_class import base_class
@@ -30,7 +29,7 @@ class RemoteConfigValue(ConfigValue):
         description="URL of the remote repository",
     )
 
-    def to_option_raw_value(self) -> ConfigDict:
+    def to_option_raw_value(self) -> dict:
         from wexample_filestate.option.name_option import NameOption
         from wexample_filestate_git.option._git.create_remote_option import (
             CreateRemoteOption,
