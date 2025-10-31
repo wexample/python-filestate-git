@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 from wexample_helpers.decorator.base_class import base_class
+
+from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
 
 if TYPE_CHECKING:
     pass

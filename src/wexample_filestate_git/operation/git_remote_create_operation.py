@@ -12,14 +12,14 @@ if TYPE_CHECKING:
 
 @base_class
 class GitRemoteCreateOperation(AbstractGitOperation):
+    api_token: str = public_field(
+        description="The remote API token",
+    )
     remote_type: str = public_field(
         description="The remote type (github/gitlab)",
     )
     remote_url: str = public_field(
         description="The remote URL",
-    )
-    api_token: str = public_field(
-        description="The remote API token",
     )
 
     @staticmethod

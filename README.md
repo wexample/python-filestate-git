@@ -1,10 +1,16 @@
+# wexample-filestate-git
+
+Version: 0.0.43
+
+An extension for "filestate" package, which adds GIT management operations.
+
 ## Code Quality & Typing
 
-All Wexample packages follow strict quality standards:
+All the suite packages follow strict quality standards:
 
 - **Type hints**: Full type coverage with mypy validation
-- **Code formatting**: Enforced with black and ruff
-- **Linting**: Comprehensive checks with ruff
+- **Code formatting**: Enforced with black and isort
+- **Linting**: Comprehensive checks with custom scripts and tools
 - **Testing**: High test coverage requirements
 
 These standards ensure reliability and maintainability across the suite.
