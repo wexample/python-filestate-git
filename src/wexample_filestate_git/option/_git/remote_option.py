@@ -96,7 +96,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             for remote_item_option in self.children:
                 url_option = remote_item_option.get_option(UrlOption)
                 if url_option:
-                    remote_url = url_option.get_value().to_str()
+                    remote_url = url_option.get_url(target=target)
                     # For remote add, we need a name - use "origin" as default or derive from URL
                     remote_name = self._get_remote_name(remote_item_option)
                     if remote_name and remote_url:
@@ -203,7 +203,7 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                 continue
 
             desired_name = self._get_remote_name(remote_item_option)
-            desired_url = url_option.get_value().to_str()
+            desired_url = url_option.get_url(target=target)
 
             if not desired_name or not desired_url:
                 continue
