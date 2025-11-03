@@ -231,14 +231,15 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         self, remote_item_option, target: TargetFileOrDirectoryType
     ):
         """Resolve remote type and URL from remote item option."""
-        from wexample_filestate_git.option._git.type_option import TypeOption
-        from wexample_filestate_git.option._git.url_option import UrlOption
-        from wexample_filestate_git.remote.github_remote import GithubRemote
-        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
         from wexample_helpers_git.const.common import (
             GIT_PROVIDER_GITHUB,
             GIT_PROVIDER_GITLAB,
         )
+
+        from wexample_filestate_git.option._git.type_option import TypeOption
+        from wexample_filestate_git.option._git.url_option import UrlOption
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
 
         url_option = remote_item_option.get_option(UrlOption)
         type_option = remote_item_option.get_option(TypeOption)
