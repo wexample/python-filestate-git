@@ -14,10 +14,10 @@ if TYPE_CHECKING:
 
 class AbstractGitOperation(AbstractOperation):
     @classmethod
-    def get_scope(cls) -> Scope:
+    def get_scopes(cls) -> [Scope]:
         from wexample_filestate.enum.scopes import Scope
 
-        return Scope.REMOTE
+        return [Scope.REMOTE]
 
     # Shared Git helpers
     def _get_target_git_repo(self) -> Repo:
