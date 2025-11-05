@@ -10,6 +10,7 @@ from wexample_config.config_option.abstract_nested_config_option import (
 from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
+from wexample_filestate.enum.scopes import Scope
 
 if TYPE_CHECKING:
     from types import UnionType
@@ -21,6 +22,14 @@ if TYPE_CHECKING:
 
 @base_class
 class GitOption(OptionMixin, AbstractNestedConfigOption):
+    @classmethod
+    def get_scopes(cls) -> None | list[Scope]:
+        from wexample_filestate.enum.scopes import Scope
+
+        return [
+            Scope.REMOTE
+        ]
+
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:
         from wexample_filestate.option.should_exist_option import (
