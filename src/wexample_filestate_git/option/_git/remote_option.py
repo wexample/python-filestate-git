@@ -60,9 +60,16 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                         if remote:
                             remote.connect()
                             repo_info = remote.parse_repository_url(remote_url)
-                            if not remote.check_repository_exists(
+                            repository_exists = remote.check_repository_exists(
                                 repo_info["name"], repo_info["namespace"]
-                            ):
+                            )
+                            target.log(
+                                message=(
+                                    f"{remote_type.get_snake_short_class_name()} repo "
+                                    f"{'found' if repository_exists else 'missing'}: {remote_url}"
+                                )
+                            )
+                            if not repository_exists:
                                 # Create operation with all necessary parameters
                                 from wexample_filestate_git.operation.git_remote_create_operation import (
                                     GitRemoteCreateOperation,
@@ -93,27 +100,25 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                                 )
 
         # Second priority: Check if any remote needs to be added locally
-        if self._is_remote_missing_or_mismatched(target):
+        remotes_to_add_map = self._collect_remotes_to_add(target)
+        if remotes_to_add_map:
             from wexample_filestate_git.operation.git_remote_add_operation import (
                 GitRemoteAddOperation,
             )
 
-            # Collect all remotes that need to be added
-            remotes_to_add = []
-            for remote_item_option in self.children:
-                url_option = remote_item_option.get_option(UrlOption)
-                if url_option:
-                    remote_url = url_option.get_url(target=target)
-                    # For remote add, we need a name - use "origin" as default or derive from URL
-                    remote_name = self._get_remote_name(remote_item_option)
-                    if remote_name and remote_url:
-                        remotes_to_add.append({"name": remote_name, "url": remote_url})
-
-            if remotes_to_add:
-                return GitRemoteAddOperation(
-                    option=self, target=target, remotes=remotes_to_add
+            remotes_to_add = [
+                {"name": name, "url": url}
+                for name, url in remotes_to_add_map.items()
+            ]
+            target.log(
+                message=(
+                    "Adding git remotes: "
+                    + ", ".join(f"{name}->{url}" for name, url in remotes_to_add_map.items())
                 )
-
+            )
+            return GitRemoteAddOperation(
+                option=self, target=target, remotes=remotes_to_add
+            )
         return None
 
     def get_item_class_type(self) -> type | UnionType:
@@ -163,8 +168,10 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
         from wexample_filestate.option.name_option import NameOption
 
         name_option = remote_item_option.get_option(NameOption)
-        if name_option and name_option.get_value().is_str():
-            return name_option.get_value().get_str()
+        if name_option:
+            name_value = name_option.get_name_value()
+            if name_value:
+                return name_value
 
         # Default to "origin" if no name specified
         return "origin"
@@ -182,30 +189,47 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             pass
         return None
 
-    def _has_remotes_configured(self) -> bool:
-        """Check if there are any remotes configured."""
+    def _build_expected_remote_map(self, target) -> dict[str, str]:
+        """Return configured remote name->url mapping (deduplicated)."""
         from wexample_filestate_git.option._git.url_option import UrlOption
+
+        remotes: dict[str, str] = {}
 
         for remote_item_option in self.children:
             url_option = remote_item_option.get_option(UrlOption)
-            if url_option:
-                return True
+            if not url_option:
+                continue
+            remote_url = url_option.get_url(target=target)
+            remote_name = self._get_remote_name(remote_item_option)
+            if remote_name and remote_url:
+                remotes.setdefault(remote_name, remote_url)
 
-        return False
+        return remotes
 
-    def _is_remote_missing_or_mismatched(self, target) -> bool:
-        """Check if any configured remote is missing locally or has different URL."""
+    def _has_remotes_configured(self) -> bool:
+        """Check if there are any remotes configured."""
+        return len(self.children) > 0
+
+    def _collect_remotes_to_add(self, target) -> dict[str, str]:
+        """Return remotes that need to be added or updated locally."""
         from wexample_filestate_git.option._git.url_option import UrlOption
 
         # Check if Git repo exists
         repo = self._get_target_git_repo(target)
         if not repo:
-            # If no Git repo but remotes are configured, they need to be added later
-            return self._has_remotes_configured()
+            expected_remotes = self._build_expected_remote_map(target)
+            if expected_remotes:
+                target.log(
+                    message="No git repository detected locally; remotes pending configuration"
+                )
+            else:
+                target.log(message="No git repository detected and no remotes configured")
+            return expected_remotes
 
         # Git repo exists, check if remotes match
         # Get existing remotes by name
         existing_by_name = {r.name: r for r in repo.remotes}
+        remotes_to_add: dict[str, str] = {}
 
         for remote_item_option in self.children:
             url_option = remote_item_option.get_option(UrlOption)
@@ -220,14 +244,30 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
             existing = existing_by_name.get(desired_name)
             if existing is None:
-                return True  # Remote missing
+                target.log(
+                    message=(
+                        f"Remote '{desired_name}' missing locally "
+                        f"(expected URL: {desired_url})"
+                    )
+                )
+                remotes_to_add[desired_name] = desired_url
+                continue
 
             # Check if URL matches
             existing_urls = {u for u in existing.urls}
             if desired_url not in existing_urls:
-                return True  # URL mismatch
+                target.log(
+                    message=(
+                        f"Remote '{desired_name}' URL mismatch "
+                        f"(have: {', '.join(sorted(existing_urls))}, expected: {desired_url})"
+                    )
+                )
+                remotes_to_add[desired_name] = desired_url
 
-        return False
+        if not remotes_to_add:
+            target.log(message="All configured remotes match the local git repository")
+
+        return remotes_to_add
 
     def _resolve_remote_type_and_url(
         self, remote_item_option, target: TargetFileOrDirectoryType
