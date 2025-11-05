@@ -6,6 +6,8 @@ from wexample_config.config_option.abstract_config_option import AbstractConfigO
 from wexample_config.config_option.abstract_nested_config_option import (
     AbstractNestedConfigOption,
 )
+
+from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
 
@@ -48,7 +50,7 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         return dict | bool
 
     def create_required_operation(
-        self, target: TargetFileOrDirectoryType
+        self, target: TargetFileOrDirectoryType, scopes: set[Scope]
     ) -> AbstractOperation | None:
         """Create GitInitOperation if Git is required but not initialized, or delegate to children."""
         from wexample_helpers_git.helpers.git import git_is_init
@@ -74,7 +76,7 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
             )
 
         # Git is already initialized, delegate to children for other operations
-        return self._create_child_required_operation(target=target)
+        return self._create_child_required_operation(target=target, scopes=scopes)
 
     def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
         from wexample_filestate_git.option._git.main_branch_option import (
