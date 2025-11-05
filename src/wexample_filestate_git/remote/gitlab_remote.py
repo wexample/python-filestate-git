@@ -95,7 +95,7 @@ class GitlabRemote(AbstractRemote):
             description: Optional repository description
             private: Whether the repository should be private
         """
-        from wexample_helpers_api.enums.http import HttpMethod
+        from wexample_api.enums.http import HttpMethod
 
         data = {
             "name": name,

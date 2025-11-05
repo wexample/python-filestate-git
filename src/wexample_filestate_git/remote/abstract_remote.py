@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from wexample_helpers.classes.abstract_method import abstract_method
-from wexample_helpers_api.common.abstract_gateway import AbstractGateway
+from wexample_api.common.abstract_gateway import AbstractGateway
 
 
 class AbstractRemote(AbstractGateway):

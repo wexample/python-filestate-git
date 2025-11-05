@@ -28,7 +28,7 @@ class TestGitlabRemote(AbstractGitRemoteTest):
         from unittest.mock import patch
 
         with patch(
-            "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
+            "wexample_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
             mock_request.return_value.status_code = 200
 
@@ -42,7 +42,7 @@ class TestGitlabRemote(AbstractGitRemoteTest):
         from unittest.mock import patch
 
         with patch(
-            "wexample_helpers_api.common.abstract_gateway.AbstractGateway.make_request"
+            "wexample_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
             mock_request.return_value.json.return_value = {"id": 1}
 
