@@ -1,6 +1,6 @@
 # wexample-filestate-git
 
-Version: 0.0.55
+Version: 0.0.56
 
 An extension for "filestate" package, which adds GIT management operations.
 
