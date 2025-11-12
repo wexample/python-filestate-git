@@ -48,12 +48,14 @@ class MainBranchOption(OptionMixin, AbstractConfigOption):
             description=f"Create Git branch '{branch_name}'",
         )
 
-    def _get_desired_branch_name(self) -> str | None:
+    def _get_desired_branch_name(self) -> str:
         """Resolve desired branch name from config.
 
         Accepts either a list (first item) or a single string value.
         Defaults to "main" if the option exists but is empty/invalid.
         """
+        from wexample_helpers_git.const.common import GIT_BRANCH_MAIN
+
         v = self.get_value()
 
         # Prefer list form
@@ -74,7 +76,7 @@ class MainBranchOption(OptionMixin, AbstractConfigOption):
             return v.raw
 
         # If the option exists but has no usable value, default to "main"
-        return "main"
+        return GIT_BRANCH_MAIN
 
     def _get_target_git_repo(self, target):
         """Get Git repository for the target."""
