@@ -129,6 +129,23 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
 
         return RemoteItemOption
 
+    def _build_expected_remote_map(self, target) -> dict[str, str]:
+        """Return configured remote name->url mapping (deduplicated)."""
+        from wexample_filestate_git.option._git.url_option import UrlOption
+
+        remotes: dict[str, str] = {}
+
+        for remote_item_option in self.children:
+            url_option = remote_item_option.get_option(UrlOption)
+            if not url_option:
+                continue
+            remote_url = url_option.get_url(target=target)
+            remote_name = self._get_remote_name(remote_item_option)
+            if remote_name and remote_url:
+                remotes.setdefault(remote_name, remote_url)
+
+        return remotes
+
     def _build_remote_instance(self, remote_type, remote_url: str, target):
         """Build remote instance with proper configuration."""
         api_token_env_key = (
@@ -151,65 +168,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             api_token=api_token,
             base_url=remote_type.build_remote_api_url_from_repo(remote_url),
         )
-
-    def _detect_remote_type(self, remote_url: str):
-        """Detect the remote type (GitHub, GitLab, etc.) from the URL."""
-        from wexample_filestate_git.remote.github_remote import GithubRemote
-        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-
-        remote_types = [GithubRemote, GitlabRemote]
-
-        for remote_type in remote_types:
-            if remote_type.detect_remote_type(remote_url):
-                return remote_type
-        return None
-
-    def _get_remote_name(self, remote_item_option) -> str:
-        """Get remote name from option or default to 'origin'."""
-        from wexample_filestate.option.name_option import NameOption
-
-        name_option = remote_item_option.get_option(NameOption)
-        if name_option:
-            name_value = name_option.get_name_value()
-            if name_value:
-                return name_value
-
-        # Default to "origin" if no name specified
-        return "origin"
-
-    def _get_target_git_repo(self, target):
-        """Get Git repository for the target."""
-        try:
-            from git import Repo
-            from wexample_helpers.const.globals import DIR_GIT
-
-            git_dir = target.get_path() / DIR_GIT
-            if git_dir.exists():
-                return Repo(str(target.get_path()))
-        except Exception:
-            pass
-        return None
-
-    def _build_expected_remote_map(self, target) -> dict[str, str]:
-        """Return configured remote name->url mapping (deduplicated)."""
-        from wexample_filestate_git.option._git.url_option import UrlOption
-
-        remotes: dict[str, str] = {}
-
-        for remote_item_option in self.children:
-            url_option = remote_item_option.get_option(UrlOption)
-            if not url_option:
-                continue
-            remote_url = url_option.get_url(target=target)
-            remote_name = self._get_remote_name(remote_item_option)
-            if remote_name and remote_url:
-                remotes.setdefault(remote_name, remote_url)
-
-        return remotes
-
-    def _has_remotes_configured(self) -> bool:
-        """Check if there are any remotes configured."""
-        return len(self.children) > 0
 
     def _collect_remotes_to_add(self, target) -> dict[str, str]:
         """Return remotes that need to be added or updated locally."""
@@ -271,6 +229,48 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             target.log(message="All configured remotes match the local git repository")
 
         return remotes_to_add
+
+    def _detect_remote_type(self, remote_url: str):
+        """Detect the remote type (GitHub, GitLab, etc.) from the URL."""
+        from wexample_filestate_git.remote.github_remote import GithubRemote
+        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
+
+        remote_types = [GithubRemote, GitlabRemote]
+
+        for remote_type in remote_types:
+            if remote_type.detect_remote_type(remote_url):
+                return remote_type
+        return None
+
+    def _get_remote_name(self, remote_item_option) -> str:
+        """Get remote name from option or default to 'origin'."""
+        from wexample_filestate.option.name_option import NameOption
+
+        name_option = remote_item_option.get_option(NameOption)
+        if name_option:
+            name_value = name_option.get_name_value()
+            if name_value:
+                return name_value
+
+        # Default to "origin" if no name specified
+        return "origin"
+
+    def _get_target_git_repo(self, target):
+        """Get Git repository for the target."""
+        try:
+            from git import Repo
+            from wexample_helpers.const.globals import DIR_GIT
+
+            git_dir = target.get_path() / DIR_GIT
+            if git_dir.exists():
+                return Repo(str(target.get_path()))
+        except Exception:
+            pass
+        return None
+
+    def _has_remotes_configured(self) -> bool:
+        """Check if there are any remotes configured."""
+        return len(self.children) > 0
 
     def _resolve_remote_type_and_url(
         self, remote_item_option, target: TargetFileOrDirectoryType
