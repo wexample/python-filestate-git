@@ -14,7 +14,7 @@ dependencies = [
     "cattrs>=23.1.0",
     "requests",
     "wexample-api==0.0.78",
-    "wexample-filestate==0.0.69",
+    "wexample-filestate==0.0.70",
     "wexample-helpers-git==0.0.91",
 ]
 
