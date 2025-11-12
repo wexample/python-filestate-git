@@ -2,49 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from git import Repo
-from wexample_filestate.operation.abstract_operation import AbstractOperation
-from wexample_filestate.operation.file_create_operation import FileCreateOperation
-from wexample_filestate.operation.mixin.file_manipulation_operation_mixin import (
-    FileManipulationOperationMixin,
-)
+from wexample_helpers.decorator.base_class import base_class
+
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
-from wexample_helpers.const.globals import DIR_GIT
 
 if TYPE_CHECKING:
-    from wexample_config.config_option.abstract_config_option import (
-        AbstractConfigOption,
-    )
+    pass
 
 
-class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
-    _original_path_str: str
+@base_class
+class GitInitOperation(AbstractGitOperation):
     _has_initialized_git: bool = False
 
-    def dependencies(self) -> list[type[AbstractOperation]]:
-        return [FileCreateOperation]
+    def apply_operation(self) -> None:
+        from git import Repo
 
-    def applicable_for_option(self, option: AbstractConfigOption) -> bool:
-        from wexample_filestate_git.config_option.git_config_option import (
-            GitConfigOption,
-        )
-        from wexample_helpers_git.helpers.git import git_is_init
-
-        if isinstance(option, GitConfigOption):
-            return option.should_have_git() and not git_is_init(self.target.get_path())
-
-        return False
-
-    def describe_before(self) -> str:
-        return "No initialized .git directory"
-
-    def describe_after(self) -> str:
-        return "Initialized .git directory"
-
-    def description(self) -> str:
-        return "Initialize .git directory"
-
-    def apply(self) -> None:
         path = self.target.get_path()
         self._has_initialized_git = True
 
@@ -54,5 +26,7 @@ class GitInitOperation(FileManipulationOperationMixin, AbstractGitOperation):
     def undo(self) -> None:
         import shutil
 
+        from wexample_helpers.const.globals import DIR_GIT
+
         if self._has_initialized_git:
-            shutil.rmtree(self.target.get_path() / DIR_GIT)
+            shutil.rmtree(f"{self.target.get_path()}/{DIR_GIT}")

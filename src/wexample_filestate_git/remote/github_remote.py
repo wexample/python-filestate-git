@@ -2,27 +2,67 @@ from __future__ import annotations
 
 import re
 
-from pydantic import Field
-from wexample_helpers_api.enums.http import HttpMethod
+from wexample_helpers.classes.field import public_field
+from wexample_helpers.decorator.base_class import base_class
 
 from .abstract_remote import AbstractRemote
 
 
+@base_class
 class GithubRemote(AbstractRemote):
-    api_token: str = Field(description="GitHub API token")
-    base_url: str = Field(
+    api_token: str = public_field(description="GitHub API token")
+    base_url: str = public_field(
         default="https://api.github.com", description="GitHub API base URL"
     )
 
-    def model_post_init(self, *args, **kwargs) -> None:
-        super().model_post_init(*args, **kwargs)
-
+    def __attrs_post_init__(self) -> None:
         self.default_headers.update(
             {
                 "Authorization": f"token {self.api_token}",
                 "Accept": "application/vnd.github.v3+json",
             }
         )
+
+    @classmethod
+    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
+        """Build API base URL from a GitHub remote URL.
+
+        Supports:
+        - https://github.com/owner/repo(.git)
+        - git@github.com:owner/repo(.git)
+        - GHES custom domains: https://github.example.com/... or git@github.example.com:...
+        Returns the appropriate https://<host>/api/v3 for custom domains,
+        or https://api.github.com for github.com.
+        """
+        m = re.search(r"^(?:https://|git@)([^/:]+)", remote_url)
+        if not m:
+            return None
+        host = m.group(1)
+        if host == "github.com":
+            return "https://api.github.com"
+        # GitHub Enterprise Server
+        return f"https://{host}/api/v3"
+
+    @classmethod
+    def detect_remote_type(cls, remote_url: str) -> bool:
+        return bool(re.search(r"github\.com[:/]", remote_url))
+
+    def check_repository_exists(self, name: str, namespace: str) -> bool:
+        """
+        Check if a repository exists in the specified namespace.
+
+        Args:
+            name: Repository name
+            namespace: Organization or user name (mandatory)
+        """
+        endpoint = f"repos/{namespace}/{name}"
+        response = self.make_request(
+            endpoint=endpoint,
+            call_origin=__file__,
+            expected_status_codes=[200, 404],
+            fatal_if_unexpected=True,
+        )
+        return response.status_code == 200
 
     def create_repository(
         self, name: str, namespace: str, description: str = "", private: bool = False
@@ -36,6 +76,8 @@ class GithubRemote(AbstractRemote):
             description: Optional repository description
             private: Whether the repository should be private
         """
+        from wexample_api.enums.http import HttpMethod
+
         endpoint = f"orgs/{namespace}/repos"
 
         response = self.make_request(
@@ -52,22 +94,6 @@ class GithubRemote(AbstractRemote):
             fatal_if_unexpected=True,  # Any other status code should raise an error
         )
         return response.json()
-
-    def check_repository_exists(self, name: str, namespace: str) -> bool:
-        """
-        Check if a repository exists in the specified namespace.
-
-        Args:
-            name: Repository name
-            namespace: Organization or user name (mandatory)
-        """
-        endpoint = f"repos/{namespace}/{name}"
-        response = self.make_request(
-            endpoint=endpoint,
-            call_origin=__file__,
-            expected_status_codes=[200, 404],
-        )
-        return response.status_code == 200
 
     def create_repository_if_not_exists(
         self, remote_url: str, description: str = "", private: bool = False
@@ -107,27 +133,3 @@ class GithubRemote(AbstractRemote):
         if len(parts) >= 2:
             return {"name": parts[-1], "namespace": parts[-2]}
         return {"name": parts[0], "namespace": ""}
-
-    @classmethod
-    def detect_remote_type(cls, remote_url: str) -> bool:
-        return bool(re.search(r"github\.com[:/]", remote_url))
-
-    @classmethod
-    def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
-        """Build API base URL from a GitHub remote URL.
-
-        Supports:
-        - https://github.com/owner/repo(.git)
-        - git@github.com:owner/repo(.git)
-        - GHES custom domains: https://github.example.com/... or git@github.example.com:...
-        Returns the appropriate https://<host>/api/v3 for custom domains,
-        or https://api.github.com for github.com.
-        """
-        m = re.search(r"^(?:https://|git@)([^/:]+)", remote_url)
-        if not m:
-            return None
-        host = m.group(1)
-        if host == "github.com":
-            return "https://api.github.com"
-        # GitHub Enterprise Server
-        return f"https://{host}/api/v3"
