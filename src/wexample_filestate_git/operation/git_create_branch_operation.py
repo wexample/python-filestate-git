@@ -16,7 +16,7 @@ class GitCreateBranchOperation(AbstractGitOperation):
         super().__init__(option=option, target=target, description=description)
         self.branch_name = branch_name
 
-    def apply(self) -> None:
+    def apply_operation(self) -> None:
         """Create the desired branch locally if it does not exist.
 
         Notes:

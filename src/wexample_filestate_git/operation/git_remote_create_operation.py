@@ -30,7 +30,7 @@ class GitRemoteCreateOperation(AbstractGitOperation):
 
         return [GithubRemote, GitlabRemote]
 
-    def apply(self) -> None:
+    def apply_operation(self) -> None:
         """Create the remote repository using the configured parameters."""
         # Build remote instance with the provided parameters
         remote = self._build_remote_instance()

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class GitInitOperation(AbstractGitOperation):
     _has_initialized_git: bool = False
 
-    def apply(self) -> None:
+    def apply_operation(self) -> None:
         from git import Repo
 
         path = self.target.get_path()

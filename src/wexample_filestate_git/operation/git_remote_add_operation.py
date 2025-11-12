@@ -21,7 +21,7 @@ class GitRemoteAddOperation(AbstractGitOperation):
         self.remotes = remotes  # List of {"name": str, "url": str}
         self._created_remote = {}
 
-    def apply(self) -> None:
+    def apply_operation(self) -> None:
         """Add configured remotes to the Git repository."""
         from wexample_helpers_git.helpers.git import git_remote_create_once
 
