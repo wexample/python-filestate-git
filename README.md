@@ -1,6 +1,6 @@
 # wexample-filestate-git
 
-Version: 0.0.47
+Version: 0.0.55
 
 An extension for "filestate" package, which adds GIT management operations.
 
@@ -19,7 +19,7 @@ First, install the required testing dependencies:
 
 Run all tests with coverage:
 ```bash
-.venv/bin/python -m pytest --cov
+.venv/bin/python -m pytest --cov --cov-report=html
 ```
 
 ### Common Commands

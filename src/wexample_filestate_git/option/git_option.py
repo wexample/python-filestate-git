@@ -26,9 +26,7 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
     def get_scopes(cls) -> None | list[Scope]:
         from wexample_filestate.enum.scopes import Scope
 
-        return [
-            Scope.REMOTE
-        ]
+        return [Scope.REMOTE]
 
     @classmethod
     def resolve_config(cls, config: DictConfig) -> DictConfig:

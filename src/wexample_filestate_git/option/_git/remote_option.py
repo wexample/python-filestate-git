@@ -107,13 +107,14 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             )
 
             remotes_to_add = [
-                {"name": name, "url": url}
-                for name, url in remotes_to_add_map.items()
+                {"name": name, "url": url} for name, url in remotes_to_add_map.items()
             ]
             target.log(
                 message=(
                     "Adding git remotes: "
-                    + ", ".join(f"{name}->{url}" for name, url in remotes_to_add_map.items())
+                    + ", ".join(
+                        f"{name}->{url}" for name, url in remotes_to_add_map.items()
+                    )
                 )
             )
             return GitRemoteAddOperation(
@@ -223,7 +224,9 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                     message="No git repository detected locally; remotes pending configuration"
                 )
             else:
-                target.log(message="No git repository detected and no remotes configured")
+                target.log(
+                    message="No git repository detected and no remotes configured"
+                )
             return expected_remotes
 
         # Git repo exists, check if remotes match
