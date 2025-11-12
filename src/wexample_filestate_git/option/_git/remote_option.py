@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Union
 from wexample_config.config_option.abstract_list_config_option import (
     AbstractListConfigOption,
 )
-
 from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
