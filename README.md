@@ -90,7 +90,7 @@ Breaking changes are clearly documented with upgrade paths and examples.
 
 Current limitations and planned features are tracked in the GitHub issues.
 
-See the [project roadmap](https://github.com/wexample/python-filestate-git/issues) for upcoming features and improvements.
+See the [project roadmap](https://github.com/wexample/python-filestate_git/issues) for upcoming features and improvements.
 
 ## Security Policy
 
@@ -119,7 +119,7 @@ Community support is available through GitHub Discussions.
 
 ## Contribution Guidelines
 
-We welcome contributions to the Wexample suite! 
+We welcome contributions to the Wexample suite!
 
 ### How to Contribute
 
@@ -137,15 +137,17 @@ See [CONTRIBUTORS.md](CONTRIBUTORS.md) for the full list of contributors.
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Free to use in both personal and commercial projects.
 
 ## Useful Links
 
-- **Homepage**: https://github.com/wexample/python-filestate-git
+- **Homepage**: https://github.com/wexample/python-filestate_git
 - **Documentation**: [docs.wexample.com](https://docs.wexample.com)
-- **Issue Tracker**: https://github.com/wexample/python-filestate-git/issues
-- **Discussions**: https://github.com/wexample/python-filestate-git/discussions
-- **PyPI**: [pypi.org/project/wexample-filestate-git](https://pypi.org/project/wexample-filestate-git/)
+- **Issue Tracker**: https://github.com/wexample/python-filestate_git/issues
+- **Discussions**: https://github.com/wexample/python-filestate_git/discussions
+- **PyPI**: [pypi.org/project/wexample-app](https://pypi.org/project/wexample-app/)
 
 ## Integration in the Suite
 
