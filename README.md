@@ -147,7 +147,7 @@ Free to use in both personal and commercial projects.
 - **Documentation**: [docs.wexample.com](https://docs.wexample.com)
 - **Issue Tracker**: https://github.com/wexample/python-filestate_git/issues
 - **Discussions**: https://github.com/wexample/python-filestate_git/discussions
-- **PyPI**: [pypi.org/project/wexample-app](https://pypi.org/project/wexample-app/)
+- **PyPI**: [pypi.org/project/wexample-filestate-git](https://pypi.org/project/wexample-filestate-git/)
 
 ## Integration in the Suite
 
