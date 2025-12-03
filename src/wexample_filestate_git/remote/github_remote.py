@@ -24,29 +24,6 @@ class GithubRemote(AbstractRemote):
         )
 
     @classmethod
-    def is_github_repo(cls, remote_url: str) -> bool:
-        """Return True if the URL is a GitHub remote (SSH or HTTPS)."""
-        return bool(re.search(r"github\.com[:/]", remote_url))
-
-    @classmethod
-    def resolve_url_from_repo_url(cls, remote_url: str) -> str | None:
-        """
-        Normalize any GitHub remote URL into a clean HTTPS repository URL:
-        - git@github.com:owner/repo.git → https://github.com/owner/repo
-        - https://github.com/owner/repo.git → https://github.com/owner/repo
-        """
-        if not cls.is_github_repo(remote_url):
-            return None
-
-        # Extract user & repo
-        m = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote_url)
-        if not m:
-            return None
-
-        path = m.group(1)
-        return f"https://github.com/{path}"
-
-    @classmethod
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
         """Build API base URL from a GitHub remote URL.
 
@@ -69,6 +46,29 @@ class GithubRemote(AbstractRemote):
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
         return bool(re.search(r"github\.com[:/]", remote_url))
+
+    @classmethod
+    def is_github_repo(cls, remote_url: str) -> bool:
+        """Return True if the URL is a GitHub remote (SSH or HTTPS)."""
+        return bool(re.search(r"github\.com[:/]", remote_url))
+
+    @classmethod
+    def resolve_url_from_repo_url(cls, remote_url: str) -> str | None:
+        """
+        Normalize any GitHub remote URL into a clean HTTPS repository URL:
+        - git@github.com:owner/repo.git → https://github.com/owner/repo
+        - https://github.com/owner/repo.git → https://github.com/owner/repo
+        """
+        if not cls.is_github_repo(remote_url):
+            return None
+
+        # Extract user & repo
+        m = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote_url)
+        if not m:
+            return None
+
+        path = m.group(1)
+        return f"https://github.com/{path}"
 
     def check_repository_exists(self, name: str, namespace: str) -> bool:
         """
