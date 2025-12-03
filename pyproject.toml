@@ -13,9 +13,9 @@ dependencies = [
     "attrs>=23.1.0",
     "cattrs>=23.1.0",
     "requests",
-    "wexample-api==0.0.81",
-    "wexample-filestate==0.0.72",
-    "wexample-helpers-git==0.0.94",
+    "wexample-api==0.0.82",
+    "wexample-filestate==0.0.73",
+    "wexample-helpers-git==0.0.95",
 ]
 
 [project.readme]
