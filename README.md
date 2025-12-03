@@ -1,6 +1,6 @@
 # wexample-filestate-git
 
-Version: 0.0.58
+Version: 0.0.59
 
 An extension for "filestate" package, which adds GIT management operations.
 
@@ -190,7 +190,7 @@ Free to use in both personal and commercial projects.
 
 ## Integration in the Suite
 
-This package is part of the **Wexample Suite** — a collection of high-quality Python packages designed to work seamlessly together.
+This package is part of the Wexample Suite — a collection of high-quality, modular tools designed to work seamlessly together across multiple languages and environments.
 
 ### Related Packages
 
@@ -209,9 +209,9 @@ Refer to each package's documentation for specific version compatibility require
 - attrs: >=23.1.0
 - cattrs: >=23.1.0
 - requests: 
-- wexample-api: ==0.0.81
-- wexample-filestate: ==0.0.72
-- wexample-helpers-git: ==0.0.94
+- wexample-api: ==0.0.83
+- wexample-filestate: ==0.0.74
+- wexample-helpers-git: ==0.0.96
 
 
 # About us
