@@ -4,12 +4,17 @@ from typing import Any, Union
 
 from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
 from wexample_helpers.decorator.base_class import base_class
 
 
 @base_class
 class UrlOption(OptionMixin, AbstractConfigOption):
+    @classmethod
+    def get_scopes(cls) -> list[Scope]:
+        return [Scope.REMOTE]
+
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
         from collections.abc import Callable
