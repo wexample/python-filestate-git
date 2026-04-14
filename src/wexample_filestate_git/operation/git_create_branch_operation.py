@@ -22,6 +22,8 @@ class GitCreateBranchOperation(AbstractGitOperation):
         Notes:
         - This operation is local-only (no remote push, no deletion/rename of other branches).
         - The branch is created at current HEAD.
+        - If the repository has no commits yet, an initial empty commit is created first
+          so that HEAD resolves to a valid object and the branch pointer can be set.
         """
         repo = self._get_target_git_repo()
         if not repo:
@@ -29,6 +31,13 @@ class GitCreateBranchOperation(AbstractGitOperation):
 
         if any(h.name == self.branch_name for h in getattr(repo, "heads", [])):
             return  # Already exists
+
+        # A freshly-initialised repo (git init, no commits) has no HEAD to anchor
+        # the branch pointer on.  Create an initial empty commit in that case.
+        try:
+            repo.head.commit
+        except Exception:
+            repo.index.commit("Init")
 
         # Create new branch at current HEAD
         repo.create_head(self.branch_name)
