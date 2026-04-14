@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 
 @base_class
 class MainBranchOption(OptionMixin, AbstractConfigOption):
+    @classmethod
+    def get_scopes(cls) -> list[Scope]:
+        return [Scope.REMOTE]
+
     @staticmethod
     def get_raw_value_allowed_type() -> Any:
         return Union[str, list]

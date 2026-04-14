@@ -23,19 +23,23 @@ class GitRemoteAddOperation(AbstractGitOperation):
 
     def apply_operation(self) -> None:
         """Add configured remotes to the Git repository."""
-        from wexample_helpers_git.helpers.git import git_remote_create_once
-
         repo = self._get_target_git_repo()
         if not repo:
             return
+
+        existing_by_name = {r.name: r for r in repo.remotes}
 
         for remote in self.remotes:
             remote_name = remote["name"]
             remote_url = remote["url"]
 
-            self._created_remote[remote_name] = (
-                git_remote_create_once(repo, remote_name, remote_url) is not None
-            )
+            existing = existing_by_name.get(remote_name)
+            if existing is None:
+                repo.create_remote(remote_name, remote_url)
+                self._created_remote[remote_name] = True
+            else:
+                existing.set_url(remote_url)
+                self._created_remote[remote_name] = False
 
     def undo(self) -> None:
         """Remove remotes that were created by this operation."""
