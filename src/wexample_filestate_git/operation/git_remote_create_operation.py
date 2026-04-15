@@ -32,7 +32,9 @@ class GitRemoteCreateOperation(AbstractGitOperation):
 
     def apply_operation(self) -> None:
         """Create the remote repository using the configured parameters."""
-        from wexample_filestate_git.option._git.remote_option import _REMOTE_EXISTS_CACHE
+        from wexample_filestate_git.option._git.remote_option import (
+            _REMOTE_EXISTS_CACHE,
+        )
 
         # Build remote instance with the provided parameters
         remote = self._build_remote_instance()
