@@ -15,6 +15,12 @@ if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
     from wexample_filestate.operation.abstract_operation import AbstractOperation
 
+# Process-level cache: URLs confirmed to exist this run.
+# Keyed by remote URL. Avoids repeating API calls across rectify loop passes.
+# A given remote URL cannot be deleted during a run, so True is safe to cache permanently.
+# Updated by RemoteOption.create_required_operation and GitRemoteCreateOperation.apply_operation.
+_REMOTE_EXISTS_CACHE: set[str] = set()
+
 
 @base_class
 class RemoteOption(OptionMixin, AbstractListConfigOption):
@@ -61,11 +67,16 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                             target=target,
                         )
                         if remote:
-                            remote.connect()
-                            repo_info = remote.parse_repository_url(remote_url)
-                            repository_exists = remote.check_repository_exists(
-                                repo_info["name"], repo_info["namespace"]
-                            )
+                            if remote_url in _REMOTE_EXISTS_CACHE:
+                                repository_exists = True
+                            else:
+                                remote.connect()
+                                repo_info = remote.parse_repository_url(remote_url)
+                                repository_exists = remote.check_repository_exists(
+                                    repo_info["name"], repo_info["namespace"]
+                                )
+                                if repository_exists:
+                                    _REMOTE_EXISTS_CACHE.add(remote_url)
                             target.log(
                                 message=(
                                     f"{remote_type.get_snake_short_class_name()} repo "

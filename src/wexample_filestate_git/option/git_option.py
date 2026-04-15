@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
     from wexample_config.const.types import DictConfig, DictConfigValue
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
+    from wexample_filestate.enum.scopes import Scope
     from wexample_filestate.operation.abstract_operation import AbstractOperation
 
 

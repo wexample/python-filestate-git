@@ -32,12 +32,18 @@ class GitRemoteCreateOperation(AbstractGitOperation):
 
     def apply_operation(self) -> None:
         """Create the remote repository using the configured parameters."""
+        from wexample_filestate_git.option._git.remote_option import (
+            _REMOTE_EXISTS_CACHE,
+        )
+
         # Build remote instance with the provided parameters
         remote = self._build_remote_instance()
         if remote:
             remote.connect()
             # Create repository directly from URL
             remote.create_repository_if_not_exists(self.remote_url)
+            # Mark as existing so subsequent passes skip the API check
+            _REMOTE_EXISTS_CACHE.add(self.remote_url)
 
     def undo(self) -> None:
         # Note: We don't implement undo for remote repository creation
