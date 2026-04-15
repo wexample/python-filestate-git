@@ -11,6 +11,7 @@ from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
     from types import UnionType
+    from wexample_filestate.enum.scopes import Scope
 
     from wexample_config.const.types import DictConfig, DictConfigValue
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
