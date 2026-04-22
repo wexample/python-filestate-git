@@ -15,7 +15,7 @@ dependencies = [
     "requests",
     "wexample-api>=0.0.84",
     "wexample-filestate>=6.1.0",
-    "wexample-helpers-git>=6.1.0",
+    "wexample-helpers-git>=6.2.0",
 ]
 
 [project.readme]
