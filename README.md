@@ -1,6 +1,6 @@
 # filestate_git
 
-Version: 6.0.20
+Version: 6.0.21
 
 An extension for "filestate" package, which adds GIT management operations.
 
@@ -84,8 +84,8 @@ Visit the [Wexample Suite documentation](https://docs.wexample.com) for the comp
 - cattrs: >=23.1.0
 - requests: 
 - wexample-api: >=0.0.84
-- wexample-filestate: >=6.1.0
-- wexample-helpers-git: >=6.1.0
+- wexample-filestate: >=6.3.0
+- wexample-helpers-git: >=6.3.0
 
 ## Versioning & Compatibility Policy
 
