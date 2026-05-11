@@ -199,6 +199,7 @@ class GitlabRemote(AbstractRemote):
             call_origin=__file__,
             expected_status_codes=[200],
             fatal_if_unexpected=True,
+            retries=5,
         )
         return response.json()
 
