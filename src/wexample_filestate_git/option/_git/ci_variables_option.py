@@ -31,7 +31,7 @@ class CiVariablesOption(WithGitRemoteMixin, OptionMixin, AbstractConfigOption):
         self, target: TargetFileOrDirectoryType, scopes: set[Scope]
     ) -> AbstractOperation | None:
         value = self.get_value()
-        var_names: list[str] = value.get_list_or_empty()
+        var_names: list[str] = [v.get_str() for v in value.get_list_or_empty()]
         if not var_names:
             return None
 
