@@ -252,6 +252,21 @@ class GitlabRemote(AbstractRemote):
         )
         return response.json() if response else {}
 
+    def get_branch_pipelines(
+        self,
+        namespace: str,
+        name: str,
+        branch: str,
+    ) -> list[dict[str, Any]]:
+        project = self._project_endpoint(namespace, name)
+        response = self.make_request(
+            endpoint=f"{project}/pipelines",
+            call_origin=__file__,
+            expected_status_codes=[200],
+            query_params={"ref": branch, "order_by": "id", "sort": "desc", "per_page": 5},
+        )
+        return response.json() if response else []
+
     # ------------------------------------------------------------------
     # CI/CD variables
     # ------------------------------------------------------------------

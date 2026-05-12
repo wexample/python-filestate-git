@@ -134,6 +134,15 @@ class AbstractRemote(AbstractGateway):
     ) -> dict[str, Any]:
         """Return the pipeline/workflow-run dict for the given ID."""
 
+    def get_branch_pipelines(
+        self,
+        namespace: str,
+        name: str,
+        branch: str,
+    ) -> list[dict[str, Any]]:
+        """Return pipelines for a branch, most recent first. No-op by default."""
+        return []
+
     def poll_pipeline(
         self,
         namespace: str,
