@@ -17,6 +17,10 @@ class BranchDesignConfigValue(ConfigValue):
         default="merge",
         description="What to do when both the canonical branch and an alias exist: merge, skip, error",
     )
+    sync_remote: bool | None = public_field(
+        default=True,
+        description="Whether to also delete alias branches that still exist on remotes after local cleanup",
+    )
     raw: Any = public_field(
         default=None, description="Disabled raw value for this config."
     )

@@ -51,9 +51,10 @@ class GitRenameBranchOperation(WithGitRemoteMixin, AbstractGitOperation):
                         api_remote = self._build_remote_instance(remote_type, remote_url, self.target)
                         repo_info = api_remote.parse_repository_url(remote_url)
                         api_remote.unprotect_branch(repo_info["namespace"], repo_info["name"], self.from_branch)
+                        api_remote.set_default_branch(repo_info["namespace"], repo_info["name"], self.to_branch)
                     except Exception as e:
                         self.target.log(
-                            message=f"WARNING: could not unprotect '{self.from_branch}' on {remote.name}: {e}"
+                            message=f"WARNING: could not prepare '{self.from_branch}' for deletion on {remote.name}: {e}"
                         )
 
             try:

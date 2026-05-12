@@ -107,6 +107,10 @@ class AbstractRemote(AbstractGateway):
         """Remove branch protection. Returns True if successful, False if not supported."""
         return False
 
+    def set_default_branch(self, namespace: str, name: str, branch_name: str) -> bool:
+        """Set the default branch. Returns True if successful, False if not supported."""
+        return False
+
     # ------------------------------------------------------------------
     # Pipelines / workflow runs
     # ------------------------------------------------------------------

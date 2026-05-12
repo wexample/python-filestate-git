@@ -81,6 +81,38 @@ class BranchesOption(OptionMixin, AbstractConfigOption):
 
                 # skip: nothing to do
 
+        # Local aliases are clean — check if any alias still exists on a remote
+        for remote in repo.remotes:
+            try:
+                remote_heads = {ref.remote_head for ref in remote.refs}
+            except Exception:
+                continue
+
+            for canonical, config in raw.items():
+                if not isinstance(config, dict):
+                    continue
+
+                if not config.get("sync_remote", True):
+                    continue
+
+                aliases: list[str] = config.get("aliases", [])
+                if not isinstance(aliases, list):
+                    aliases = []
+
+                for alias in aliases:
+                    if alias in remote_heads:
+                        from wexample_filestate_git.operation.git_delete_remote_branch_operation import (
+                            GitDeleteRemoteBranchOperation,
+                        )
+
+                        return GitDeleteRemoteBranchOperation(
+                            option=self,
+                            target=target,
+                            branch_name=alias,
+                            canonical_branch=canonical,
+                            description=f"Delete remote alias '{alias}' (canonical is '{canonical}')",
+                        )
+
         return None
 
     def _get_target_git_repo(self, target: TargetFileOrDirectoryType):
