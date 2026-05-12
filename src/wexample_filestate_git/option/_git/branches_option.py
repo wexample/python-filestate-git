@@ -30,15 +30,17 @@ class BranchesOption(OptionMixin, AbstractConfigOption):
             return None
 
         existing_branches = {h.name for h in repo.heads}
-        raw = self.get_value().raw or {}
+        value = self.get_value()
+        raw = value.get_dict_or_empty()
 
         for canonical, config in raw.items():
             if not isinstance(config, dict):
-                config = {}
+                continue
 
-            aliases: list[str] = config.get("aliases") or []
+            aliases: list[str] = config.get("aliases", [])
+            if not isinstance(aliases, list):
+                aliases = []
             on_conflict: str = config.get("on_alias_conflict", "merge")
-
             canonical_exists = canonical in existing_branches
 
             for alias in aliases:
