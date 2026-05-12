@@ -7,6 +7,7 @@ from wexample_config.config_option.abstract_list_config_option import (
 )
 from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
+from wexample_filestate_git.remote.mixin.with_git_remote_mixin import WithGitRemoteMixin
 from wexample_helpers.decorator.base_class import base_class
 
 if TYPE_CHECKING:
@@ -23,7 +24,7 @@ _REMOTE_EXISTS_CACHE: set[str] = set()
 
 
 @base_class
-class RemoteOption(OptionMixin, AbstractListConfigOption):
+class RemoteOption(WithGitRemoteMixin, OptionMixin, AbstractListConfigOption):
     @classmethod
     def get_scopes(cls) -> list[Scope]:
         return [Scope.REMOTE]
@@ -89,28 +90,13 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                                     GitRemoteCreateOperation,
                                 )
 
-                                api_token_env_key = f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
-                                api_token = target.get_env_parameter_or_suite_fallback(
-                                    api_token_env_key
-                                )
-
-                                if not api_token:
-                                    from wexample_filestate.exception.missing_env_variable_exception import (
-                                        MissingEnvVariableException,
-                                    )
-
-                                    raise MissingEnvVariableException(
-                                        message=f"Missing required environment variable: {api_token_env_key}",
-                                        env_key=api_token_env_key,
-                                    )
-
                                 return GitRemoteCreateOperation(
                                     option=self,
                                     description=f"The remote should exist: {remote_url}",
                                     target=target,
                                     remote_type=remote_type,
                                     remote_url=remote_url,
-                                    api_token=api_token,
+                                    api_token=self._get_api_token(remote_type, target),
                                 )
 
         # Second priority: Check if any remote needs to be added locally
@@ -159,29 +145,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
                 remotes.setdefault(remote_name, remote_url)
 
         return remotes
-
-    def _build_remote_instance(self, remote_type, remote_url: str, target):
-        """Build remote instance with proper configuration."""
-        api_token_env_key = (
-            f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
-        )
-        api_token = target.get_env_parameter_or_suite_fallback(api_token_env_key)
-
-        if not api_token:
-            from wexample_filestate.exception.missing_env_variable_exception import (
-                MissingEnvVariableException,
-            )
-
-            raise MissingEnvVariableException(
-                message=f"Missing required environment variable: {api_token_env_key}",
-                env_key=api_token_env_key,
-            )
-
-        return remote_type(
-            io=target.io,
-            api_token=api_token,
-            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
-        )
 
     def _collect_remotes_to_add(self, target) -> dict[str, str]:
         """Return remotes that need to be added or updated locally."""
@@ -243,18 +206,6 @@ class RemoteOption(OptionMixin, AbstractListConfigOption):
             target.log(message="All configured remotes match the local git repository")
 
         return remotes_to_add
-
-    def _detect_remote_type(self, remote_url: str):
-        """Detect the remote type (GitHub, GitLab, etc.) from the URL."""
-        from wexample_filestate_git.remote.github_remote import GithubRemote
-        from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
-
-        remote_types = [GithubRemote, GitlabRemote]
-
-        for remote_type in remote_types:
-            if remote_type.detect_remote_type(remote_url):
-                return remote_type
-        return None
 
     def _get_remote_name(self, remote_item_option) -> str:
         """Get remote name from option or default to 'origin'."""

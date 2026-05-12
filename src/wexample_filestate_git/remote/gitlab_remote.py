@@ -122,6 +122,23 @@ class GitlabRemote(AbstractRemote):
         return {"name": url_parts[0], "namespace": ""}
 
     # ------------------------------------------------------------------
+    # Branch protection
+    # ------------------------------------------------------------------
+
+    def unprotect_branch(self, namespace: str, name: str, branch_name: str) -> bool:
+        from wexample_api.enums.http import HttpMethod
+
+        project = self._project_endpoint(namespace, name)
+        response = self.make_request(
+            method=HttpMethod.DELETE,
+            endpoint=f"{project}/protected_branches/{branch_name}",
+            call_origin=__file__,
+            expected_status_codes=[204, 404],
+            fatal_if_unexpected=False,
+        )
+        return response is not None and response.status_code in (204, 404)
+
+    # ------------------------------------------------------------------
     # Merge proposals (GitLab: merge requests)
     # ------------------------------------------------------------------
 

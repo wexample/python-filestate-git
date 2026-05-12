@@ -3,10 +3,11 @@ from __future__ import annotations
 from wexample_helpers.decorator.base_class import base_class
 
 from wexample_filestate_git.operation.abstract_git_operation import AbstractGitOperation
+from wexample_filestate_git.remote.mixin.with_git_remote_mixin import WithGitRemoteMixin
 
 
 @base_class
-class GitRenameBranchOperation(AbstractGitOperation):
+class GitRenameBranchOperation(WithGitRemoteMixin, AbstractGitOperation):
     def __init__(
         self, option, target, from_branch: str, to_branch: str, description: str
     ) -> None:
@@ -41,6 +42,19 @@ class GitRenameBranchOperation(AbstractGitOperation):
                     message=f"WARNING: could not push '{self.to_branch}' to {remote.name}: {e}"
                 )
                 continue
+
+            remote_url = next(iter(remote.urls), None)
+            if remote_url:
+                remote_type = self._detect_remote_type(remote_url)
+                if remote_type:
+                    try:
+                        api_remote = self._build_remote_instance(remote_type, remote_url, self.target)
+                        repo_info = api_remote.parse_repository_url(remote_url)
+                        api_remote.unprotect_branch(repo_info["namespace"], repo_info["name"], self.from_branch)
+                    except Exception as e:
+                        self.target.log(
+                            message=f"WARNING: could not unprotect '{self.from_branch}' on {remote.name}: {e}"
+                        )
 
             try:
                 remote.push(refspec=f":{self.from_branch}")

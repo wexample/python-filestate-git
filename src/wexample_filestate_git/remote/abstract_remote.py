@@ -103,6 +103,10 @@ class AbstractRemote(AbstractGateway):
         """Extract the provider-specific numeric identifier from a proposal dict."""
         return proposal.get("iid") or proposal.get("number")
 
+    def unprotect_branch(self, namespace: str, name: str, branch_name: str) -> bool:
+        """Remove branch protection. Returns True if successful, False if not supported."""
+        return False
+
     # ------------------------------------------------------------------
     # Pipelines / workflow runs
     # ------------------------------------------------------------------
