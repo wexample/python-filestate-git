@@ -249,6 +249,7 @@ class GitlabRemote(AbstractRemote):
             endpoint=f"{project}/pipelines/{pipeline_id}",
             call_origin=__file__,
             expected_status_codes=[200],
+            quiet=True,
         )
         return response.json() if response else {}
 
@@ -264,6 +265,7 @@ class GitlabRemote(AbstractRemote):
             call_origin=__file__,
             expected_status_codes=[200],
             query_params={"ref": branch, "order_by": "id", "sort": "desc", "per_page": 5},
+            quiet=True,
         )
         return response.json() if response else []
 
