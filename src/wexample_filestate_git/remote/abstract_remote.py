@@ -111,6 +111,16 @@ class AbstractRemote(AbstractGateway):
         """Set the default branch. Returns True if successful, False if not supported."""
         return False
 
+    def get_ci_variable(self, namespace: str, name: str, key: str) -> dict | None:
+        """Return the CI/CD variable dict for the given key, or None if not found/supported."""
+        return None
+
+    def set_ci_variable(
+        self, namespace: str, name: str, key: str, value: str, masked: bool = True
+    ) -> bool:
+        """Create or update a CI/CD variable. Returns True if successful, False if not supported."""
+        return False
+
     # ------------------------------------------------------------------
     # Pipelines / workflow runs
     # ------------------------------------------------------------------

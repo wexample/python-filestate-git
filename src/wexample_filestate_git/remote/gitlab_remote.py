@@ -253,6 +253,51 @@ class GitlabRemote(AbstractRemote):
         return response.json() if response else {}
 
     # ------------------------------------------------------------------
+    # CI/CD variables
+    # ------------------------------------------------------------------
+
+    def get_ci_variable(self, namespace: str, name: str, key: str) -> dict | None:
+        project = self._project_endpoint(namespace, name)
+        response = self.make_request(
+            endpoint=f"{project}/variables/{key}",
+            call_origin=__file__,
+            expected_status_codes=[200, 404],
+            fatal_if_unexpected=False,
+        )
+        if response and response.status_code == 200:
+            return response.json()
+        return None
+
+    def set_ci_variable(
+        self, namespace: str, name: str, key: str, value: str, masked: bool = True
+    ) -> bool:
+        from wexample_api.enums.http import HttpMethod
+
+        project = self._project_endpoint(namespace, name)
+        existing = self.get_ci_variable(namespace, name, key)
+
+        if existing:
+            response = self.make_request(
+                method=HttpMethod.PUT,
+                endpoint=f"{project}/variables/{key}",
+                data={"value": value, "masked": masked, "protected": False},
+                call_origin=__file__,
+                expected_status_codes=[200],
+                fatal_if_unexpected=False,
+            )
+            return response is not None and response.status_code == 200
+        else:
+            response = self.make_request(
+                method=HttpMethod.POST,
+                endpoint=f"{project}/variables",
+                data={"key": key, "value": value, "masked": masked, "protected": False},
+                call_origin=__file__,
+                expected_status_codes=[201],
+                fatal_if_unexpected=False,
+            )
+            return response is not None and response.status_code == 201
+
+    # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
 
