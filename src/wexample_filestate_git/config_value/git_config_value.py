@@ -9,6 +9,10 @@ from wexample_helpers.decorator.base_class import base_class
 
 @base_class
 class GitConfigValue(ConfigValue):
+    branches: dict | None = public_field(
+        default=None,
+        description="Branch structure: canonical names with optional aliases to reconcile",
+    )
     main_branch: str | list[str] | None = public_field(
         default=None,
         description="Main branch name(s) to create",
@@ -22,12 +26,14 @@ class GitConfigValue(ConfigValue):
     )
 
     def to_option_raw_value(self) -> Any:
+        from wexample_filestate_git.option._git.branches_option import BranchesOption
         from wexample_filestate_git.option._git.main_branch_option import (
             MainBranchOption,
         )
         from wexample_filestate_git.option._git.remote_option import RemoteOption
 
         return {
+            BranchesOption.get_name(): self.branches,
             MainBranchOption.get_name(): self.main_branch,
             RemoteOption.get_name(): self.remote,
         }
