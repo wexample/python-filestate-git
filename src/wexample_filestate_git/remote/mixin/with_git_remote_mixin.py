@@ -8,6 +8,18 @@ if TYPE_CHECKING:
 
 class WithGitRemoteMixin:
     @staticmethod
+    def _build_remote_instance(
+        remote_type, remote_url: str, target
+    ) -> AbstractRemote | None:
+        api_token = WithGitRemoteMixin._get_api_token(remote_type, target)
+
+        return remote_type(
+            io=target.io,
+            api_token=api_token,
+            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
+        )
+
+    @staticmethod
     def _detect_remote_type(remote_url: str):
         from wexample_filestate_git.remote.github_remote import GithubRemote
         from wexample_filestate_git.remote.gitlab_remote import GitlabRemote
@@ -19,7 +31,9 @@ class WithGitRemoteMixin:
 
     @staticmethod
     def _get_api_token(remote_type, target) -> str:
-        api_token_env_key = f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+        api_token_env_key = (
+            f"{remote_type.get_snake_short_class_name().upper()}_API_TOKEN"
+        )
         api_token = target.get_env_parameter_or_suite_fallback(api_token_env_key)
 
         if not api_token:
@@ -33,13 +47,3 @@ class WithGitRemoteMixin:
             )
 
         return api_token
-
-    @staticmethod
-    def _build_remote_instance(remote_type, remote_url: str, target) -> AbstractRemote | None:
-        api_token = WithGitRemoteMixin._get_api_token(remote_type, target)
-
-        return remote_type(
-            io=target.io,
-            api_token=api_token,
-            base_url=remote_type.build_remote_api_url_from_repo(remote_url),
-        )

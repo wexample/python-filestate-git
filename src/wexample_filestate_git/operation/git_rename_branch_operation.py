@@ -33,6 +33,9 @@ class GitRenameBranchOperation(WithGitRemoteMixin, AbstractGitOperation):
 
         self._sync_remote(repo)
 
+    def undo(self) -> None:
+        pass
+
     def _sync_remote(self, repo) -> None:
         for remote in repo.remotes:
             try:
@@ -48,10 +51,16 @@ class GitRenameBranchOperation(WithGitRemoteMixin, AbstractGitOperation):
                 remote_type = self._detect_remote_type(remote_url)
                 if remote_type:
                     try:
-                        api_remote = self._build_remote_instance(remote_type, remote_url, self.target)
+                        api_remote = self._build_remote_instance(
+                            remote_type, remote_url, self.target
+                        )
                         repo_info = api_remote.parse_repository_url(remote_url)
-                        api_remote.unprotect_branch(repo_info["namespace"], repo_info["name"], self.from_branch)
-                        api_remote.set_default_branch(repo_info["namespace"], repo_info["name"], self.to_branch)
+                        api_remote.unprotect_branch(
+                            repo_info["namespace"], repo_info["name"], self.from_branch
+                        )
+                        api_remote.set_default_branch(
+                            repo_info["namespace"], repo_info["name"], self.to_branch
+                        )
                     except Exception as e:
                         self.target.log(
                             message=f"WARNING: could not prepare '{self.from_branch}' for deletion on {remote.name}: {e}"
@@ -63,6 +72,3 @@ class GitRenameBranchOperation(WithGitRemoteMixin, AbstractGitOperation):
                 self.target.log(
                     message=f"WARNING: could not delete '{self.from_branch}' on {remote.name}: {e}"
                 )
-
-    def undo(self) -> None:
-        pass

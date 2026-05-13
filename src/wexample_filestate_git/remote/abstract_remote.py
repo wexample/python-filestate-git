@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from wexample_api.common.abstract_gateway import AbstractGateway
 from wexample_helpers.classes.abstract_method import abstract_method
@@ -16,7 +17,6 @@ class AbstractRemote(AbstractGateway):
     # ------------------------------------------------------------------
     # Remote detection
     # ------------------------------------------------------------------
-
     @classmethod
     @abstract_method
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
@@ -38,31 +38,13 @@ class AbstractRemote(AbstractGateway):
     # ------------------------------------------------------------------
     # Repositories
     # ------------------------------------------------------------------
-
     @abstract_method
     def check_repository_exists(self, name: str, namespace: str) -> bool:
         """Return True if the repository exists on the remote service."""
 
-    @abstract_method
-    def create_repository(
-        self, name: str, namespace: str, description: str = "", private: bool = False
-    ) -> dict:
-        """Create a new repository on the remote service."""
-
-    @abstract_method
-    def create_repository_if_not_exists(
-        self, remote_url: str, description: str = "", private: bool = False
-    ) -> dict:
-        """Create a repository from a complete remote URL if it doesn't exist."""
-
-    @abstract_method
-    def parse_repository_url(self, remote_url: str) -> dict[str, str]:
-        """Parse a repository URL to extract ``name`` and ``namespace``."""
-
     # ------------------------------------------------------------------
     # Merge proposals (MR on GitLab, PR on GitHub)
     # ------------------------------------------------------------------
-
     @abstract_method
     def create_merge_proposal(
         self,
@@ -82,6 +64,35 @@ class AbstractRemote(AbstractGateway):
         """
 
     @abstract_method
+    def create_repository(
+        self, name: str, namespace: str, description: str = "", private: bool = False
+    ) -> dict:
+        """Create a new repository on the remote service."""
+
+    @abstract_method
+    def create_repository_if_not_exists(
+        self, remote_url: str, description: str = "", private: bool = False
+    ) -> dict:
+        """Create a repository from a complete remote URL if it doesn't exist."""
+
+    def get_branch_pipelines(
+        self,
+        namespace: str,
+        name: str,
+        branch: str,
+    ) -> list[dict[str, Any]]:
+        """Return pipelines for a branch, most recent first. No-op by default."""
+        return []
+
+    def get_ci_variable(self, namespace: str, name: str, key: str) -> dict | None:
+        """Return the CI/CD variable dict for the given key, or None if not found/supported."""
+        return None
+
+    def get_merge_proposal_id(self, proposal: dict[str, Any]) -> int:
+        """Extract the provider-specific numeric identifier from a proposal dict."""
+        return proposal.get("iid") or proposal.get("number")
+
+    @abstract_method
     def get_merge_proposal_pipelines(
         self,
         namespace: str,
@@ -89,6 +100,18 @@ class AbstractRemote(AbstractGateway):
         proposal_id: int,
     ) -> list[dict[str, Any]]:
         """Return the pipelines/checks associated with a MR/PR."""
+
+    # ------------------------------------------------------------------
+    # Pipelines / workflow runs
+    # ------------------------------------------------------------------
+    @abstract_method
+    def get_pipeline(
+        self,
+        namespace: str,
+        name: str,
+        pipeline_id: int,
+    ) -> dict[str, Any]:
+        """Return the pipeline/workflow-run dict for the given ID."""
 
     @abstract_method
     def merge_merge_proposal(
@@ -99,49 +122,9 @@ class AbstractRemote(AbstractGateway):
     ) -> dict[str, Any]:
         """Merge a MR/PR."""
 
-    def get_merge_proposal_id(self, proposal: dict[str, Any]) -> int:
-        """Extract the provider-specific numeric identifier from a proposal dict."""
-        return proposal.get("iid") or proposal.get("number")
-
-    def unprotect_branch(self, namespace: str, name: str, branch_name: str) -> bool:
-        """Remove branch protection. Returns True if successful, False if not supported."""
-        return False
-
-    def set_default_branch(self, namespace: str, name: str, branch_name: str) -> bool:
-        """Set the default branch. Returns True if successful, False if not supported."""
-        return False
-
-    def get_ci_variable(self, namespace: str, name: str, key: str) -> dict | None:
-        """Return the CI/CD variable dict for the given key, or None if not found/supported."""
-        return None
-
-    def set_ci_variable(
-        self, namespace: str, name: str, key: str, value: str, masked: bool = True
-    ) -> bool:
-        """Create or update a CI/CD variable. Returns True if successful, False if not supported."""
-        return False
-
-    # ------------------------------------------------------------------
-    # Pipelines / workflow runs
-    # ------------------------------------------------------------------
-
     @abstract_method
-    def get_pipeline(
-        self,
-        namespace: str,
-        name: str,
-        pipeline_id: int,
-    ) -> dict[str, Any]:
-        """Return the pipeline/workflow-run dict for the given ID."""
-
-    def get_branch_pipelines(
-        self,
-        namespace: str,
-        name: str,
-        branch: str,
-    ) -> list[dict[str, Any]]:
-        """Return pipelines for a branch, most recent first. No-op by default."""
-        return []
+    def parse_repository_url(self, remote_url: str) -> dict[str, str]:
+        """Parse a repository URL to extract ``name`` and ``namespace``."""
 
     def poll_pipeline(
         self,
@@ -163,9 +146,21 @@ class AbstractRemote(AbstractGateway):
             if self._is_pipeline_terminal(pipeline):
                 return status
             time.sleep(interval)
-        raise TimeoutError(
-            f"Pipeline {pipeline_id} did not complete within {timeout}s"
-        )
+        raise TimeoutError(f"Pipeline {pipeline_id} did not complete within {timeout}s")
+
+    def set_ci_variable(
+        self, namespace: str, name: str, key: str, value: str, masked: bool = True
+    ) -> bool:
+        """Create or update a CI/CD variable. Returns True if successful, False if not supported."""
+        return False
+
+    def set_default_branch(self, namespace: str, name: str, branch_name: str) -> bool:
+        """Set the default branch. Returns True if successful, False if not supported."""
+        return False
+
+    def unprotect_branch(self, namespace: str, name: str, branch_name: str) -> bool:
+        """Remove branch protection. Returns True if successful, False if not supported."""
+        return False
 
     def _extract_pipeline_status(self, pipeline: dict[str, Any]) -> str:
         """Extract the human-readable status string from a pipeline dict."""
@@ -174,5 +169,8 @@ class AbstractRemote(AbstractGateway):
     def _is_pipeline_terminal(self, pipeline: dict[str, Any]) -> bool:
         """Return True if the pipeline has reached a terminal state."""
         return self._extract_pipeline_status(pipeline) in {
-            "success", "failed", "canceled", "skipped",
+            "success",
+            "failed",
+            "canceled",
+            "skipped",
         }

@@ -27,7 +27,6 @@ class GithubRemote(AbstractRemote):
     # ------------------------------------------------------------------
     # Remote detection
     # ------------------------------------------------------------------
-
     @classmethod
     def build_remote_api_url_from_repo(cls, remote_url: str) -> str | None:
         """Build API base URL from a GitHub remote URL.
@@ -39,7 +38,11 @@ class GithubRemote(AbstractRemote):
         if not m:
             return None
         host = m.group(1)
-        return "https://api.github.com" if host == "github.com" else f"https://{host}/api/v3"
+        return (
+            "https://api.github.com"
+            if host == "github.com"
+            else f"https://{host}/api/v3"
+        )
 
     @classmethod
     def detect_remote_type(cls, remote_url: str) -> bool:
@@ -60,7 +63,6 @@ class GithubRemote(AbstractRemote):
     # ------------------------------------------------------------------
     # Repositories
     # ------------------------------------------------------------------
-
     def check_repository_exists(self, name: str, namespace: str) -> bool:
         response = self.make_request(
             endpoint=f"repos/{namespace}/{name}",
@@ -69,6 +71,49 @@ class GithubRemote(AbstractRemote):
             fatal_if_unexpected=True,
         )
         return response.status_code == 200
+
+    # ------------------------------------------------------------------
+    # Merge proposals (GitHub: pull requests)
+    # ------------------------------------------------------------------
+    def create_merge_proposal(
+        self,
+        namespace: str,
+        name: str,
+        source_branch: str,
+        target_branch: str,
+        title: str,
+        remove_source_branch: bool = True,
+        squash: bool = False,
+    ) -> dict[str, Any]:
+        from wexample_api.enums.http import HttpMethod
+
+        response = self.make_request(
+            endpoint=f"repos/{namespace}/{name}/pulls",
+            query_params={
+                "state": "open",
+                "head": f"{namespace}:{source_branch}",
+                "base": target_branch,
+            },
+            call_origin=__file__,
+            expected_status_codes=[200],
+        )
+        existing = response.json() if response else []
+        if existing:
+            return existing[0]
+
+        response = self.make_request(
+            method=HttpMethod.POST,
+            endpoint=f"repos/{namespace}/{name}/pulls",
+            data={
+                "title": title,
+                "head": source_branch,
+                "base": target_branch,
+            },
+            call_origin=__file__,
+            expected_status_codes=[201],
+            fatal_if_unexpected=True,
+        )
+        return response.json()
 
     def create_repository(
         self, name: str, namespace: str, description: str = "", private: bool = False
@@ -103,54 +148,6 @@ class GithubRemote(AbstractRemote):
             )
         return {}
 
-    def parse_repository_url(self, remote_url: str) -> dict[str, str]:
-        path = re.sub(r"^(https://github\.com/|git@github\.com:)", "", remote_url)
-        path = path.replace(".git", "")
-        parts = path.split("/")
-        if len(parts) >= 2:
-            return {"name": parts[-1], "namespace": parts[-2]}
-        return {"name": parts[0], "namespace": ""}
-
-    # ------------------------------------------------------------------
-    # Merge proposals (GitHub: pull requests)
-    # ------------------------------------------------------------------
-
-    def create_merge_proposal(
-        self,
-        namespace: str,
-        name: str,
-        source_branch: str,
-        target_branch: str,
-        title: str,
-        remove_source_branch: bool = True,
-        squash: bool = False,
-    ) -> dict[str, Any]:
-        from wexample_api.enums.http import HttpMethod
-
-        response = self.make_request(
-            endpoint=f"repos/{namespace}/{name}/pulls",
-            query_params={"state": "open", "head": f"{namespace}:{source_branch}", "base": target_branch},
-            call_origin=__file__,
-            expected_status_codes=[200],
-        )
-        existing = response.json() if response else []
-        if existing:
-            return existing[0]
-
-        response = self.make_request(
-            method=HttpMethod.POST,
-            endpoint=f"repos/{namespace}/{name}/pulls",
-            data={
-                "title": title,
-                "head": source_branch,
-                "base": target_branch,
-            },
-            call_origin=__file__,
-            expected_status_codes=[201],
-            fatal_if_unexpected=True,
-        )
-        return response.json()
-
     def get_merge_proposal_pipelines(
         self,
         namespace: str,
@@ -175,6 +172,22 @@ class GithubRemote(AbstractRemote):
         )
         return response.json().get("check_runs", []) if response else []
 
+    # ------------------------------------------------------------------
+    # Pipelines (GitHub: workflow runs)
+    # ------------------------------------------------------------------
+    def get_pipeline(
+        self,
+        namespace: str,
+        name: str,
+        pipeline_id: int,
+    ) -> dict[str, Any]:
+        response = self.make_request(
+            endpoint=f"repos/{namespace}/{name}/actions/runs/{pipeline_id}",
+            call_origin=__file__,
+            expected_status_codes=[200],
+        )
+        return response.json() if response else {}
+
     def merge_merge_proposal(
         self,
         namespace: str,
@@ -193,22 +206,13 @@ class GithubRemote(AbstractRemote):
         )
         return response.json()
 
-    # ------------------------------------------------------------------
-    # Pipelines (GitHub: workflow runs)
-    # ------------------------------------------------------------------
-
-    def get_pipeline(
-        self,
-        namespace: str,
-        name: str,
-        pipeline_id: int,
-    ) -> dict[str, Any]:
-        response = self.make_request(
-            endpoint=f"repos/{namespace}/{name}/actions/runs/{pipeline_id}",
-            call_origin=__file__,
-            expected_status_codes=[200],
-        )
-        return response.json() if response else {}
+    def parse_repository_url(self, remote_url: str) -> dict[str, str]:
+        path = re.sub(r"^(https://github\.com/|git@github\.com:)", "", remote_url)
+        path = path.replace(".git", "")
+        parts = path.split("/")
+        if len(parts) >= 2:
+            return {"name": parts[-1], "namespace": parts[-2]}
+        return {"name": parts[0], "namespace": ""}
 
     def _extract_pipeline_status(self, pipeline: dict[str, Any]) -> str:
         """GitHub: return conclusion when completed, otherwise status."""

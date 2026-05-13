@@ -7,8 +7,9 @@ from wexample_config.config_option.abstract_list_config_option import (
 )
 from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
-from wexample_filestate_git.remote.mixin.with_git_remote_mixin import WithGitRemoteMixin
 from wexample_helpers.decorator.base_class import base_class
+
+from wexample_filestate_git.remote.mixin.with_git_remote_mixin import WithGitRemoteMixin
 
 if TYPE_CHECKING:
     from types import UnionType

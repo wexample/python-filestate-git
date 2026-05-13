@@ -31,7 +31,9 @@ class GitConfigValue(ConfigValue):
 
     def to_option_raw_value(self) -> Any:
         from wexample_filestate_git.option._git.branches_option import BranchesOption
-        from wexample_filestate_git.option._git.ci_variables_option import CiVariablesOption
+        from wexample_filestate_git.option._git.ci_variables_option import (
+            CiVariablesOption,
+        )
         from wexample_filestate_git.option._git.main_branch_option import (
             MainBranchOption,
         )

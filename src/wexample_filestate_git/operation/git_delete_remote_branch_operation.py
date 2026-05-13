@@ -32,10 +32,18 @@ class GitDeleteRemoteBranchOperation(WithGitRemoteMixin, AbstractGitOperation):
                 remote_type = self._detect_remote_type(remote_url)
                 if remote_type:
                     try:
-                        api_remote = self._build_remote_instance(remote_type, remote_url, self.target)
+                        api_remote = self._build_remote_instance(
+                            remote_type, remote_url, self.target
+                        )
                         repo_info = api_remote.parse_repository_url(remote_url)
-                        api_remote.unprotect_branch(repo_info["namespace"], repo_info["name"], self.branch_name)
-                        api_remote.set_default_branch(repo_info["namespace"], repo_info["name"], self.canonical_branch)
+                        api_remote.unprotect_branch(
+                            repo_info["namespace"], repo_info["name"], self.branch_name
+                        )
+                        api_remote.set_default_branch(
+                            repo_info["namespace"],
+                            repo_info["name"],
+                            self.canonical_branch,
+                        )
                     except Exception as e:
                         self.target.log(
                             message=f"WARNING: could not prepare '{self.branch_name}' for deletion on {remote.name}: {e}"

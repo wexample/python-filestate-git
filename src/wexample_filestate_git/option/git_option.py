@@ -85,7 +85,9 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
 
     def get_allowed_options(self) -> list[type[AbstractConfigOption]]:
         from wexample_filestate_git.option._git.branches_option import BranchesOption
-        from wexample_filestate_git.option._git.ci_variables_option import CiVariablesOption
+        from wexample_filestate_git.option._git.ci_variables_option import (
+            CiVariablesOption,
+        )
         from wexample_filestate_git.option._git.main_branch_option import (
             MainBranchOption,
         )

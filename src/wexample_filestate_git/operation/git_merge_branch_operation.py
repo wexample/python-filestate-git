@@ -28,6 +28,9 @@ class GitMergeBranchOperation(AbstractGitOperation):
 
         self._sync_remote(repo)
 
+    def undo(self) -> None:
+        pass
+
     def _sync_remote(self, repo) -> None:
         for remote in repo.remotes:
             try:
@@ -43,6 +46,3 @@ class GitMergeBranchOperation(AbstractGitOperation):
                 self.target.log(
                     message=f"WARNING: could not delete '{self.from_branch}' on {remote.name}: {e}"
                 )
-
-    def undo(self) -> None:
-        pass

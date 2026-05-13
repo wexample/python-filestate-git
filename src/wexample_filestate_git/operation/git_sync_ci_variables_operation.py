@@ -31,7 +31,9 @@ class GitSyncCiVariablesOperation(WithGitRemoteMixin, AbstractGitOperation):
             _CI_VARIABLES_SYNCED_CACHE,
         )
 
-        api_remote = self._build_remote_instance(self.remote_type, self.remote_url, self.target)
+        api_remote = self._build_remote_instance(
+            self.remote_type, self.remote_url, self.target
+        )
 
         for var_name, value in self.variables.items():
             try:

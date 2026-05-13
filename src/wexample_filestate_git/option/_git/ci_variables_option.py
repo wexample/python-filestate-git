@@ -5,8 +5,9 @@ from typing import TYPE_CHECKING, Any
 from wexample_config.config_option.abstract_config_option import AbstractConfigOption
 from wexample_filestate.enum.scopes import Scope
 from wexample_filestate.option.mixin.option_mixin import OptionMixin
-from wexample_filestate_git.remote.mixin.with_git_remote_mixin import WithGitRemoteMixin
 from wexample_helpers.decorator.base_class import base_class
+
+from wexample_filestate_git.remote.mixin.with_git_remote_mixin import WithGitRemoteMixin
 
 if TYPE_CHECKING:
     from wexample_filestate.const.types_state_items import TargetFileOrDirectoryType
@@ -64,10 +65,14 @@ class CiVariablesOption(WithGitRemoteMixin, OptionMixin, AbstractConfigOption):
 
             local_value = target.get_env_parameter_or_suite_fallback(var_name)
             if not local_value:
-                target.log(message=f"WARNING: {var_name} not found in local env, skipping")
+                target.log(
+                    message=f"WARNING: {var_name} not found in local env, skipping"
+                )
                 continue
 
-            existing = api_remote.get_ci_variable(repo_info["namespace"], repo_info["name"], var_name)
+            existing = api_remote.get_ci_variable(
+                repo_info["namespace"], repo_info["name"], var_name
+            )
             if existing and existing.get("value") == local_value:
                 _CI_VARIABLES_SYNCED_CACHE.add(cache_key)
                 continue
