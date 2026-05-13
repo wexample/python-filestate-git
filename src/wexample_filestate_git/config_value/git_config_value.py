@@ -9,6 +9,14 @@ from wexample_helpers.decorator.base_class import base_class
 
 @base_class
 class GitConfigValue(ConfigValue):
+    branches: dict | None = public_field(
+        default=None,
+        description="Branch structure: canonical names with optional aliases to reconcile",
+    )
+    ci_variables: list[str] | None = public_field(
+        default=None,
+        description="Env variable names to read locally and push as masked CI/CD variables on the remote",
+    )
     main_branch: str | list[str] | None = public_field(
         default=None,
         description="Main branch name(s) to create",
@@ -22,12 +30,18 @@ class GitConfigValue(ConfigValue):
     )
 
     def to_option_raw_value(self) -> Any:
+        from wexample_filestate_git.option._git.branches_option import BranchesOption
+        from wexample_filestate_git.option._git.ci_variables_option import (
+            CiVariablesOption,
+        )
         from wexample_filestate_git.option._git.main_branch_option import (
             MainBranchOption,
         )
         from wexample_filestate_git.option._git.remote_option import RemoteOption
 
         return {
+            BranchesOption.get_name(): self.branches,
+            CiVariablesOption.get_name(): self.ci_variables,
             MainBranchOption.get_name(): self.main_branch,
             RemoteOption.get_name(): self.remote,
         }
