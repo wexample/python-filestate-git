@@ -4,4 +4,4 @@ domains: []
 global:
   name: filestate_git
   type: app
-  version: 7.0.3
+  version: 7.0.4
