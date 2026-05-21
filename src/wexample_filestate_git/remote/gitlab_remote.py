@@ -230,6 +230,13 @@ class GitlabRemote(AbstractRemote):
         from wexample_api.enums.http import HttpMethod
 
         project = self._project_endpoint(namespace, name)
+        # GitLab needs a few seconds to finish its mergeability check after the
+        # MR is created. Calling /merge while it's still in `checking` or
+        # `unchecked` returns 405 Method Not Allowed. Poll until the MR is
+        # confirmed mergeable (or until we hit a definitively-not-mergeable
+        # state) before issuing the PUT.
+        self._wait_for_mergeable(project, proposal_id)
+
         response = self.make_request(
             method=HttpMethod.PUT,
             endpoint=f"{project}/merge_requests/{proposal_id}/merge",
@@ -333,3 +340,56 @@ class GitlabRemote(AbstractRemote):
     # ------------------------------------------------------------------
     def _project_endpoint(self, namespace: str, name: str) -> str:
         return f"projects/{namespace}%2F{name}"
+
+    def _wait_for_mergeable(
+        self,
+        project: str,
+        proposal_id: int,
+        max_attempts: int = 12,
+        delay_seconds: int = 5,
+    ) -> None:
+        from wexample_api.enums.http import HttpMethod
+        from wexample_helpers.helpers.polling_callback_manager import (
+            PollingCallbackManager,
+        )
+
+        # Terminal states where additional polling won't help; bail out and let
+        # the merge call return its real error rather than wait the full budget.
+        terminal_not_mergeable = {
+            "not_open",
+            "blocked_status",
+            "broken_status",
+            "draft_status",
+            "discussions_not_resolved",
+            "cannot_be_merged",
+        }
+
+        def check_status() -> str | None:
+            response = self.make_request(
+                method=HttpMethod.GET,
+                endpoint=f"{project}/merge_requests/{proposal_id}",
+                call_origin=__file__,
+                expected_status_codes=[200],
+                quiet=True,
+            )
+            mr = response.json() if response else {}
+            # Prefer the newer detailed_merge_status when available; fall back
+            # to the legacy merge_status field for older GitLab instances.
+            status = mr.get("detailed_merge_status") or mr.get("merge_status")
+            if status in ("mergeable", "can_be_merged"):
+                return status
+            if status in terminal_not_mergeable:
+                # Stop polling; surface the real error from the merge call.
+                return status
+            return None
+
+        try:
+            PollingCallbackManager(
+                callback=check_status,
+                max_attempts=max_attempts,
+                delay_seconds_callback=lambda _attempt: delay_seconds,
+            ).run()
+        except TimeoutError:
+            # Fall through: let the merge call attempt anyway. Its own retry
+            # may succeed if the check completes in the meantime.
+            pass
