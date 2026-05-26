@@ -259,18 +259,6 @@ class GitlabRemote(AbstractRemote):
         )
         return response.json()
 
-    def _get_merge_proposal_state(self, project: str, proposal_id: int) -> dict[str, Any]:
-        from wexample_api.enums.http import HttpMethod
-
-        response = self.make_request(
-            method=HttpMethod.GET,
-            endpoint=f"{project}/merge_requests/{proposal_id}",
-            call_origin=__file__,
-            expected_status_codes=[200],
-            quiet=True,
-        )
-        return response.json() if response else {}
-
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         if remote_url.startswith("git@"):
             path = remote_url.split(":", 1)[1]
@@ -341,6 +329,20 @@ class GitlabRemote(AbstractRemote):
             fatal_if_unexpected=False,
         )
         return response is not None and response.status_code in (204, 404)
+
+    def _get_merge_proposal_state(
+        self, project: str, proposal_id: int
+    ) -> dict[str, Any]:
+        from wexample_api.enums.http import HttpMethod
+
+        response = self.make_request(
+            method=HttpMethod.GET,
+            endpoint=f"{project}/merge_requests/{proposal_id}",
+            call_origin=__file__,
+            expected_status_codes=[200],
+            quiet=True,
+        )
+        return response.json() if response else {}
 
     def _get_namespace_id(self, namespace_path: str) -> int | None:
         try:
