@@ -1,6 +1,6 @@
 # filestate_git
 
-Version: 7.3.2
+Version: 7.4.0
 
 An extension for "filestate" package, which adds GIT management operations.
 
