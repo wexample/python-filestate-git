@@ -230,6 +230,19 @@ class GitlabRemote(AbstractRemote):
         from wexample_api.enums.http import HttpMethod
 
         project = self._project_endpoint(namespace, name)
+        # If the MR was already merged out-of-band (e.g. manually via the web
+        # UI while we were polling), the PUT /merge endpoint returns 405. Check
+        # the state first; if already merged, return the MR payload as success.
+        mr_state = self._get_merge_proposal_state(project, proposal_id)
+        if mr_state.get("state") == "merged":
+            return mr_state
+        if mr_state.get("state") == "closed":
+            from wexample_app.exception.app_runtime_exception import AppRuntimeException
+
+            raise AppRuntimeException(
+                message=f"MR !{proposal_id} is closed without being merged; cannot merge."
+            )
+
         # GitLab needs a few seconds to finish its mergeability check after the
         # MR is created. Calling /merge while it's still in `checking` or
         # `unchecked` returns 405 Method Not Allowed. Poll until the MR is
@@ -247,6 +260,18 @@ class GitlabRemote(AbstractRemote):
             retries=5,
         )
         return response.json()
+
+    def _get_merge_proposal_state(self, project: str, proposal_id: int) -> dict[str, Any]:
+        from wexample_api.enums.http import HttpMethod
+
+        response = self.make_request(
+            method=HttpMethod.GET,
+            endpoint=f"{project}/merge_requests/{proposal_id}",
+            call_origin=__file__,
+            expected_status_codes=[200],
+            quiet=True,
+        )
+        return response.json() if response else {}
 
     def parse_repository_url(self, remote_url: str) -> dict[str, str]:
         if remote_url.startswith("git@"):
