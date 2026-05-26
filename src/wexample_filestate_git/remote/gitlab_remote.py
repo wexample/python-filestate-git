@@ -237,10 +237,8 @@ class GitlabRemote(AbstractRemote):
         if mr_state.get("state") == "merged":
             return mr_state
         if mr_state.get("state") == "closed":
-            from wexample_app.exception.app_runtime_exception import AppRuntimeException
-
-            raise AppRuntimeException(
-                message=f"MR !{proposal_id} is closed without being merged; cannot merge."
+            raise RuntimeError(
+                f"MR !{proposal_id} is closed without being merged; cannot merge."
             )
 
         # GitLab needs a few seconds to finish its mergeability check after the
