@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from typing import Any
 
-import requests
 from wexample_helpers.classes.field import public_field
 from wexample_helpers.decorator.base_class import base_class
 
@@ -52,14 +51,17 @@ class GitlabRemote(AbstractRemote):
     # Connectivity
     # ------------------------------------------------------------------
     def check_connection(self) -> bool:
-        try:
-            url = f"{self.base_url.rstrip('/')}/user"
-            response = requests.head(
-                url, headers=self.default_headers, timeout=self.timeout
-            )
-            return response.status_code == 200
-        except requests.exceptions.RequestException:
-            return False
+        from wexample_api.enums.http import HttpMethod
+
+        response = self.make_request(
+            method=HttpMethod.HEAD,
+            endpoint="user",
+            call_origin=__file__,
+            expected_status_codes=[200],
+            fatal_if_unexpected=False,
+            quiet=True,
+        )
+        return response is not None and response.status_code == 200
 
     # ------------------------------------------------------------------
     # Repositories
@@ -345,20 +347,20 @@ class GitlabRemote(AbstractRemote):
         return response.json() if response else {}
 
     def _get_namespace_id(self, namespace_path: str) -> int | None:
-        try:
-            response = requests.get(
-                f"{self.base_url.rstrip('/')}/namespaces",
-                params={"search": namespace_path},
-                headers=self.default_headers,
-                timeout=self.timeout,
-            )
-            if response.status_code == 200:
-                for ns in response.json():
-                    if ns["path"] == namespace_path:
-                        return ns["id"]
+        response = self.make_request(
+            endpoint="namespaces",
+            query_params={"search": namespace_path},
+            call_origin=__file__,
+            expected_status_codes=[200],
+            fatal_if_unexpected=False,
+            quiet=True,
+        )
+        if response is None or response.status_code != 200:
             return None
-        except requests.exceptions.RequestException:
-            return None
+        for ns in response.json():
+            if ns["path"] == namespace_path:
+                return ns["id"]
+        return None
 
     # ------------------------------------------------------------------
     # Internal helpers
