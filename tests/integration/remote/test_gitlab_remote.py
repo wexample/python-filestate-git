@@ -39,12 +39,19 @@ class TestGitlabRemote(AbstractGitRemoteTest):
             assert exists is True
 
     def test_create_repository(self, remote) -> None:
-        from unittest.mock import patch
+        from unittest.mock import Mock, patch
 
         with patch(
             "wexample_api.common.abstract_gateway.AbstractGateway.make_request"
         ) as mock_request:
-            mock_request.return_value.json.return_value = {"id": 1}
+            # First call resolves the namespace id, second one creates the project.
+            namespace_response = Mock(status_code=200)
+            namespace_response.json.return_value = [
+                {"path": "test-namespace", "id": 42}
+            ]
+            create_response = Mock(status_code=201)
+            create_response.json.return_value = {"id": 1}
+            mock_request.side_effect = [namespace_response, create_response]
 
             result = remote.create_repository(
                 name="test-repo",
@@ -53,8 +60,9 @@ class TestGitlabRemote(AbstractGitRemoteTest):
                 private=True,
             )
 
-            mock_request.assert_called_once()
+            assert mock_request.call_count == 2
             self._assert_create_repository_request(mock_request)
+            assert mock_request.call_args[1]["data"]["namespace_id"] == 42
             assert result == {"id": 1}
 
     def test_parse_repository_url_https(self, remote) -> None:

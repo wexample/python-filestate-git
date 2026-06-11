@@ -22,8 +22,10 @@ class AbstractGitTestOption(AbstractTestOperation):
         if git_dir.exists():
             shutil.rmtree(git_dir)
 
-        # Initialize fresh Git repo
-        repo = Repo.init(str(dir_path))
+        # Initialize fresh Git repo on a neutral branch name: the default
+        # branch otherwise depends on the machine's init.defaultBranch config,
+        # which would make "branch X should not exist yet" assertions flaky.
+        repo = Repo.init(str(dir_path), initial_branch="test-initial-branch")
 
         # Create initial commit so HEAD exists
         repo.index.commit("Initial commit")
