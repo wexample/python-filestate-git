@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "wexample-filestate-git"
-version = "7.5.0"
+version = "7.5.1"
 description = "An extension for \"filestate\" package, which adds GIT management operations."
 authors = [{name = "weeger", email = "contact@wexample.com"}]
 requires-python = ">=3.10"
@@ -13,8 +13,8 @@ dependencies = [
     "attrs>=23.1.0",
     "cattrs>=23.1.0",
     "requests",
-    "wexample-api>=6.2.0",
-    "wexample-filestate>=11.5.0",
+    "wexample-api>=6.3.0",
+    "wexample-filestate>=12.0.0",
     "wexample-helpers-git>=6.9.0",
 ]
 
