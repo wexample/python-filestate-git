@@ -8,3 +8,11 @@ global:
 wex:
   migration: 1
   version: 6.0.112
+test:
+  coverage:
+    last_report:
+      covered: 603
+      excluded: 46
+      missing: 597
+      percent: 50.25
+      total: 1200
