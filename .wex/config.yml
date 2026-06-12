@@ -4,15 +4,16 @@ domains: []
 global:
   name: filestate_git
   type: app
-  version: 7.6.0
-wex:
-  migration: 1
-  version: 6.0.112
+  version: 7.6.1
 test:
   coverage:
     last_report:
+      commit_hash: 3ed86e0e48a103ff6b81ca136a6a5edb96e1ef37
       covered: 603
       excluded: 46
       missing: 597
       percent: 50.25
       total: 1200
+wex:
+  migration: 1
+  version: 6.0.112
