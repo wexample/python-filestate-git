@@ -56,6 +56,8 @@ class CiVariablesOption(WithGitRemoteMixin, OptionMixin, AbstractConfigOption):
             target.log(message=f"WARNING: could not connect to remote API: {e}")
             return None
 
+        namespace = repo_info["namespace"]
+        repo_name = repo_info["name"]
         vars_to_sync: dict[str, str] = {}
 
         for var_name in var_names:
@@ -71,7 +73,7 @@ class CiVariablesOption(WithGitRemoteMixin, OptionMixin, AbstractConfigOption):
                 continue
 
             existing = api_remote.get_ci_variable(
-                repo_info["namespace"], repo_info["name"], var_name
+                namespace, repo_name, var_name
             )
             if existing and existing.get("value") == local_value:
                 _CI_VARIABLES_SYNCED_CACHE.add(cache_key)
@@ -90,8 +92,8 @@ class CiVariablesOption(WithGitRemoteMixin, OptionMixin, AbstractConfigOption):
             option=self,
             target=target,
             remote_url=remote_url,
-            namespace=repo_info["namespace"],
-            repo_name=repo_info["name"],
+            namespace=namespace,
+            repo_name=repo_name,
             remote_type=remote_type,
             variables=vars_to_sync,
             description=f"Sync CI variables: {', '.join(vars_to_sync)}",

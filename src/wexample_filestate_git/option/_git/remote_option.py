@@ -193,7 +193,7 @@ class RemoteOption(WithGitRemoteMixin, OptionMixin, AbstractListConfigOption):
                 continue
 
             # Check if URL matches
-            existing_urls = {u for u in existing.urls}
+            existing_urls = set(existing.urls)
             if desired_url not in existing_urls:
                 target.log(
                     message=(
@@ -236,7 +236,7 @@ class RemoteOption(WithGitRemoteMixin, OptionMixin, AbstractListConfigOption):
 
     def _has_remotes_configured(self) -> bool:
         """Check if there are any remotes configured."""
-        return len(self.children) > 0
+        return bool(self.children)
 
     def _resolve_remote_type_and_url(
         self, remote_item_option, target: TargetFileOrDirectoryType
