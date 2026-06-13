@@ -72,9 +72,7 @@ class CiVariablesOption(WithGitRemoteMixin, OptionMixin, AbstractConfigOption):
                 )
                 continue
 
-            existing = api_remote.get_ci_variable(
-                namespace, repo_name, var_name
-            )
+            existing = api_remote.get_ci_variable(namespace, repo_name, var_name)
             if existing and existing.get("value") == local_value:
                 _CI_VARIABLES_SYNCED_CACHE.add(cache_key)
                 continue
