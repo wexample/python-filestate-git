@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/git_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:06:23+00:00",
+  "last_rev": "4963fa8f921d4c06a2c8f6e6197e0cd974e291b0",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "per-target op builder with trivial guards/declarations, no loops, git-I/O gated, no hot path",
+  "in_progress": null
+}
