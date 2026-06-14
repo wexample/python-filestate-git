@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/_git/remote_item_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:05:09+00:00",
+  "last_rev": "05dd90fe2c7e37ccdabc7fabcd48d7b97ea6ee34",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "only scope/type/allowed-options declarations, no logic or loops, no hot path",
+  "in_progress": null
+}
