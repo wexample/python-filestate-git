@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/_git/ci_variables_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:04:33+00:00",
+  "last_rev": "c7d951d57335625cc9c754fad165d9e1d60da883",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "per-target op builder; invariants already hoisted, loop is per-var remote API I/O, no hot path",
+  "in_progress": null
+}
