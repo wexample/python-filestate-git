@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_merge_branch_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:40:17+00:00",
+  "last_rev": "ba1aef20e3ddc7c7fbb685f58354948298b26e11",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot IO/network-bound merge op, double heads scan negligible vs git+push, no hot path",
+  "in_progress": null
+}
