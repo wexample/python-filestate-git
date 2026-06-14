@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/gitignore_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:06:36+00:00",
+  "last_rev": "774a99ed8d5ffdd32174c7b8862d0c3ba07c6465",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "thin delegate to reorganize_gitignore_safe helper; no loops or logic in-method, no hot path",
+  "in_progress": null
+}
