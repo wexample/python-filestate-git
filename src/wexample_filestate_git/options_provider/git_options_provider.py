@@ -18,7 +18,11 @@ class GitOptionsProvider(AbstractOptionsProvider):
         from wexample_filestate_git.option.git_option import (
             GitOption,
         )
+        from wexample_filestate_git.option.gitignore_option import (
+            GitignoreOption,
+        )
 
         return [
             GitOption,
+            GitignoreOption,
         ]
