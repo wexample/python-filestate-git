@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_delete_remote_branch_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:39:46+00:00",
+  "last_rev": "c3a39ea5f23e63bfae44a6c61b41e22780ea392d",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot network-bound remote-delete op, per-remote set built once, no CPU hot path",
+  "in_progress": null
+}
