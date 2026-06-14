@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/abstract_git_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:39:21+00:00",
+  "last_rev": "89cc31db7c0222b178d496fdc0d946e3f9faa126",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "small per-call git helpers, lazy imports needed for circular avoidance, no hot path",
+  "in_progress": null
+}
