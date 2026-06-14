@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_remote_create_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:40:48+00:00",
+  "last_rev": "3214a6ed2069dce36fbc7fd315db0fc97190a09d",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot network-bound remote-create op, single instantiation + API calls, no hot path",
+  "in_progress": null
+}
