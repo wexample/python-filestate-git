@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_rename_branch_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:03:41+00:00",
+  "last_rev": "524ef6c433efa819afba61e36504936861709430",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot IO/network-bound rename op; double heads scan negligible vs git+push, no hot path",
+  "in_progress": null
+}
