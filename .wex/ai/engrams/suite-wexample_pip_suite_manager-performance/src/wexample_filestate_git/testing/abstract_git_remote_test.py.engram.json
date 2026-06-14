@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/testing/abstract_git_remote_test.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:08:57+00:00",
+  "last_rev": "f9c33934f9710f47baebe382594c41e5ed28c144",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "test base class with constant props and abstract stubs, no loops, no hot path",
+  "in_progress": null
+}
