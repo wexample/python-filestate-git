@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/remote/mixin/with_git_remote_mixin.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:08:24+00:00",
+  "last_rev": "28374da01f965846a041d9867398281218cd96f4",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot setup helpers; 2-element type scan + env lookup, bounded calls, no hot path",
+  "in_progress": null
+}
