@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/_git/remote_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:05:36+00:00",
+  "last_rev": "f51f49218c02836ac68e5a72df6020ac97b30709",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "per-target op builder; bounded config loops dominated by git/network I/O, maps already hoisted, no hot path",
+  "in_progress": null
+}
