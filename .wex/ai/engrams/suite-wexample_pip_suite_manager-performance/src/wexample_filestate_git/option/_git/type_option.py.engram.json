@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/_git/type_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:05:48+00:00",
+  "last_rev": "2d8d40fdccb9971515f784e196c830d9d67d7ff1",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "only scope/type declarations, no logic or loops, no hot path",
+  "in_progress": null
+}
