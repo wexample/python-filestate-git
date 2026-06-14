@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_remote_add_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:40:33+00:00",
+  "last_rev": "6a41b32422ecb0fa1ac3910cde9fc14911a13fab",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot remote-add op, remotes already pre-indexed in dict, rest IO-bound, no hot path",
+  "in_progress": null
+}
