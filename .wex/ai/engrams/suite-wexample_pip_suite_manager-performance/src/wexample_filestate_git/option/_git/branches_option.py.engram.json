@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/option/_git/branches_option.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:04:18+00:00",
+  "last_rev": "e1d02b01b39b2640a0be33c2c358360f2d192620",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "per-target op builder; bounded config loops negligible vs git I/O (heads/remote.refs), no hot path",
+  "in_progress": null
+}
