@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_sync_ci_variables_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:03:53+00:00",
+  "last_rev": "3162646e9b3f36501288d387eb41d95b29171075",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot network-bound CI var sync; api_remote already hoisted, loop is API I/O, no hot path",
+  "in_progress": null
+}
