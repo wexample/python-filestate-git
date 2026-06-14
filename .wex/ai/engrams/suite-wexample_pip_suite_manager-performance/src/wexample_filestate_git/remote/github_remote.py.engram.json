@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/remote/github_remote.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:07:35+00:00",
+  "last_rev": "5e39e4cc9864a3cc3e392335d03f230e74085e59",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "network-bound API methods + bounded regex parsing (re-cached), no loops, no hot path",
+  "in_progress": null
+}
