@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/testing/abstract_main_branch_test.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:09:22+00:00",
+  "last_rev": "8318b0937eb4472a8def423554cdfd745a921df6",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "test base class; one-shot assertions over repo.heads, git-I/O bound, no hot path",
+  "in_progress": null
+}
