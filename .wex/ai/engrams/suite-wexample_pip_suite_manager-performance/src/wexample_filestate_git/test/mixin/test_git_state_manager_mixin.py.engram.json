@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/test/mixin/test_git_state_manager_mixin.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:08:35+00:00",
+  "last_rev": "0c26337b5187c1fa6473525149f48b9c7297a3b2",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "test mixin with one-shot setup helpers, no loops, no hot path",
+  "in_progress": null
+}
