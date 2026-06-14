@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/testing/abstract_git_option_test.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:08:46+00:00",
+  "last_rev": "bbcf40a688b9703835812b881be6b82d2ead6e5b",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "test base class with one-shot assert/setup helpers, no loops, no hot path",
+  "in_progress": null
+}
