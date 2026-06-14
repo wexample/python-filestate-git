@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/operation/git_init_operation.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:40:00+00:00",
+  "last_rev": "a8e70f264cdc29be02d935b6291566b612bbdecb",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "one-shot git-init op, no loop or hot path; redundant init is cleanup not perf-scope",
+  "in_progress": null
+}
