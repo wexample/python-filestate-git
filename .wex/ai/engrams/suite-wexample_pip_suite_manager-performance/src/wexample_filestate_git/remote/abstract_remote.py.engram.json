@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/remote/abstract_remote.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T11:07:13+00:00",
+  "last_rev": "82f09dd65b9a371edb5d892e50627c4be80e1c6c",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "abstract/no-op methods; only loop is sleep+network-bound poll, dict.get redundancy negligible, no hot path",
+  "in_progress": null
+}
