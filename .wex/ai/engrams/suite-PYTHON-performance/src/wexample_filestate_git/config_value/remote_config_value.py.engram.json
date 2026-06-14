@@ -1,0 +1,11 @@
+{
+  "engram_version": 1,
+  "source_key": "src/wexample_filestate_git/config_value/remote_config_value.py",
+  "cache_nonce": "1c2800147ebc4367950bb7b61bd21d00",
+  "last_visited_at": "2026-06-14T10:39:10+00:00",
+  "last_rev": "bc27c6a1a318e57c20928c0636ee7eb4ec59cca0",
+  "last_decision": "skip",
+  "kinds": [],
+  "notes": "field declarations + one single-call dict builder; lazy imports needed, no hot path",
+  "in_progress": null
+}
