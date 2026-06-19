@@ -50,7 +50,7 @@ class TestGitFileStateManagerMixin:
         self._env_patcher.start()
 
     def _remove_test_git_dir(self) -> None:
-        from wexample_helpers.helpers.directory import directory_remove_tree_if_exists
+        from wexample_helpers.helper.directory import directory_remove_tree_if_exists
 
         directory_remove_tree_if_exists(
             self._get_absolute_path_from_state_manager("test_git_dir/.git")
