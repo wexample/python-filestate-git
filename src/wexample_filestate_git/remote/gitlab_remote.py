@@ -376,7 +376,7 @@ class GitlabRemote(AbstractRemote):
         delay_seconds: int = 5,
     ) -> None:
         from wexample_api.enums.http import HttpMethod
-        from wexample_helpers.helpers.polling_callback_manager import (
+        from wexample_helpers.helper.polling_callback_manager import (
             PollingCallbackManager,
         )
 
