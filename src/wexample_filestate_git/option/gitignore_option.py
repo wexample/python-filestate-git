@@ -25,7 +25,7 @@ class GitignoreOption(AbstractFileContentOption):
         return "Reorganize .gitignore: dedup + alphabetical sort within sections (safe-mode: skips files with * or !)."
 
     def _apply_content_change(self, target: TargetFileOrDirectoryType) -> str:
-        from wexample_helpers_git.helpers.gitignore import reorganize_gitignore_safe
+        from wexample_helpers_git.helper.gitignore import reorganize_gitignore_safe
 
         src = target.get_local_file().read()
         rewritten = reorganize_gitignore_safe(src)

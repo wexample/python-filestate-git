@@ -58,7 +58,7 @@ class GitOption(OptionMixin, AbstractNestedConfigOption):
         self, target: TargetFileOrDirectoryType, scopes: set[Scope]
     ) -> AbstractOperation | None:
         """Create GitInitOperation if Git is required but not initialized, or delegate to children."""
-        from wexample_helpers_git.helpers.git import git_is_init
+        from wexample_helpers_git.helper.git import git_is_init
 
         # Check if Git is required
         if not self.should_have_git():
