@@ -1,6 +1,6 @@
 # filestate_git
 
-Version: 8.0.0
+Version: 8.0.1
 
 An extension for "filestate" package, which adds GIT management operations.
 
