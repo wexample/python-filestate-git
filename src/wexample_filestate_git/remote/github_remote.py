@@ -127,7 +127,9 @@ class GithubRemote(AbstractRemote):
                 "name": name,
                 "description": description,
                 "private": private,
-                "auto_init": True,
+                # The repo must be born empty: an auto-generated initial commit
+                # would make the very first local push non-fast-forward.
+                "auto_init": False,
             },
             call_origin=__file__,
             expected_status_codes=[201],
